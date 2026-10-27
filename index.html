@@ -191,6 +191,21 @@
   .hab b { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px;
     background: var(--accent); color: var(--accent-ink); font-size: 13px; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; }
   .hab[aria-pressed="true"] b { background: var(--accent-ink); color: var(--accent); }
+  .tabs { display: flex; gap: 6px; width: min(340px, 100%); }
+  .tab { flex: 1; font-family: var(--font-display); font-size: 15px; padding: 9px 6px; border-radius: 10px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 2px solid var(--line); }
+  .tab[aria-selected="true"] { color: var(--ink); border-color: var(--accent); background: rgba(255, 194, 46, 0.14); }
+  .tab:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .muestra { width: 36px; height: 36px; border-radius: 8px; flex: none; border: 2px solid var(--line); }
+  .tuto { position: absolute; left: 16px; right: 16px; top: 200px; margin: 0 auto; max-width: 320px; z-index: 4;
+    background: rgba(12, 17, 27, 0.92); border: 1px solid var(--accent); border-radius: 12px; padding: 12px 14px;
+    text-align: center; pointer-events: none; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .tuto-paso { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .tuto p { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
+  .tuto-saltar { pointer-events: auto; background: none; border: 0; color: var(--muted); font-family: var(--font-body);
+    font-size: 15px; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 4px 8px; }
+  .tuto-saltar:hover { color: var(--ink); }
+  .tuto-saltar:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
   .sec-tienda { font-size: 15px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-align: left; margin-top: 6px; }
   .vineta { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s;
     background: radial-gradient(ellipse at center, transparent 48%, rgba(0, 0, 0, 0.62)); }
@@ -253,6 +268,11 @@
 
   <div class="pista" id="pista" hidden>Tocá para soltar</div>
   <div class="aviso" id="aviso" hidden></div>
+  <div class="tuto" id="tuto" hidden>
+    <span class="tuto-paso" id="tutoPaso">Paso 1 de 3</span>
+    <p id="tutoTxt"></p>
+    <button class="tuto-saltar" id="btnTutoSaltar">Saltar tutorial</button>
+  </div>
   <div class="habs" id="habs" hidden>
     <button class="hab" id="habRotar" aria-label="Rotar pieza (R)" title="Rotar pieza (R)" hidden><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9a5.5 5.5 0 1 0 1.8-4.1"/><path d="M3.5 3v3.8h3.8"/></svg><b id="usosRotar">0</b></button>
     <button class="hab" id="habCambiar" aria-label="Cambiar pieza (C)" title="Cambiar por la siguiente (C)" hidden><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 6h12.5l-3-3"/><path d="M15.5 12H3l3 3"/></svg><b id="usosCambiar">0</b></button>
@@ -289,6 +309,7 @@
       <span><b>R</b> rotar, <b>C</b> cambiar pieza, <b>G</b> pegamento (si los comprás)</span>
       <span><b>Esc</b> o <b>P</b> para pausar</span>
     </div>
+    <button class="btn-sec" id="btnTuto">Repetir tutorial</button>
     <button class="btn" id="btnVolverAy" data-foco>Volver</button>
   </div>
 
@@ -311,6 +332,7 @@
   <div class="overlay" id="tienda" hidden>
     <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)">Tien<em>da</em></h2>
     <div class="saldo"><span class="moneda"></span><span id="saldoTxt">0</span><small>monedas</small></div>
+    <div class="tabs" role="tablist"><button class="tab" id="tabMejoras" role="tab" aria-selected="true">Mejoras</button><button class="tab" id="tabCosm" role="tab" aria-selected="false">Cosméticos</button></div>
     <div class="lista-tienda" id="listaTienda"></div>
     <button class="btn" id="btnVolverT" data-foco>Volver</button>
   </div>
@@ -650,9 +672,9 @@
   function leerTienda() {
     try {
       var t = JSON.parse(localStorage.getItem("equilibrio-tienda"));
-      if (t && typeof t.m === "number" && t.n) return t;
+      if (t && typeof t.m === "number" && t.n) { if (!t.c) t.c = { own: {}, eq: {} }; if (!t.c.own) t.c.own = {}; if (!t.c.eq) t.c.eq = {}; return t; }
     } catch (e) {}
-    return { m: 0, n: {} };
+    return { m: 0, n: {}, c: { own: {}, eq: {} } };
   }
   function guardarTienda() { try { localStorage.setItem("equilibrio-tienda", JSON.stringify(tienda)); } catch (e) {} }
   function nivel(id) { return tienda.n[id] || 0; }
@@ -663,6 +685,7 @@
   }
   function renderTienda() {
     elSaldo.textContent = tienda.m;
+    if (tiendaTab === "cosm") { renderCosm(); return; }
     var h = "";
     for (var i = 0; i < MEJORAS.length; i++) {
       var m = MEJORAS[i], nv = nivel(m.id), max = m.p.length, pips = "";
@@ -833,6 +856,129 @@
       el.disabled = !cur || (usos[id] <= 0 && !armado) || (id === "rotar" && cur.def.circulo);
       if (id === "pegar") el.setAttribute("aria-pressed", armado ? "true" : "false");
     }
+  }
+
+  // ---------- Cosméticos ----------
+  var COSM = {
+    grua: { nombre: "Grúa", items: [
+      { id: "g-amarillo", n: "Amarilla", d: "La grúa de obra de siempre.", p: 0, c1: "#ffc22e", c2: "#ffd24f" },
+      { id: "g-roja", n: "Roja", d: "Rieles y gancho rojos.", p: 150, c1: "#e8503a", c2: "#ff7a63" },
+      { id: "g-celeste", n: "Celeste", d: "Rieles y gancho celestes.", p: 150, c1: "#3fa7e0", c2: "#7cc8f0" },
+      { id: "g-violeta", n: "Violeta", d: "Rieles y gancho violetas.", p: 150, c1: "#8f6bff", c2: "#b9a2ff" },
+      { id: "g-dorada", n: "Dorada", d: "Para torres con ambición.", p: 600, c1: "#f2c94c", c2: "#fff1a8" }
+    ] },
+    fondo: { nombre: "Fondo", items: [
+      { id: "f-ciudad", n: "Ciudad", d: "El atardecer de siempre.", p: 0, tipo: "edif", ventanas: true,
+        dia: [[88, 150, 214], [214, 182, 150]], noche: [[8, 12, 30], [28, 24, 60]], ed: [[46, 66, 104], [10, 14, 30]], vent: [[255, 226, 150], [255, 214, 120]] },
+      { id: "f-desierto", n: "Desierto", d: "Mesetas al atardecer.", p: 250, tipo: "mesa", ventanas: false,
+        dia: [[232, 150, 90], [250, 210, 150]], noche: [[20, 12, 34], [60, 34, 52]], ed: [[158, 90, 60], [40, 22, 30]], top: [[190, 112, 74], [60, 34, 44]] },
+      { id: "f-puerto", n: "Puerto", d: "Pilas de contenedores.", p: 300, tipo: "cont", ventanas: false,
+        dia: [[110, 170, 190], [205, 215, 205]], noche: [[8, 16, 30], [26, 36, 52]], ed: [[70, 100, 120], [14, 20, 32]] },
+      { id: "f-montana", n: "Montañas", d: "Picos nevados.", p: 350, tipo: "mont", ventanas: false,
+        dia: [[120, 150, 215], [236, 208, 214]], noche: [[10, 12, 36], [40, 30, 70]], ed: [[86, 100, 140], [14, 16, 38]] },
+      { id: "f-neon", n: "Neón", d: "Ciudad synthwave.", p: 500, tipo: "edif", ventanas: true,
+        dia: [[40, 14, 90], [255, 96, 160]], noche: [[14, 6, 40], [90, 20, 90]], ed: [[34, 12, 66], [10, 4, 28]], vent: [[60, 240, 255], [255, 80, 200]] }
+    ] },
+    piezas: { nombre: "Piezas", items: [
+      { id: "p-clasico", n: "Clásico", d: "Colores originales.", p: 0, m: ["#c9944f", "#7d5420"] },
+      { id: "p-pastel", n: "Pastel", d: "Colores suaves.", p: 200, m: ["#e8d2b8", "#b59a7c"] },
+      { id: "p-plano", n: "Plano", d: "Estilo plano de obra.", p: 250, m: ["#1d4a86", "#cfe6ff"] },
+      { id: "p-neon", n: "Neón", d: "Bordes que brillan.", p: 350, m: ["#0d1222", "#37f0ff"] },
+      { id: "p-dorado", n: "Dorado", d: "Todo lo que toca se vuelve oro.", p: 700, m: ["#d9ae3f", "#7a5a10"] }
+    ] }
+  };
+  var NEON = ["#ff3ea5", "#37f0ff", "#b6ff3b", "#ffb21e", "#a66bff"];
+  var tiendaTab = "mejoras", skinCache = {}, temaId = "", temaObj = null;
+  function itemCosm(cat, id) {
+    var its = COSM[cat].items;
+    for (var i = 0; i < its.length; i++) if (its[i].id === id) return its[i];
+    return its[0];
+  }
+  function equipado(cat) { return itemCosm(cat, tienda.c.eq[cat]).id; }
+  function posee(it) { return it.p === 0 || !!tienda.c.own[it.id]; }
+  function tema() {
+    var id = equipado("fondo");
+    if (id !== temaId) { temaId = id; temaObj = itemCosm("fondo", id); }
+    return temaObj;
+  }
+  function gruaCol() { return itemCosm("grua", tienda.c.eq.grua); }
+  function hexA(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+  function mezHex(a, b, k) { return rgbA(mezclaA(hexA(a), hexA(b), k)); }
+  function skin(def) {
+    var id = equipado("piezas"), key = id + def.id;
+    if (skinCache[key]) return skinCache[key];
+    var r;
+    if (id === "p-pastel") r = { f: mezHex(def.col, "#ffffff", 0.55), s: mezHex(def.borde, "#ffffff", 0.35) };
+    else if (id === "p-plano") r = { f: "#1d4a86", s: "#cfe6ff" };
+    else if (id === "p-neon") r = { f: "#0d1222", s: NEON[PIEZAS.indexOf(def) % NEON.length], g: true };
+    else if (id === "p-dorado") r = { f: mezHex("#d9ae3f", def.col, 0.18), s: "#7a5a10" };
+    else r = { f: def.col, s: def.borde };
+    skinCache[key] = r;
+    return r;
+  }
+  function muestraCss(cat, it) {
+    if (cat === "grua") return "background:linear-gradient(90deg," + it.c1 + " 50%," + it.c2 + " 50%)";
+    if (cat === "fondo") return "background:linear-gradient(180deg," + rgbA(it.dia[0]) + "," + rgbA(it.dia[1]) + ")";
+    return "background:" + it.m[0] + ";border:3px solid " + it.m[1];
+  }
+  function renderCosm() {
+    var h = "";
+    for (var cat in COSM) {
+      h += '<div class="sec-tienda">' + COSM[cat].nombre + '</div>';
+      var its = COSM[cat].items, eqId = equipado(cat);
+      for (var i = 0; i < its.length; i++) {
+        var it = its[i], btn, attrs = ' data-cos="' + it.id + '" data-cat="' + cat + '"';
+        if (eqId === it.id) btn = '<button class="btn-sec compra" disabled>Puesto</button>';
+        else if (posee(it)) btn = '<button class="btn-sec compra"' + attrs + '>Poner</button>';
+        else btn = '<button class="btn-sec compra"' + attrs + (tienda.m < it.p ? " disabled" : "") + '><span class="moneda"></span>' + it.p + '</button>';
+        h += '<div class="mejora"><span class="muestra" style="' + muestraCss(cat, it) + '"></span>' +
+          '<div class="mejora-txt"><b>' + it.n + '</b><span>' + it.d + '</span></div>' + btn + '</div>';
+      }
+    }
+    elLista.innerHTML = h;
+  }
+  function accionCosm(cat, id) {
+    var it = itemCosm(cat, id);
+    if (it.id !== id) return;
+    if (!posee(it)) {
+      if (tienda.m < it.p) return;
+      tienda.m -= it.p; tienda.c.own[id] = true; sfx.nuevo();
+    }
+    tienda.c.eq[cat] = id; guardarTienda(); renderTienda(); actualizarMenuTxt();
+  }
+  function setTab(t) {
+    tiendaTab = t;
+    document.getElementById("tabMejoras").setAttribute("aria-selected", t === "mejoras" ? "true" : "false");
+    document.getElementById("tabCosm").setAttribute("aria-selected", t === "cosm" ? "true" : "false");
+    renderTienda();
+  }
+
+  // ---------- Tutorial ----------
+  var TUTO = [
+    "Tocá la pantalla (o apretá espacio) para soltar la pieza.",
+    "Buscá que cada pieza caiga bien centrada sobre la anterior. La línea punteada marca por dónde va a caer.",
+    "Cuanto más alto, más viento y temblores. Si una pieza cae de la plataforma, se termina. Con las monedas comprás ayudas en la Tienda."
+  ];
+  var tutoHecho = leerTuto(), tutoActivo = false, tutoPend = false, tutoPaso = 0, tutoTimer = 0;
+  var elTuto = document.getElementById("tuto"), elTutoPaso = document.getElementById("tutoPaso"), elTutoTxt = document.getElementById("tutoTxt");
+  function leerTuto() { try { return localStorage.getItem("equilibrio-tuto") === "1"; } catch (e) { return false; } }
+  function terminarTuto() {
+    tutoActivo = false; tutoHecho = true; tutoPaso = 0;
+    clearTimeout(tutoTimer); elTuto.hidden = true;
+    try { localStorage.setItem("equilibrio-tuto", "1"); } catch (e) {}
+  }
+  function actualizarTuto() {
+    if (!tutoActivo) return;
+    if (estado !== "juego") { elTuto.hidden = true; return; }
+    elPista.hidden = true;
+    var p = drops < 1 ? 1 : drops < 3 ? 2 : 3;
+    if (p !== tutoPaso) {
+      tutoPaso = p;
+      elTutoPaso.textContent = "Paso " + p + " de 3";
+      elTutoTxt.textContent = TUTO[p - 1];
+      if (p === 3) { clearTimeout(tutoTimer); tutoTimer = setTimeout(terminarTuto, 9000); }
+    }
+    elTuto.hidden = false;
   }
 
   // ---------- Estado ----------
@@ -1041,6 +1187,7 @@
     mostrar("fin");
     elPista.hidden = true; btnPausa.hidden = true; setTrack("menu");
     objetivo = 1; escala = 1; elStage.classList.remove("lento"); ajusteMusica();
+    if (tutoActivo) terminarTuto();
     actualizarHUD(true);
     setTimeout(function () { try { btnOtra.focus({ preventScroll: true }); } catch (e) {} }, 50);
   }
@@ -1081,8 +1228,8 @@
     var t = clamp(Math.max(puntaje, alturaM) / 55, 0, 1);
     var g = ctx.createLinearGradient(0, 0, 0, H);
     var sp = clamp((alturaM - 50) / 50, 0, 1);
-    g.addColorStop(0, rgbA(mezclaA(mezclaA(CIELO_DIA[0], CIELO_NOCHE[0], t), ESPACIO[0], sp)));
-    g.addColorStop(1, rgbA(mezclaA(mezclaA(CIELO_DIA[1], CIELO_NOCHE[1], t), ESPACIO[1], sp)));
+    g.addColorStop(0, rgbA(mezclaA(mezclaA(tema().dia[0], tema().noche[0], t), ESPACIO[0], sp)));
+    g.addColorStop(1, rgbA(mezclaA(mezclaA(tema().dia[1], tema().noche[1], t), ESPACIO[1], sp)));
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     // estrellas
@@ -1099,24 +1246,9 @@
 
     dibujarAmbiente(t, alturaM, sp);
 
-    // siluetas de la ciudad (parallax)
+    // siluetas (parallax)
     var baseY = H - 6 + 0.22 * (-camTop - TORRE_PANTALLA);
-    ctx.fillStyle = mezcla([46, 66, 104], [10, 14, 30], t);
-    for (var e = 0; e < edificios.length; e++) {
-      var ed = edificios[e];
-      ctx.fillRect(ed.x + sh, baseY - ed.h, ed.w, ed.h + 400);
-    }
-    ctx.fillStyle = mezcla([255, 226, 150], [255, 214, 120], t);
-    for (var e2 = 0; e2 < edificios.length; e2++) {
-      var d = edificios[e2];
-      if (d.v < 0.35 + t * 0.4) continue;
-      for (var wy = baseY - d.h + 10; wy < baseY - 8; wy += 16) {
-        ctx.globalAlpha = 0.35 + 0.35 * t;
-        ctx.fillRect(d.x + 6 + sh, wy, 4, 5);
-        if (d.w > 38) ctx.fillRect(d.x + d.w - 12 + sh, wy, 4, 5);
-      }
-    }
-    ctx.globalAlpha = 1;
+    dibujarSiluetas(t, sh, baseY);
 
     // mundo
     ctx.save();
@@ -1168,11 +1300,11 @@
     // grúa (fija a la pantalla)
     var hx2 = hookX() + sh;
     ctx.fillStyle = "#1d2538"; ctx.fillRect(0, RIEL_Y, W, 9);
-    ctx.fillStyle = "#ffc22e";
+    ctx.fillStyle = gruaCol().c1;
     for (var rx = -10; rx < W; rx += 22) {
       ctx.beginPath(); ctx.moveTo(rx, RIEL_Y); ctx.lineTo(rx + 8, RIEL_Y); ctx.lineTo(rx + 2, RIEL_Y + 9); ctx.lineTo(rx - 6, RIEL_Y + 9); ctx.closePath(); ctx.fill();
     }
-    ctx.fillStyle = "#ffd24f"; ctx.fillRect(hx2 - 14, RIEL_Y - 4, 28, 16);
+    ctx.fillStyle = gruaCol().c2; ctx.fillRect(hx2 - 14, RIEL_Y - 4, 28, 16);
     ctx.fillStyle = "#1b1403"; ctx.fillRect(hx2 - 9, RIEL_Y, 18, 4);
     var piezaTop = COLGAR_TOP;
     ctx.strokeStyle = "#cfd6e4"; ctx.lineWidth = 2;
@@ -1195,6 +1327,60 @@
     }
   }
 
+  function dibujarSiluetas(t, sh, baseY) {
+    var tm = tema(), i, e, col = mezcla(tm.ed[0], tm.ed[1], t);
+    if (tm.tipo === "mont") {
+      ctx.fillStyle = col;
+      for (i = 0; i < edificios.length; i++) {
+        e = edificios[i];
+        var cx = e.x + e.w / 2 + sh, ph = e.h * 1.15 + 30, hw = e.w * 1.1;
+        ctx.beginPath(); ctx.moveTo(cx - hw, baseY); ctx.lineTo(cx, baseY - ph); ctx.lineTo(cx + hw, baseY); ctx.closePath(); ctx.fill();
+      }
+      ctx.fillRect(0, baseY - 2, W, 400);
+      ctx.fillStyle = mezcla([240, 244, 252], [120, 130, 170], t);
+      for (i = 0; i < edificios.length; i++) {
+        e = edificios[i];
+        var cx2 = e.x + e.w / 2 + sh, ph2 = e.h * 1.15 + 30, hw2 = e.w * 1.1;
+        ctx.beginPath(); ctx.moveTo(cx2 - hw2 * 0.22, baseY - ph2 * 0.78); ctx.lineTo(cx2, baseY - ph2); ctx.lineTo(cx2 + hw2 * 0.22, baseY - ph2 * 0.78); ctx.closePath(); ctx.fill();
+      }
+    } else if (tm.tipo === "cont") {
+      var pal = [[196, 84, 61], [63, 111, 168], [217, 164, 58], [79, 143, 106], [150, 70, 70]];
+      for (i = 0; i < edificios.length; i++) {
+        e = edificios[i];
+        var n = Math.max(2, Math.round(e.h / 22)), k0 = Math.floor(e.v * pal.length);
+        for (var r = 0; r < n; r++) {
+          ctx.fillStyle = mezcla(pal[(k0 + r) % pal.length], [14, 18, 28], t * 0.85);
+          ctx.fillRect(e.x + sh, baseY - (r + 1) * 20, e.w, 19);
+        }
+      }
+      ctx.fillStyle = mezcla([40, 52, 64], [8, 12, 20], t); ctx.fillRect(0, baseY, W, 400);
+    } else if (tm.tipo === "mesa") {
+      for (i = 0; i < edificios.length; i++) {
+        e = edificios[i];
+        ctx.fillStyle = col; ctx.fillRect(e.x + sh, baseY - e.h * 0.8, e.w, e.h * 0.8 + 400);
+        ctx.fillStyle = mezcla(tm.top[0], tm.top[1], t); ctx.fillRect(e.x + sh, baseY - e.h * 0.8, e.w, 5);
+      }
+    } else {
+      ctx.fillStyle = col;
+      for (i = 0; i < edificios.length; i++) {
+        e = edificios[i];
+        ctx.fillRect(e.x + sh, baseY - e.h, e.w, e.h + 400);
+      }
+      if (tm.ventanas) {
+        ctx.fillStyle = mezcla(tm.vent[0], tm.vent[1], t);
+        for (i = 0; i < edificios.length; i++) {
+          var d = edificios[i];
+          if (d.v < 0.35 + t * 0.4) continue;
+          for (var wy = baseY - d.h + 10; wy < baseY - 8; wy += 16) {
+            ctx.globalAlpha = 0.35 + 0.35 * t;
+            ctx.fillRect(d.x + 6 + sh, wy, 4, 5);
+            if (d.w > 38) ctx.fillRect(d.x + d.w - 12 + sh, wy, 4, 5);
+          }
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
   function dibujarAmbiente(t, ca, sp) {
     var i, y;
     if (sp > 0) {
@@ -1286,8 +1472,11 @@
     ctx.beginPath();
     if (def.circulo) ctx.arc(b.position.x, b.position.y, def.w / 2, 0, Math.PI * 2);
     else { ctx.moveTo(v[0].x, v[0].y); for (var i = 1; i < v.length; i++) ctx.lineTo(v[i].x, v[i].y); ctx.closePath(); }
-    ctx.fillStyle = def.col; ctx.fill();
-    ctx.lineWidth = 2; ctx.strokeStyle = def.borde; ctx.lineJoin = "round"; ctx.stroke();
+    var sk = skin(def);
+    ctx.fillStyle = sk.f; ctx.fill();
+    if (sk.g) { ctx.shadowColor = sk.s; ctx.shadowBlur = 10; }
+    ctx.lineWidth = 2; ctx.strokeStyle = sk.s; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.shadowBlur = 0;
     decorar(def, b.position.x, b.position.y, b.angle);
     if (b.plugin.pegas) {
       ctx.fillStyle = "#d8f06a"; ctx.strokeStyle = "#6b7d1e"; ctx.lineWidth = 1;
@@ -1303,7 +1492,11 @@
     if (def.circulo) ctx.arc(0, 0, def.w / 2, 0, Math.PI * 2);
     else if (def.tri) { ctx.moveTo(-def.w / 2, def.h / 2); ctx.lineTo(def.w / 2, def.h / 2); ctx.lineTo(-def.w / 2, -def.h / 2); ctx.closePath(); }
     else rr(-def.w / 2, -def.h / 2, def.w, def.h, Math.min(def.cham || 2, def.h / 2));
-    ctx.fillStyle = def.col; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = def.borde; ctx.lineJoin = "round"; ctx.stroke();
+    var sk = skin(def);
+    ctx.fillStyle = sk.f; ctx.fill();
+    if (sk.g) { ctx.shadowColor = sk.s; ctx.shadowBlur = 10; }
+    ctx.lineWidth = 2; ctx.strokeStyle = sk.s; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.shadowBlur = 0;
     ctx.restore();
     decorar(def, x, y, ang || 0);
   }
@@ -1344,6 +1537,7 @@
     mus.capa = puntaje >= 30 ? 2 : puntaje >= 15 ? 1 : 0;
     animarEq();
     actualizarHabs();
+    actualizarTuto();
     dibujar();
   }
 
@@ -1354,7 +1548,8 @@
     reiniciar();
     estado = "juego";
     mostrar(null);
-    elPista.hidden = false; btnPausa.hidden = false;
+    tutoActivo = tutoPend || !tutoHecho; tutoPend = false; tutoPaso = 0; elTuto.hidden = true; clearTimeout(tutoTimer);
+    elPista.hidden = tutoActivo; btnPausa.hidden = false;
     ajusteMusica();
   }
   var vistas = { menu: elMenu, ayuda: elAyuda, ajustes: elAjustes, tienda: elTienda, pausa: elPausa, fin: elFin };
@@ -1379,12 +1574,13 @@
     if (estado !== "pausa") return;
     estado = "juego";
     mostrar(null);
-    btnPausa.hidden = false; elPista.hidden = drops > 0;
+    btnPausa.hidden = false; elPista.hidden = drops > 0 || tutoActivo;
     ultimo = 0; acum = 0;
     ajusteMusica();
   }
   function alMenu() {
     if (estado === "pausa") cobrar();
+    if (tutoActivo) { if (tutoPaso === 3) terminarTuto(); else { tutoActivo = false; tutoPaso = 0; elTuto.hidden = true; clearTimeout(tutoTimer); } }
     estado = "menu";
     reiniciar();
     mostrar("menu");
@@ -1405,6 +1601,10 @@
   clic(document.getElementById("btnMenuFin"), alMenu);
   clic(document.getElementById("btnAyuda"), function () { mostrar("ayuda"); });
   clic(document.getElementById("btnVolverAy"), function () { mostrar("menu"); });
+  clic(document.getElementById("btnTuto"), function () { tutoPend = true; comenzar(); });
+  clic(document.getElementById("btnTutoSaltar"), terminarTuto);
+  clic(document.getElementById("tabMejoras"), function () { setTab("mejoras"); });
+  clic(document.getElementById("tabCosm"), function () { setTab("cosm"); });
   clic(document.getElementById("btnAjustesMenu"), function () { volverA = "menu"; mostrar("ajustes"); });
   clic(document.getElementById("btnAjustesPausa"), function () { volverA = "pausa"; mostrar("ajustes"); });
   clic(document.getElementById("btnVolverAj"), function () { mostrar(volverA); });
@@ -1425,8 +1625,10 @@
   clic(document.getElementById("btnTiendaFin"), function () { abrirTienda("fin"); });
   clic(document.getElementById("btnVolverT"), function () { mostrar(volverT); actualizarMenuTxt(); });
   elLista.addEventListener("click", function (e) {
-    var b = e.target.closest ? e.target.closest("button[data-id]") : null;
-    if (b) comprar(b.getAttribute("data-id"));
+    var b = e.target.closest ? e.target.closest("button[data-id], button[data-cos]") : null;
+    if (!b) return;
+    if (b.hasAttribute("data-cos")) accionCosm(b.getAttribute("data-cat"), b.getAttribute("data-cos"));
+    else comprar(b.getAttribute("data-id"));
   });
 
   // El navegador solo deja sonar el audio después de un gesto: la primera interacción activa la música.
