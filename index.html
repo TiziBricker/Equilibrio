@@ -844,38 +844,25 @@
     cur.pega = true;
     tono(200, 0.12, "sine", 0.07, 120);
   }
+  // Pegamento: la pieza se agarra a lo que toca con fricción estática muy alta y, cuando se calma, deja de girar.
+  // No usa uniones físicas entre cuerpos: así no se generan fuerzas que expulsen piezas.
   function procesarPegas() {
     while (pegarCola.length) {
-      var par = pegarCola.pop(), g = par[0], o = par[1];
+      var g = pegarCola.pop()[0];
       if (cuerpos.indexOf(g) < 0) continue;
       var vs = g.vertices.slice().sort(function (p, q) { return q.y - p.y; });
       var v0 = vs[0], v1 = vs[1], ancho = g.bounds.max.x - g.bounds.min.x;
       for (var i = 1; i < vs.length; i++) if (Math.abs(vs[i].x - v0.x) > ancho * 0.3) { v1 = vs[i]; break; }
-      g.plugin.pegas = [];
-      var pts = [v0, v1];
-      for (var j = 0; j < 2; j++) {
-        var v = pts[j];
-        var c = M.Constraint.create({
-          bodyA: g, bodyB: o, length: 0, stiffness: 0.95, damping: 0.1,
-          pointA: { x: v.x - g.position.x, y: v.y - g.position.y },
-          pointB: { x: v.x - o.position.x, y: v.y - o.position.y }
-        });
-        Composite.add(engine.world, c); g.plugin.pegas.push(c);
-      }
+      var ca = Math.cos(-g.angle), sa = Math.sin(-g.angle);
+      g.plugin.puntos = [v0, v1].map(function (v) {
+        var dx = v.x - g.position.x, dy = v.y - g.position.y;
+        return { x: dx * ca - dy * sa, y: dx * sa + dy * ca };
+      });
+      g.frictionStatic = 1000; g.friction = Math.max(g.friction, 1); g.restitution = 0;
       tono(150, 0.1, "sine", 0.08, 90); vibrar(15);
     }
   }
-  function quitarPegas(b) {
-    var i, j, p;
-    if (b.plugin && b.plugin.pegas) {
-      for (i = 0; i < b.plugin.pegas.length; i++) Composite.remove(engine.world, b.plugin.pegas[i]);
-      b.plugin.pegas = null;
-    }
-    for (i = 0; i < cuerpos.length; i++) {
-      p = cuerpos[i].plugin.pegas; if (!p) continue;
-      for (j = p.length - 1; j >= 0; j--) if (p[j].bodyB === b) { Composite.remove(engine.world, p[j]); p.splice(j, 1); }
-    }
-  }
+  function quitarPegas() {}
   function actualizarHabs() {
     var vis = estado === "juego";
     var key = vis ? [nivel("rotar"), nivel("cambiar"), nivel("pegar"), usos.rotar, usos.cambiar, usos.pegar,
@@ -1183,6 +1170,7 @@
     for (var n = 0; n < cuerpos.length; n++) {
       var b = cuerpos[n];
       if (b.speed < 0.25 && Math.abs(b.angularSpeed) < 0.012) b.plugin.calm++; else b.plugin.calm = 0;
+      if (b.plugin.pegada && !b.plugin.fija && b.plugin.calm >= 25) { Body.setInertia(b, Infinity); Body.setAngularVelocity(b, 0); b.plugin.fija = true; }
       if (b.plugin.calm >= 25 && b.bounds.min.y < tope) tope = b.bounds.min.y;
     }
     if (estado === "juego") {
@@ -1527,11 +1515,12 @@
     ctx.lineWidth = 2; ctx.strokeStyle = sk.s; ctx.lineJoin = "round"; ctx.stroke();
     ctx.shadowBlur = 0;
     decorar(def, b.position.x, b.position.y, b.angle, true);
-    if (b.plugin.pegas) {
+    if (b.plugin.puntos) {
+      var cs = Math.cos(b.angle), sn = Math.sin(b.angle);
       ctx.fillStyle = "#d8f06a"; ctx.strokeStyle = "#6b7d1e"; ctx.lineWidth = 1;
-      for (var pi = 0; pi < b.plugin.pegas.length; pi++) {
-        var pc = b.plugin.pegas[pi];
-        ctx.beginPath(); ctx.arc(b.position.x + pc.pointA.x, b.position.y + pc.pointA.y, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      for (var pi = 0; pi < b.plugin.puntos.length; pi++) {
+        var pq = b.plugin.puntos[pi];
+        ctx.beginPath(); ctx.arc(b.position.x + pq.x * cs - pq.y * sn, b.position.y + pq.x * sn + pq.y * cs, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       }
     }
   }
