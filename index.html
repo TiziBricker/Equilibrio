@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Equilibrio: apilá objetos con una grúa sin que se caiga la torre. Con viento, temblores, tienda de mejoras y música.">
+<meta name="description" content="Equilibrio: apilá objetos con una grúa sin que se caiga la torre. Con viento, tienda de mejoras y música.">
 <meta name="theme-color" content="#0c111b">
 <meta property="og:title" content="Equilibrio">
 <meta property="og:description" content="Apilá objetos con una grúa sin que se caiga la torre.">
@@ -271,6 +271,112 @@
   @media (prefers-reduced-motion: reduce) {
     .altura.pulso, .chip.alerta { animation: none; }
   }
+
+  /* ===== Pulido de interfaz v2 ===== */
+  :root { --card: rgba(26, 35, 52, 0.72); --card-line: rgba(242, 238, 228, 0.10); --accent-deep: #b88a12; }
+  .overlay { gap: 16px; padding: 28px 22px 24px; backdrop-filter: blur(7px) saturate(0.8); -webkit-backdrop-filter: blur(7px) saturate(0.8);
+    background: radial-gradient(120% 70% at 50% 0%, rgba(255,194,46,0.10), transparent 60%), linear-gradient(180deg, rgba(12,17,27,0.80), rgba(12,17,27,0.95)); }
+  #tienda, #ajustes, #ayuda, #pausa { background: radial-gradient(120% 60% at 50% 0%, rgba(255,194,46,0.09), transparent 60%), rgba(12,17,27,0.96); }
+  .overlay > * { animation: entra 0.38s cubic-bezier(.2,.8,.2,1) both; }
+  .overlay > *:nth-child(2) { animation-delay: 0.04s; } .overlay > *:nth-child(3) { animation-delay: 0.08s; }
+  .overlay > *:nth-child(4) { animation-delay: 0.12s; } .overlay > *:nth-child(5) { animation-delay: 0.16s; }
+  .overlay > *:nth-child(6) { animation-delay: 0.2s; }
+  @keyframes entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .titulo { text-shadow: 0 3px 0 rgba(0,0,0,0.45), 0 10px 30px rgba(0,0,0,0.5); }
+  #menu .titulo { font-size: clamp(50px, 16vw, 72px); transform: rotate(-2deg); }
+  #menu .titulo em { text-shadow: 0 3px 0 var(--accent-deep), 0 10px 30px rgba(255,194,46,0.25); }
+  .franja { width: 150px; height: 12px; border-radius: 3px; box-shadow: 0 0 0 2px var(--accent-deep) inset; opacity: .95; }
+  .sub { color: var(--muted); font-size: 20px; max-width: 26ch; }
+  .mejor-menu { padding: 5px 16px; border-radius: 999px; background: var(--card); border: 1px solid var(--card-line); font-size: 16px; }
+  .mejor-menu:empty { display: none; }
+
+  .btn { position: relative; border-radius: 14px; padding: 15px 34px; font-size: 21px;
+    background: linear-gradient(180deg, #ffd25c, var(--accent)); box-shadow: 0 5px 0 var(--accent-deep), 0 14px 26px -8px rgba(255,194,46,0.45), inset 0 1px 0 rgba(255,255,255,0.45); }
+  .btn:active { box-shadow: 0 1px 0 var(--accent-deep), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; margin-right: 8px; vertical-align: -2px; }
+  .btn-sec { border-radius: 14px; background: var(--card); border: 1px solid var(--card-line); box-shadow: 0 3px 0 rgba(0,0,0,0.35); font-size: 16px; padding: 12px 20px; }
+  .btn-sec:hover { border-color: var(--accent); background: rgba(255,194,46,0.10); }
+  .btn-sec:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.35); }
+  .menu-col { width: min(290px, 100%); gap: 14px; }
+  .menu-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .menu-fila .btn-sec { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px 10px; font-size: 13px; letter-spacing: 0.04em; }
+  .menu-fila .btn-sec svg { width: 24px; height: 24px; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .menu-fila .btn-sec:hover svg { stroke: var(--ink); }
+  .sonando { width: auto; max-width: 100%; padding: 5px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--card-line);
+    font-size: 13px; white-space: nowrap; min-height: 30px; }
+  .sonando:has(#sonandoTxt:empty) { display: none; }
+  .eq { flex: none; }
+
+  .cab { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .cab .titulo { font-size: clamp(36px, 11vw, 48px) !important; }
+
+  /* Ayuda */
+  .reglas { width: min(340px, 100%); gap: 8px; counter-reset: r; text-align: left; letter-spacing: 0; }
+  .reglas span { counter-increment: r; position: relative; display: block; padding: 10px 12px 10px 50px; min-height: 46px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--card-line); font-size: 17px; line-height: 1.25; color: var(--ink); font-weight: 500; }
+  .reglas span::before { content: counter(r); position: absolute; left: 12px; top: 50%; margin-top: -13px; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); font-size: 14px; }
+  .reglas span b { color: var(--accent); font-weight: 700; }
+
+  /* Ajustes */
+  .panel-aj { width: min(340px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 16px;
+    background: var(--card); border: 1px solid var(--card-line); }
+  .panel-aj .ajuste, .panel-aj .interruptor { width: 100%; }
+  .panel-aj .interruptor { padding-top: 12px; border-top: 1px solid var(--card-line); }
+  .ajuste-cab, .interruptor { font-size: 15px; color: var(--ink); opacity: .85; }
+  .interruptor + .interruptor { padding-top: 12px; border-top: 1px solid var(--card-line); }
+
+  /* Tienda */
+  #tienda { justify-content: flex-start; gap: 12px; padding-bottom: 18px; }
+  .saldo { padding: 8px 18px; border-radius: 999px; background: var(--card); border: 1px solid var(--card-line); font-size: 30px; }
+  .saldo .moneda { width: 0.75em; height: 0.75em; }
+  .tabs { padding: 4px; border-radius: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-line); gap: 4px; }
+  .tab { border: 0; border-radius: 10px; font-size: 15px; padding: 10px 6px; }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); box-shadow: 0 2px 0 var(--accent-deep); }
+  .lista-tienda { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 2px 4px 8px; gap: 8px; scrollbar-width: thin; scrollbar-color: rgba(242,238,228,.25) transparent;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 8px, #000 calc(100% - 14px), transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 8px, #000 calc(100% - 14px), transparent 100%); }
+  .sec-tienda { flex: none; display: flex; align-items: center; gap: 10px; margin: 8px 2px 0; color: var(--accent); font-size: 14px; }
+  .sec-tienda::after { content: ""; flex: 1; height: 1px; background: var(--card-line); }
+  .mejora { flex: none; position: relative; padding: 11px 12px 11px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--card-line); overflow: hidden; }
+  .mejora::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); opacity: .85; }
+  .mejora-txt b { font-size: 16px; letter-spacing: .01em; }
+  .pip { width: 16px; height: 7px; }
+  .pip.on { box-shadow: 0 0 8px rgba(255,194,46,0.55); }
+  .compra { border-radius: 12px; min-width: 86px; padding: 9px 12px; }
+  .compra:not(:disabled) { background: linear-gradient(180deg, #ffd25c, var(--accent)); color: var(--accent-ink); border-color: transparent; box-shadow: 0 3px 0 var(--accent-deep); }
+  .compra:not(:disabled):hover { color: var(--accent-ink); filter: brightness(1.06); }
+  .compra:disabled { background: rgba(0,0,0,0.25); box-shadow: none; }
+  .compra .moneda { box-shadow: inset 0 0 0 2px var(--accent-deep); }
+  .muestra { width: 40px; height: 40px; border-radius: 10px; }
+  #tienda .btn, #ayuda .btn, #ajustes .btn { flex: none; }
+
+  /* Pausa / fin */
+  .tarjeta { width: min(300px, 100%); padding: 16px 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--card-line);
+    display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .tarjeta .etiqueta { font-size: 13px; opacity: .7; }
+  #fin .final-num { font-size: 78px; text-shadow: 0 4px 0 var(--accent-deep), 0 12px 30px rgba(255,194,46,0.3); }
+  .record:empty { display: none; }
+  .record { padding: 3px 12px; border-radius: 999px; background: rgba(111,217,160,0.12); border: 1px solid rgba(111,217,160,0.35); font-size: 16px; }
+  .ganancia { padding-top: 10px; margin-top: 4px; border-top: 1px dashed var(--card-line); width: 100%; justify-content: center; font-size: 18px; }
+  .motivo:empty { display: none; }
+  .motivo { font-size: 17px; }
+  #fin .menu-fila { grid-template-columns: 1fr 1fr; width: min(300px, 100%); }
+  #fin .menu-fila .btn-sec { flex-direction: row; justify-content: center; font-size: 15px; padding: 11px 8px; }
+
+  /* HUD y barra inferior */
+  .hud { padding: 12px 14px 30px; }
+  .chip { background: rgba(12,17,27,0.66); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+  .monedas-hud { box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+  .habs { gap: 8px; }
+  .hab { width: 56px; height: 62px; border-radius: 16px; background: linear-gradient(180deg, rgba(34,46,68,0.92), rgba(14,20,32,0.92)); border-color: rgba(242,238,228,0.18); }
+  .hab-n { font-size: 11px; color: var(--ink); opacity: .75; }
+  .btn-sonido, .btn-pausa { width: 44px; height: 44px; bottom: 15px; background: linear-gradient(180deg, rgba(34,46,68,0.92), rgba(14,20,32,0.92)); box-shadow: 0 3px 0 rgba(0,0,0,0.35); }
+  .btn-sonido { right: 12px; } .btn-pausa { right: 64px; }
+  .tuto { border-radius: 14px; box-shadow: 0 10px 30px -8px #000; }
+  @media (max-width: 360px) { .habs { gap: 5px; } .hab { width: 50px; } .btn-pausa { right: 60px; } }
+  @media (max-height: 640px) { .overlay { gap: 10px; padding-top: 18px; } .sub { font-size: 18px; } }
+  @media (prefers-reduced-motion: reduce) { .overlay > * { animation: none; } }
 </style>
 
 </head>
@@ -319,10 +425,12 @@
     <p class="sub">La grúa te trae cosas. Vos las apilás. Si algo se cae, se acabó.</p>
     <div class="mejor-menu" id="mejorMenu"></div>
     <div class="menu-col">
-      <button class="btn" id="btnJugar" data-foco>Jugar</button>
-      <button class="btn-sec" id="btnTienda">Tienda</button>
-      <button class="btn-sec" id="btnAyuda">Cómo se juega</button>
-      <button class="btn-sec" id="btnAjustesMenu">Ajustes</button>
+      <button class="btn" id="btnJugar" data-foco><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Jugar</button>
+      <div class="menu-fila">
+        <button class="btn-sec" id="btnTienda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.4 10.2a1 1 0 0 1-1 .8H6.4a1 1 0 0 1-1-.8z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/></svg>Tienda</button>
+        <button class="btn-sec" id="btnAyuda"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/></svg>Cómo se juega</button>
+        <button class="btn-sec" id="btnAjustesMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</button>
+      </div>
     </div>
     <div class="sonando">
       <span class="eq" id="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
@@ -331,12 +439,11 @@
   </div>
 
   <div class="overlay" id="ayuda" hidden>
-    <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)">Cómo se <em>juega</em></h2>
-    <div class="franja" aria-hidden="true"></div>
+    <div class="cab"><h2 class="titulo">Cómo se <em>juega</em></h2><div class="franja" aria-hidden="true"></div></div>
     <div class="reglas">
       <span><b>Tocá</b> la pantalla o apretá <b>espacio</b> para soltar</span>
       <span>Soltá en movimiento y la pieza <b>sale con impulso</b></span>
-      <span>Arriba hay <b>viento</b> y a veces <b>temblores</b></span>
+      <span>Arriba hay <b>viento</b> que empuja la torre</span>
       <span>Si una pieza cae de la plataforma, <b>se terminó</b></span>
       <span><b>R</b> rotar, <b>C</b> cambiar pieza, <b>G</b> pegamento (si los comprás)</span>
       <span><b>Esc</b> o <b>P</b> para pausar</span>
@@ -346,8 +453,8 @@
   </div>
 
   <div class="overlay" id="ajustes" hidden>
-    <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)">Ajus<em>tes</em></h2>
-    <div class="franja" aria-hidden="true"></div>
+    <div class="cab"><h2 class="titulo">Ajus<em>tes</em></h2><div class="franja" aria-hidden="true"></div></div>
+    <div class="panel-aj">
     <div class="ajuste">
       <div class="ajuste-cab"><label for="volMusica">Música</label><output id="outMusica" for="volMusica">70%</output></div>
       <input type="range" id="volMusica" min="0" max="100" step="1" value="70">
@@ -358,11 +465,12 @@
     </div>
     <div class="interruptor"><span id="lblMute">Silenciar todo</span><button class="sw" id="swMute" role="switch" aria-checked="false" aria-labelledby="lblMute"></button></div>
     <div class="interruptor" id="rowVib"><span id="lblVib">Vibración</span><button class="sw" id="swVib" role="switch" aria-checked="true" aria-labelledby="lblVib"></button></div>
+    </div>
     <button class="btn" id="btnVolverAj" data-foco>Volver</button>
   </div>
 
   <div class="overlay" id="tienda" hidden>
-    <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)">Tien<em>da</em></h2>
+    <h2 class="titulo" style="font-size:clamp(34px,10vw,44px)">Tien<em>da</em></h2>
     <div class="saldo"><span class="moneda"></span><span id="saldoTxt">0</span><small>monedas</small></div>
     <div class="tabs" role="tablist"><button class="tab" id="tabMejoras" role="tab" aria-selected="true">Mejoras</button><button class="tab" id="tabCosm" role="tab" aria-selected="false">Cosméticos</button></div>
     <div class="lista-tienda" id="listaTienda"></div>
@@ -370,8 +478,8 @@
   </div>
 
   <div class="overlay" id="pausa" hidden>
-    <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)"><em>Pausa</em></h2>
-    <div class="pausa-alt" id="pausaAlt">0,0 m</div>
+    <div class="cab"><h2 class="titulo"><em>Pausa</em></h2><div class="franja" aria-hidden="true"></div></div>
+    <div class="tarjeta"><span class="etiqueta">Altura actual</span><div class="pausa-alt" id="pausaAlt">0,0 m</div></div>
     <div class="menu-col">
       <button class="btn" id="btnReanudar" data-foco>Continuar</button>
       <button class="btn-sec" id="btnAjustesPausa">Ajustes</button>
@@ -380,14 +488,18 @@
   </div>
 
   <div class="overlay" id="fin" hidden>
-    <h2 class="titulo" style="font-size:clamp(38px,11vw,52px)">Se <em>cayó</em></h2>
-    <div class="final-num" id="finalNum">0,0<small>m</small></div>
-    <div class="record" id="recordTxt"></div>
-    <div class="ganancia" id="ganTxt"></div>
-    <div class="motivo" id="motivoTxt"></div>
-    <button class="btn" id="btnOtra" data-foco>Otra vez</button>
-    <button class="btn-sec" id="btnTiendaFin">Tienda</button>
-    <button class="btn-sec" id="btnMenuFin">Menú</button>
+    <div class="cab"><h2 class="titulo">Se <em>cayó</em></h2><div class="franja" aria-hidden="true"></div></div>
+    <div class="tarjeta">
+      <span class="etiqueta">Altura final</span>
+      <div class="final-num" id="finalNum">0,0<small>m</small></div>
+      <div class="record" id="recordTxt"></div>
+      <div class="ganancia" id="ganTxt"></div>
+      <div class="motivo" id="motivoTxt"></div>
+    </div>
+    <div class="menu-col">
+      <button class="btn" id="btnOtra" data-foco><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Otra vez</button>
+      <div class="menu-fila"><button class="btn-sec" id="btnTiendaFin">Tienda</button><button class="btn-sec" id="btnMenuFin">Menú</button></div>
+    </div>
   </div>
 </main>
 
@@ -688,7 +800,6 @@
     { id: "grua", sec: "Ayudas", n: "Grúa más lenta",       d: "La grúa se mueve 6 % más despacio por nivel.", p: [50, 100, 180, 300, 500] },
     { id: "agarre",  n: "Agarre firme",         d: "Las piezas resbalan menos al apoyarse.", p: [60, 120, 220, 350, 550] },
     { id: "viento",  n: "Viento amortiguado",   d: "El viento empuja 8 % menos por nivel.", p: [60, 120, 220, 350, 550] },
-    { id: "temblor", n: "Aviso de temblor",     d: "Más tiempo de aviso antes de cada temblor.", p: [40, 90, 160, 260] },
     { id: "vista",   n: "Vista previa",         d: "Muestra las dos próximas piezas.", p: [150] },
     { id: "guia",    n: "Sombra de caída",      d: "Marca dónde va a quedar la pieza.", p: [200] },
     { id: "segunda", n: "Segunda oportunidad",  d: "Salva una pieza que se cae, una vez por nivel y por partida.", p: [500, 1200, 2400] },
@@ -697,6 +808,10 @@
     { id: "pegar",   n: "Pegamento",     d: "La pieza queda pegada a lo primero que toque. Usos por partida: 1, 2 o 3.", p: [200, 450, 900] }
   ];
   var tienda = leerTienda();
+  (function () {   // los temblores se quitaron: se devuelven las monedas gastadas en su mejora
+    var n = tienda.n.temblor | 0, pr = [40, 90, 160, 260], r = 0;
+    if (n > 0) { for (var i = 0; i < n && i < pr.length; i++) r += pr[i]; tienda.m += r; delete tienda.n.temblor; guardarTienda(); }
+  })();
   var vidas = 0, sig2 = null, avisoT = 0;
   var elTienda = document.getElementById("tienda"), elLista = document.getElementById("listaTienda"), elSaldo = document.getElementById("saldoTxt");
   var elGan = document.getElementById("ganTxt"), elAviso = document.getElementById("aviso");
@@ -844,22 +959,39 @@
     cur.pega = true;
     tono(200, 0.12, "sine", 0.07, 120);
   }
-  // Pegamento: la pieza se agarra a lo que toca con fricción estática muy alta y, cuando se calma, deja de girar.
-  // No usa uniones físicas entre cuerpos: así no se generan fuerzas que expulsen piezas.
+  // Pegamento: al primer contacto la pieza queda soldada a lo que tocó. Se guarda su posición relativa a esa base
+  // y se la vuelve a colocar en cada paso. No usa uniones físicas, que eran las que expulsaban piezas.
   function procesarPegas() {
     while (pegarCola.length) {
-      var g = pegarCola.pop()[0];
+      var par = pegarCola.pop(), g = par[0], o = par[1];
       if (cuerpos.indexOf(g) < 0) continue;
+      var ca = Math.cos(-o.angle), sa = Math.sin(-o.angle);
+      var dx = g.position.x - o.position.x, dy = g.position.y - o.position.y;
+      g.plugin.sigue = { o: o, x: dx * ca - dy * sa, y: dx * sa + dy * ca, a: g.angle - o.angle };
       var vs = g.vertices.slice().sort(function (p, q) { return q.y - p.y; });
       var v0 = vs[0], v1 = vs[1], ancho = g.bounds.max.x - g.bounds.min.x;
       for (var i = 1; i < vs.length; i++) if (Math.abs(vs[i].x - v0.x) > ancho * 0.3) { v1 = vs[i]; break; }
-      var ca = Math.cos(-g.angle), sa = Math.sin(-g.angle);
+      var cg = Math.cos(-g.angle), sg = Math.sin(-g.angle);
       g.plugin.puntos = [v0, v1].map(function (v) {
-        var dx = v.x - g.position.x, dy = v.y - g.position.y;
-        return { x: dx * ca - dy * sa, y: dx * sa + dy * ca };
+        var ex = v.x - g.position.x, ey = v.y - g.position.y;
+        return { x: ex * cg - ey * sg, y: ex * sg + ey * cg };
       });
-      g.frictionStatic = 1000; g.friction = Math.max(g.friction, 1); g.restitution = 0;
+      Body.setInertia(g, Infinity);
+      Body.setAngularVelocity(g, 0);
       tono(150, 0.1, "sine", 0.08, 90); vibrar(15);
+    }
+  }
+  function seguirPegas() {
+    for (var i = 0; i < cuerpos.length; i++) {
+      var g = cuerpos[i], sg = g.plugin.sigue;
+      if (!sg) continue;
+      var o = sg.o;
+      if (o !== base && cuerpos.indexOf(o) < 0) { g.plugin.sigue = null; continue; }
+      var cs = Math.cos(o.angle), sn = Math.sin(o.angle);
+      Body.setPosition(g, { x: o.position.x + sg.x * cs - sg.y * sn, y: o.position.y + sg.x * sn + sg.y * cs });
+      Body.setAngle(g, o.angle + sg.a);
+      Body.setVelocity(g, { x: o.velocity.x, y: o.velocity.y });
+      Body.setAngularVelocity(g, 0);
     }
   }
   function quitarPegas() {}
@@ -1061,7 +1193,7 @@
     camTop = -TORRE_PANTALLA; camObj = camTop;
     fase = 0; tiempo = 0; tSpawn = 0; tCaida = 0;
     vientoFase = Math.random() * 6; vientoVal = 0;
-    temblorAviso = 0; temblorT = 0; temblorProx = 12; sacudida = 0; hookVx = 0;
+    temblorAviso = 0; temblorT = 0; temblorProx = Infinity; sacudida = 0; hookVx = 0;
     ultimaPieza = ""; repetida = 0;
     sig = elegirPieza(); cur = null;
     pasarSiguiente();
@@ -1164,13 +1296,13 @@
     }
     procesarPegas();
     Engine.update(engine, DT * escala);
+    seguirPegas();
 
     // calma + altura de la torre
     var tope = 0;
     for (var n = 0; n < cuerpos.length; n++) {
       var b = cuerpos[n];
       if (b.speed < 0.25 && Math.abs(b.angularSpeed) < 0.012) b.plugin.calm++; else b.plugin.calm = 0;
-      if (b.plugin.pegada && !b.plugin.fija && b.plugin.calm >= 25) { Body.setInertia(b, Infinity); Body.setAngularVelocity(b, 0); b.plugin.fija = true; }
       if (b.plugin.calm >= 25 && b.bounds.min.y < tope) tope = b.bounds.min.y;
     }
     if (estado === "juego") {
