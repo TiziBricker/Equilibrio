@@ -1019,7 +1019,18 @@
       { id: "g-roja", n: "Roja", d: "Rieles y gancho rojos.", p: 150, c1: "#e8503a", c2: "#ff7a63" },
       { id: "g-celeste", n: "Celeste", d: "Rieles y gancho celestes.", p: 150, c1: "#3fa7e0", c2: "#7cc8f0" },
       { id: "g-violeta", n: "Violeta", d: "Rieles y gancho violetas.", p: 150, c1: "#8f6bff", c2: "#b9a2ff" },
-      { id: "g-dorada", n: "Dorada", d: "Oro macizo con destellos.", p: 600, c1: "#d9a621", c2: "#ffe27a", oro: true }
+      { id: "g-bronce", n: "Bronce", d: "Metal cálido con destellos.", p: 250, c1: "#b06a34", c2: "#e8a672", metal: "bronce" },
+      { id: "g-plata", n: "Plata", d: "Acero pulido con destellos.", p: 400, c1: "#c3ccda", c2: "#f4f7fc", metal: "plata" },
+      { id: "g-dorada", n: "Dorada", d: "Oro macizo. Lo más caro.", p: 800, c1: "#d9a621", c2: "#ffe27a", metal: "oro" }
+    ] },
+    plataforma: { nombre: "Plataforma", items: [
+      { id: "pl-acero", n: "Acero", d: "La plataforma de siempre.", p: 0, pl: { cu: "#4a566f", to: "#6a7894", fr: "#ffc22e", pi: "#2a3347", la: "#394560", ba: "#1b2233" } },
+      { id: "pl-hormigon", n: "Hormigón", d: "Gris de obra con franjas naranjas.", p: 120, pl: { cu: "#8d939c", to: "#b9bec6", fr: "#ff8a3d", pi: "#5c626d", la: "#747b87", ba: "#3d424c" } },
+      { id: "pl-ladrillo", n: "Ladrillo", d: "Rojo con franjas crema.", p: 150, pl: { cu: "#a84a37", to: "#d1705a", fr: "#f2e3c6", pi: "#6b2d22", la: "#8a3a2b", ba: "#43180f" } },
+      { id: "pl-madera", n: "Madera", d: "Tablones con franjas oscuras.", p: 200, pl: { cu: "#9a6a3c", to: "#c9955f", fr: "#3b2a18", pi: "#5e3f21", la: "#7a5230", ba: "#382412" } },
+      { id: "pl-hielo", n: "Hielo", d: "Azul helado con franjas blancas.", p: 250, pl: { cu: "#7fb6d6", to: "#d2f0fb", fr: "#ffffff", pi: "#4a7f9c", la: "#62a0c2", ba: "#2f5870" } },
+      { id: "pl-neon", n: "Neón", d: "Bordes que brillan en la noche.", p: 400, pl: { cu: "#1a1030", to: "#37f0ff", fr: "#ff3ea5", pi: "#120a24", la: "#2a1850", ba: "#ff3ea5" } },
+      { id: "pl-oro", n: "Oro", d: "Oro metálico. Lo más caro.", p: 900, pl: { cu: "#d9ae3f", to: "#fff1a6", fr: "#7a5210", pi: "#6b4c10", la: "#a8771a", ba: "#4a3208" }, metal: "oro" }
     ] },
     fondo: { nombre: "Fondo", items: [
       { id: "f-ciudad", n: "Ciudad", d: "Skyline al atardecer, con antenas y ventanas.", p: 0, tipo: "edif", ventanas: true,
@@ -1038,7 +1049,9 @@
       { id: "p-pastel", n: "Pastel", d: "Colores suaves.", p: 200, m: ["#e8d2b8", "#b59a7c"] },
       { id: "p-plano", n: "Plano", d: "Estilo plano de obra.", p: 250, m: ["#1d4a86", "#cfe6ff"] },
       { id: "p-neon", n: "Neón", d: "Bordes que brillan.", p: 350, m: ["#0d1222", "#37f0ff"] },
-      { id: "p-dorado", n: "Dorado", d: "Oro brillante con destellos.", p: 700, m: ["#d9ae3f", "#7a5a10"], oro: true }
+      { id: "p-bronce", n: "Bronce", d: "Piezas de bronce con destellos.", p: 300, m: ["#b06a34", "#4a2810"], metal: "bronce" },
+      { id: "p-plata", n: "Plata", d: "Piezas de plata con destellos.", p: 450, m: ["#c3ccda", "#4a5262"], metal: "plata" },
+      { id: "p-dorado", n: "Dorado", d: "Oro brillante. Lo más caro.", p: 1000, m: ["#d9ae3f", "#7a5a10"], metal: "oro" }
     ] }
   };
   var NEON = ["#ff3ea5", "#37f0ff", "#b6ff3b", "#ffb21e", "#a66bff"];
@@ -1065,13 +1078,16 @@
     if (id === "p-pastel") r = { f: mezHex(def.col, "#ffffff", 0.55), s: mezHex(def.borde, "#ffffff", 0.35) };
     else if (id === "p-plano") r = { f: "#1d4a86", s: "#cfe6ff" };
     else if (id === "p-neon") r = { f: "#0d1222", s: NEON[PIEZAS.indexOf(def) % NEON.length], g: true };
-    else if (id === "p-dorado") r = { f: "#d9ae3f", s: "#7a5210", oro: true };
+    else if (id === "p-dorado") r = { f: "#d9ae3f", s: METALES.oro.bo, metal: "oro" };
+    else if (id === "p-plata") r = { f: "#c3ccda", s: METALES.plata.bo, metal: "plata" };
+    else if (id === "p-bronce") r = { f: "#b06a34", s: METALES.bronce.bo, metal: "bronce" };
     else r = { f: def.col, s: def.borde };
     skinCache[key] = r;
     return r;
   }
   function muestraCss(cat, it) {
-    if (it.oro) return "background:linear-gradient(135deg,#8a5f10 0%,#f6d86a 30%,#fff6bf 48%,#d9a62e 66%,#9c6d12 100%);border:2px solid #7a5210";
+    if (it.metal) return "background:" + METALES[it.metal].css + ";border:2px solid " + METALES[it.metal].bo;
+    if (cat === "plataforma") return "background:linear-gradient(180deg," + it.pl.to + " 30%," + it.pl.cu + " 30%);border:3px solid " + it.pl.fr;
     if (cat === "grua") return "background:linear-gradient(90deg," + it.c1 + " 50%," + it.c2 + " 50%)";
     if (cat === "fondo") return "background:linear-gradient(180deg," + rgbA(it.dia[0]) + "," + rgbA(it.dia[1]) + ")";
     return "background:" + it.m[0] + ";border:3px solid " + it.m[1];
@@ -1214,7 +1230,7 @@
 
   function crearCuerpo(def, x, y) {
     var ag = nivel("agarre");
-    var op = { friction: Math.min(1.3, def.fric * (1 + 0.06 * ag)), frictionStatic: 1.2 * (1 + 0.1 * ag), restitution: 0.0, density: def.dens, slop: 0.04 };
+    var op = { friction: Math.min(1.3, def.fric * (1 + 0.06 * ag)), frictionStatic: 1.2 * (1 + 0.1 * ag), restitution: 0.0, density: def.dens, slop: 0.04, frictionAir: 0.022 };
     var b;
     if (def.circulo) b = Bodies.circle(x, y, def.w / 2, op);
     else if (def.tri) {
@@ -1264,11 +1280,11 @@
     hookVx = amplitudGrua() * Math.sin(fase) - prev;
 
     // viento: crece con la altura
-    var fuerza = clamp((alturaM - 4) / 26, 0, 1) * (1 - 0.08 * nivel("viento"));
+    var fuerza = clamp((alturaM - 6) / 30, 0, 1) * (1 - 0.08 * nivel("viento"));
     vientoFase += dt * 0.35;
     var onda = Math.sin(vientoFase) * 0.8 + Math.sin(vientoFase * 2.3 + 1) * 0.2;
     vientoVal = onda * fuerza;                    // -1..1
-    var acc = vientoVal * 0.00026;
+    var acc = vientoVal * 0.00022;
     if (Math.abs(acc) > 1e-7) {
       for (var i = 0; i < cuerpos.length; i++) {
         var c = cuerpos[i];
@@ -1298,6 +1314,15 @@
     procesarPegas();
     Engine.update(engine, DT * escala);
     seguirPegas();
+    // asentado: amortigua el balanceo de las piezas que ya casi están quietas
+    for (var sq = 0; sq < cuerpos.length; sq++) {
+      var bq = cuerpos[sq];
+      if (bq.plugin.sigue) continue;
+      if (bq.speed < 1.6 && Math.abs(bq.angularVelocity) < 0.09) {
+        Body.setAngularVelocity(bq, bq.angularVelocity * 0.82);
+        if (bq.speed < 0.7) Body.setVelocity(bq, { x: bq.velocity.x * 0.93, y: bq.velocity.y });
+      }
+    }
 
     // calma + altura de la torre
     var tope = 0;
@@ -1426,25 +1451,28 @@
 
     // pilar y plataforma
     var px = base.position.x, py0 = 0;
-    ctx.fillStyle = "#2a3347";
+    var plI = itemCosm("plataforma", tienda.c.eq.plataforma), pl = plI.pl;
+    ctx.fillStyle = pl.pi;
     ctx.fillRect(BASE_X - 34, BASE_H, 68, 4000);
-    ctx.fillStyle = "#394560";
+    ctx.fillStyle = pl.la;
     ctx.fillRect(BASE_X - 34, BASE_H, 8, 4000);
-    ctx.fillStyle = "#1b2233";
+    ctx.fillStyle = pl.ba;
     for (var by = BASE_H + 60; by < camTop + H + 80; by += 120) ctx.fillRect(BASE_X - 34, by, 68, 6);
     ctx.save();
     ctx.translate(px - BASE_X, 0);
-    ctx.fillStyle = "#4a566f";
-    rr(BASE_X - BASE_W / 2, py0, BASE_W, BASE_H, 6); ctx.fill();
+    ctx.fillStyle = pl.cu;
+    rr(BASE_X - BASE_W / 2, py0, BASE_W, BASE_H, 6);
+    if (plI.metal) oroPintar(BASE_X, py0 + BASE_H / 2, BASE_W, BASE_H, 5, plI.metal); else ctx.fill();
     ctx.save();
     rr(BASE_X - BASE_W / 2, py0, BASE_W, BASE_H, 6); ctx.clip();
-    ctx.fillStyle = "#ffc22e";
+    ctx.fillStyle = pl.fr;
     for (var hx = BASE_X - BASE_W / 2 - 20; hx < BASE_X + BASE_W / 2; hx += 24) {
       ctx.beginPath(); ctx.moveTo(hx, py0 + 14); ctx.lineTo(hx + 12, py0 + 14); ctx.lineTo(hx + 4, py0 + 32); ctx.lineTo(hx - 8, py0 + 32); ctx.closePath(); ctx.fill();
     }
     ctx.restore();
-    ctx.fillStyle = "#6a7894";
+    ctx.fillStyle = pl.to;
     ctx.fillRect(BASE_X - BASE_W / 2, py0, BASE_W, 5);
+    if (plI.id === "pl-neon") { ctx.fillStyle = "rgba(55,240,255,0.35)"; ctx.fillRect(BASE_X - BASE_W / 2, py0 - 3, BASE_W, 3); }
     ctx.restore();
 
     // piezas
@@ -1471,24 +1499,24 @@
     // grúa (fija a la pantalla)
     var hx2 = hookX() + sh;
     ctx.fillStyle = "#1d2538"; ctx.fillRect(0, RIEL_Y, W, 9);
-    var gc = gruaCol(), orog = !!gc.oro;
+    var gc = gruaCol(), orog = !!gc.metal, mtg = orog ? METALES[gc.metal] : null;
     if (orog) {
       var gg = ctx.createLinearGradient(0, 0, W, 0);
-      for (var gi = 0; gi <= 8; gi++) gg.addColorStop(gi / 8, gi % 2 ? "#fff0a0" : "#c58f1a");
+      for (var gi = 0; gi <= 8; gi++) gg.addColorStop(gi / 8, gi % 2 ? mtg.cl : mtg.cd);
       ctx.fillStyle = gg;
     } else ctx.fillStyle = gc.c1;
     for (var rx = -10; rx < W; rx += 22) {
       ctx.beginPath(); ctx.moveTo(rx, RIEL_Y); ctx.lineTo(rx + 8, RIEL_Y); ctx.lineTo(rx + 2, RIEL_Y + 9); ctx.lineTo(rx - 6, RIEL_Y + 9); ctx.closePath(); ctx.fill();
     }
     if (orog) {
-      ctx.fillStyle = "rgba(255,244,180,0.9)"; ctx.fillRect(0, RIEL_Y, W, 1.5);
-      ctx.beginPath(); ctx.rect(hx2 - 14, RIEL_Y - 4, 28, 16); oroPintar(hx2, RIEL_Y + 4, 28, 16, 3);
-      ctx.strokeStyle = "#7a5210"; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = mtg.sp; ctx.globalAlpha = 0.9; ctx.fillRect(0, RIEL_Y, W, 1.5); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.rect(hx2 - 14, RIEL_Y - 4, 28, 16); oroPintar(hx2, RIEL_Y + 4, 28, 16, 3, gc.metal);
+      ctx.strokeStyle = mtg.bo; ctx.lineWidth = 1.5; ctx.stroke();
       var sw = ((tiempo * 0.5) % 1) * (W + 80) - 40;
-      destello(sw, RIEL_Y + 4, 6, 0.9, "#fffbe0");
-      for (var gk = 0; gk < 4; gk++) { var ga = Math.sin(tiempo * 2.2 + gk * 1.9); if (ga > 0) destello(30 + gk * 105 + hz(gk, 31) * 30, RIEL_Y + 4, 2 + 4 * ga * ga, ga * ga * ga, "#fffbe0"); }
+      destello(sw, RIEL_Y + 4, 6, 0.9, mtg.sp);
+      for (var gk = 0; gk < 4; gk++) { var ga = Math.sin(tiempo * 2.2 + gk * 1.9); if (ga > 0) destello(30 + gk * 105 + hz(gk, 31) * 30, RIEL_Y + 4, 2 + 4 * ga * ga, ga * ga * ga, mtg.sp); }
       destello(hx2 - 6, RIEL_Y, 3 + 3 * Math.abs(Math.sin(tiempo * 3)), 0.9, "#fff");
-      if (Math.random() < 0.18) lanzarBrillo(brillosP, Math.random() * W, RIEL_Y + 2 + Math.random() * 8);
+      if (Math.random() < 0.18) lanzarBrillo(brillosP, Math.random() * W, RIEL_Y + 2 + Math.random() * 8, gc.metal);
     } else { ctx.fillStyle = gc.c2; ctx.fillRect(hx2 - 14, RIEL_Y - 4, 28, 16); }
     ctx.fillStyle = "#1b1403"; ctx.fillRect(hx2 - 9, RIEL_Y, 18, 4);
     var piezaTop = COLGAR_TOP;
@@ -1768,14 +1796,14 @@
     if (def.circulo) ctx.arc(b.position.x, b.position.y, def.w / 2, 0, Math.PI * 2);
     else { ctx.moveTo(v[0].x, v[0].y); for (var i = 1; i < v.length; i++) ctx.lineTo(v[i].x, v[i].y); ctx.closePath(); }
     var sk = skin(def);
-    if (sk.oro) oroPintar(b.position.x, b.position.y, def.w, def.h, b.id); else { ctx.fillStyle = sk.f; ctx.fill(); }
+    if (sk.metal) oroPintar(b.position.x, b.position.y, def.w, def.h, b.id, sk.metal); else { ctx.fillStyle = sk.f; ctx.fill(); }
     if (sk.g) { ctx.shadowColor = sk.s; ctx.shadowBlur = 10; }
     ctx.lineWidth = 2; ctx.strokeStyle = sk.s; ctx.lineJoin = "round"; ctx.stroke();
     ctx.shadowBlur = 0;
     decorar(def, b.position.x, b.position.y, b.angle, true);
-    if (sk.oro) {
-      brilloOro(b.position.x, b.position.y, def.w, def.h, b.angle, b.id);
-      if (Math.random() < 0.06) lanzarBrillo(brillosM, b.bounds.min.x + Math.random() * (b.bounds.max.x - b.bounds.min.x), b.bounds.min.y + Math.random() * (b.bounds.max.y - b.bounds.min.y));
+    if (sk.metal) {
+      brilloOro(b.position.x, b.position.y, def.w, def.h, b.angle, b.id, sk.metal);
+      if (Math.random() < 0.06) lanzarBrillo(brillosM, b.bounds.min.x + Math.random() * (b.bounds.max.x - b.bounds.min.x), b.bounds.min.y + Math.random() * (b.bounds.max.y - b.bounds.min.y), sk.metal);
     }
     if (b.plugin.puntos) {
       var cs = Math.cos(b.angle), sn = Math.sin(b.angle), pp = b.plugin.puntos, q0 = pp[0], q1 = pp[1];
@@ -1789,21 +1817,30 @@
     else if (def.tri) { ctx.moveTo(-def.w / 2, def.h / 2); ctx.lineTo(def.w / 2, def.h / 2); ctx.lineTo(-def.w / 2, -def.h / 2); ctx.closePath(); }
     else rr(-def.w / 2, -def.h / 2, def.w, def.h, Math.min(def.cham || 2, def.h / 2));
     var sk = skin(def);
-    if (sk.oro) oroPintar(0, 0, def.w, def.h, 7); else { ctx.fillStyle = sk.f; ctx.fill(); }
+    if (sk.metal) oroPintar(0, 0, def.w, def.h, 7, sk.metal); else { ctx.fillStyle = sk.f; ctx.fill(); }
     if (sk.g) { ctx.shadowColor = sk.s; ctx.shadowBlur = 10; }
     ctx.lineWidth = 2; ctx.strokeStyle = sk.s; ctx.lineJoin = "round"; ctx.stroke();
     ctx.shadowBlur = 0;
     ctx.restore();
     decorar(def, x, y, ang || 0);
-    if (sk.oro) {
-      brilloOro(x, y, def.w, def.h, ang || 0, 7);
-      if (Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h);
+    if (sk.metal) {
+      brilloOro(x, y, def.w, def.h, ang || 0, 7, sk.metal);
+      if (Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk.metal);
     }
   }
 
   // ---------- Oro, destellos y pegamento ----------
+  var METALES = {
+    oro: { st: [[0, "#8f6212"], [0.22, "#e9bd3e"], [0.42, "#fff1a6"], [0.58, "#e0aa2a"], [0.8, "#a8771a"], [1, "#d9a62e"]], bo: "#7a5210", cd: "#c58f1a", cl: "#fff0a0", sp: "#fffbe0", pc: ["#fff3b0", "#ffd24f"],
+      css: "linear-gradient(135deg,#8a5f10 0%,#f6d86a 30%,#fff6bf 48%,#d9a62e 66%,#9c6d12 100%)" },
+    plata: { st: [[0, "#7d8696"], [0.22, "#c9d1de"], [0.42, "#ffffff"], [0.58, "#aeb8c8"], [0.8, "#7b8494"], [1, "#c3ccda"]], bo: "#4a5262", cd: "#8d97a8", cl: "#f4f7fc", sp: "#ffffff", pc: ["#ffffff", "#cfe0ff"],
+      css: "linear-gradient(135deg,#6f7888 0%,#d4dbe7 30%,#ffffff 48%,#aab4c4 66%,#737c8c 100%)" },
+    bronce: { st: [[0, "#5e3418"], [0.22, "#b87038"], [0.42, "#f0b27a"], [0.58, "#a8602c"], [0.8, "#6f3d1c"], [1, "#b06a34"]], bo: "#4a2810", cd: "#9a5a28", cl: "#e8a672", sp: "#ffe2c0", pc: ["#ffd9b0", "#e89a5a"],
+      css: "linear-gradient(135deg,#5a3216 0%,#c27a40 30%,#f2b987 48%,#a05c2a 66%,#63381a 100%)" }
+  };
   var brillosM = [], brillosP = [];
   function destello(x, y, r, al, col) {
+    col = col || "#fff8d0";
     if (al <= 0.02) return;
     ctx.globalAlpha = Math.min(1, al); ctx.fillStyle = col || "#fff8d0";
     ctx.beginPath(); ctx.moveTo(x, y - r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.quadraticCurveTo(x, y, x, y + r);
@@ -1811,10 +1848,10 @@
     ctx.globalAlpha = 0.5 * Math.min(1, al); ctx.beginPath(); ctx.arc(x, y, r * 0.35, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = 1;
   }
-  function oroPintar(cx, cy, w, h, seed) {
+  function oroPintar(cx, cy, w, h, seed, mt) {
+    mt = METALES[mt || "oro"];
     seed = seed || 0; var R = Math.max(w, h) / 2 + 4, g = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-    g.addColorStop(0, "#8f6212"); g.addColorStop(0.22, "#e9bd3e"); g.addColorStop(0.42, "#fff1a6");
-    g.addColorStop(0.58, "#e0aa2a"); g.addColorStop(0.8, "#a8771a"); g.addColorStop(1, "#d9a62e");
+    for (var ms = 0; ms < mt.st.length; ms++) g.addColorStop(mt.st[ms][0], mt.st[ms][1]);
     ctx.fillStyle = g; ctx.fill();
     ctx.save(); ctx.clip();
     var ph = ((tiempo * 0.32 + seed * 0.37) % 1) * (2 * R + 200) - R - 100;
@@ -1824,23 +1861,24 @@
     ctx.fillStyle = sg; ctx.fillRect(-R * 2, -R * 2, R * 4, R * 4);
     ctx.restore();
   }
-  function brilloOro(cx, cy, w, h, ang, seed) {
+  function brilloOro(cx, cy, w, h, ang, seed, mt) {
+    var spc = METALES[mt || "oro"].sp;
     seed = seed || 0; var cs = Math.cos(ang), sn = Math.sin(ang);
     for (var i = 0; i < 3; i++) {
       var lx = (hz(seed + i, 21) - 0.5) * w * 0.7, ly = (hz(seed + i, 22) - 0.5) * h * 0.6;
       var a = Math.sin(tiempo * 2.6 + i * 2.1 + seed), a3 = a > 0 ? a * a * a : 0;
-      destello(cx + lx * cs - ly * sn, cy + lx * sn + ly * cs, 3 + 4 * a3, a3, "#fffbe0");
+      destello(cx + lx * cs - ly * sn, cy + lx * sn + ly * cs, 3 + 4 * a3, a3, spc);
     }
   }
-  function lanzarBrillo(arr, x, y) {
+  function lanzarBrillo(arr, x, y, mt) {
     if (arr.length > 70) return;
-    arr.push({ x: x, y: y, vx: (Math.random() - 0.5) * 0.35, vy: -0.15 - Math.random() * 0.4, l: 1, d: 0.014 + Math.random() * 0.02, r: 2 + Math.random() * 3 });
+    arr.push({ x: x, y: y, vx: (Math.random() - 0.5) * 0.35, vy: -0.15 - Math.random() * 0.4, l: 1, d: 0.014 + Math.random() * 0.02, r: 2 + Math.random() * 3, pc: METALES[mt || "oro"].pc });
   }
   function dibujarBrillos(arr) {
     for (var i = arr.length - 1; i >= 0; i--) {
       var p = arr[i]; p.x += p.vx; p.y += p.vy; p.l -= p.d;
       if (p.l <= 0) { arr.splice(i, 1); continue; }
-      destello(p.x, p.y, p.r * (0.5 + p.l * 0.6), p.l, i % 3 ? "#fff3b0" : "#ffd24f");
+      destello(p.x, p.y, p.r * (0.5 + p.l * 0.6), p.l, i % 3 ? p.pc[0] : p.pc[1]);
     }
   }
   function pegamentoBanda(x0, y, w) {
