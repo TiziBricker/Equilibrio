@@ -180,7 +180,7 @@
   .sw[aria-checked="true"]::after { transform: translateX(22px); background: var(--accent-ink); }
   .pausa-alt { font-family: var(--font-display); font-size: 34px; color: var(--accent); font-variant-numeric: tabular-nums; }
 
-  .habs { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; }
+  .habs { position: absolute; left: 12px; bottom: 12px; display: flex; flex-wrap: wrap-reverse; gap: 6px; max-width: 196px; }
   .hab {
     position: relative; width: 52px; height: 58px; padding: 4px 0 2px; border-radius: 14px;
     border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer;
@@ -377,6 +377,57 @@
   @media (max-width: 360px) { .habs { gap: 5px; } .hab { width: 50px; } .btn-pausa { right: 60px; } }
   @media (max-height: 640px) { .overlay { gap: 10px; padding-top: 18px; } .sub { font-size: 18px; } }
   @media (prefers-reduced-motion: reduce) { .overlay > * { animation: none; } }
+
+  /* Misiones y logros */
+  #misiones { background: radial-gradient(120% 60% at 50% 0%, rgba(255,194,46,0.09), transparent 60%), rgba(12,17,27,0.96); justify-content: flex-start; gap: 12px; padding-bottom: 18px; }
+  #misiones .btn { flex: none; }
+  .insignia { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; margin-left: 8px; border-radius: 10px; background: var(--danger); color: #fff;
+    font-family: var(--font-display); font-size: 12px; letter-spacing: 0; line-height: 1; vertical-align: 2px; box-shadow: 0 0 0 2px rgba(12,17,27,0.8); }
+  .insignia[hidden] { display: none; }
+  .barra { height: 7px; border-radius: 4px; background: rgba(0,0,0,0.4); overflow: hidden; margin-top: 7px; }
+  .barra i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent-deep), var(--accent)); transition: width 0.3s; }
+  .mejora.hecha::before { background: var(--ok); }
+  .mejora.hecha .barra i { background: var(--ok); }
+  .mejora.cobrada { opacity: 0.55; }
+  .prog { display: flex; justify-content: space-between; margin-top: 4px; font-size: 13px; color: var(--muted); letter-spacing: 0.02em; }
+  .reloj { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 14px; background: var(--card); border: 1px dashed var(--card-line); font-size: 15px; color: var(--muted); flex: none; }
+  .reloj b { color: var(--accent); }
+  .menu-col .btn-sec .insignia { margin-left: 8px; }
+  #btnMis { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  #btnMis svg { width: 20px; height: 20px; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; margin-right: 8px; }
+  #fin .menu-fila { grid-template-columns: repeat(3, 1fr); }
+  #fin .menu-fila .btn-sec { font-size: 14px; padding: 11px 4px; }
+
+  /* Mundos */
+  .mundo-chip { display: block; margin-top: 3px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); opacity: 0.85; text-shadow: 0 1px 3px rgba(0,0,0,0.7); }
+  .mundo { position: absolute; left: 0; right: 0; top: 24%; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; text-align: center; }
+  .mundo[hidden] { display: none; }
+  .mundo small { font-size: 15px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink); text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
+  .mundo b { font-family: var(--font-display); font-size: clamp(36px, 12vw, 52px); line-height: 1; color: var(--accent); text-shadow: 0 3px 0 rgba(0,0,0,0.5), 0 8px 26px rgba(0,0,0,0.6); }
+  .mundo span { margin-top: 4px; font-size: 15px; font-weight: 600; color: var(--ink); text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+  .mundo i { display: block; width: 120px; height: 4px; border-radius: 2px; background: repeating-linear-gradient(135deg, var(--accent) 0 8px, #1a1a1a 8px 16px); }
+  .mundo.anim { animation: mundoIn 2.6s ease both; }
+  @keyframes mundoIn { 0% { opacity: 0; transform: translateY(16px) scale(0.92); } 14% { opacity: 1; transform: none; } 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce) { .mundo.anim { animation-duration: 2.6s; } }
+
+  /* Índice de objetos */
+  #indice { background: radial-gradient(120% 60% at 50% 0%, rgba(255,194,46,0.09), transparent 60%), rgba(12,17,27,0.96); justify-content: flex-start; gap: 12px; padding-bottom: 18px; }
+  #indice .btn { flex: none; }
+  .conteo { display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 18px; border-radius: 999px; background: var(--card); border: 1px solid var(--card-line); font-family: var(--font-display); font-size: 26px; color: var(--accent); }
+  .conteo small { font-family: var(--font-body, inherit); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .ficha { flex: none; display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: var(--card); border: 1px solid var(--card-line); }
+  .ficha.oculta { opacity: 0.8; }
+  .ficha-ico { flex: none; width: 70px; height: 70px; display: grid; place-items: center; border-radius: 12px; background: rgba(0,0,0,0.32); border: 1px solid var(--card-line); }
+  .ficha-ico canvas { position: static; width: 60px; height: 60px; }
+  .ficha-txt { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
+  .ficha-txt b { font-size: 17px; letter-spacing: 0.01em; }
+  .ficha-txt p { margin: 0; font-size: 14px; line-height: 1.25; color: var(--muted); }
+  .rasgos { display: flex; flex-wrap: wrap; gap: 4px; }
+  .rasgo { padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; background: rgba(255,194,46,0.14); color: var(--accent); border: 1px solid rgba(255,194,46,0.3); }
+  .rasgo.mal { background: rgba(255,107,107,0.12); color: #ff9a9a; border-color: rgba(255,107,107,0.3); }
+  .rasgo.neu { background: rgba(143,155,176,0.14); color: var(--ink); border-color: rgba(143,155,176,0.3); }
+  .pista-i { font-size: 13px; color: var(--muted); font-style: italic; }
+  .veces { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
 </style>
 
 </head>
@@ -384,18 +435,19 @@
 <main class="stage" id="stage">
   <canvas id="cv" aria-label="Torre de objetos apilados sobre una plataforma"></canvas>
   <div class="vineta" id="vineta"></div>
+  <div class="mundo" id="mundoBanner" hidden><small id="mundoNum">Mundo 2</small><b id="mundoNom">Cielo</b><i aria-hidden="true"></i><span id="mundoNuevos"></span></div>
 
   <div class="hud" id="hud">
     <div class="hud-col">
       <span class="etiqueta">Altura</span>
       <span class="altura" id="alturaTxt">0,0<small>m</small></span>
+      <span class="mundo-chip" id="mundoChip">Mundo 1 · Ciudad</span>
     </div>
     <div class="hud-col" style="align-items:center; flex:1;">
       <div class="chips">
         <span class="chip">Sigue <b id="sigueTxt"><canvas id="icoSig1" width="56" height="56"></canvas><canvas id="icoSig2" width="56" height="56" hidden></canvas></b></span>
-        <span class="chip">Viento <span class="viento-flechas calmo" id="vientoTxt">calmo</span></span>
       </div>
-      <div class="chips"><span class="chip alerta" id="alertaTemblor" hidden>⚠ Temblor</span><span class="chip" id="chipVida" hidden>Salvavidas <b id="vidasTxt">0</b></span></div>
+      <div class="chips"><span class="chip alerta" id="alertaTemblor" hidden>⚠ Temblor</span><span class="chip" id="chipVida" hidden>Vidas <b id="vidasTxt">0</b></span></div>
     </div>
     <div class="hud-col der">
       <span class="etiqueta">Mejor</span>
@@ -413,8 +465,11 @@
   </div>
   <div class="habs" id="habs" hidden>
     <button class="hab" id="habRotar" aria-label="Rotar pieza (R)" title="Rotar pieza (R)" hidden><kbd>R</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9a5.5 5.5 0 1 0 1.8-4.1"/><path d="M3.5 3v3.8h3.8"/></svg><span class="hab-n">Rotar</span><b id="usosRotar">0</b></button>
-    <button class="hab" id="habCambiar" aria-label="Cambiar pieza (C)" title="Cambiar por la siguiente (C)" hidden><kbd>C</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 6h12.5l-3-3"/><path d="M15.5 12H3l3 3"/></svg><span class="hab-n">Cambiar</span><b id="usosCambiar">0</b></button>
+    <button class="hab" id="habCambiar" aria-label="Cambiar pieza (C)" title="Descartar y pasar a la siguiente (C)" hidden><kbd>C</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 6h12.5l-3-3"/><path d="M15.5 12H3l3 3"/></svg><span class="hab-n">Cambiar</span><b id="usosCambiar">0</b></button>
     <button class="hab" id="habPegar" aria-label="Pegamento (G)" aria-pressed="false" title="Pegamento en la base (G)" hidden><kbd>G</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.2c3 3.8 5 6.3 5 8.6a5 5 0 0 1-10 0c0-2.3 2-4.8 5-8.6z"/></svg><span class="hab-n">Pegar</span><b id="usosPegar">0</b></button>
+    <button class="hab" id="habFreno" aria-label="Freno (F)" title="Frena toda la torre al instante (F)" hidden><kbd>F</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M5.5 9h7"/></svg><span class="hab-n">Freno</span><b id="usosFreno">0</b></button>
+    <button class="hab" id="habTam" aria-label="Tamaño de la pieza (T)" aria-pressed="false" title="Agranda o achica la pieza (T)" hidden><kbd>T</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="8.5" width="6.5" height="6.5" rx="1"/><rect x="8.5" y="2.5" width="7" height="7" rx="1"/></svg><span class="hab-n">Tamaño</span><b id="usosTam">0</b></button>
+    <button class="hab" id="habNivel" aria-label="Nivelar (N)" title="Endereza las piezas torcidas (N)" hidden><kbd>N</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="6.5" width="14" height="5" rx="2"/><circle cx="9" cy="9" r="1.2"/></svg><span class="hab-n">Nivelar</span><b id="usosNivel">0</b></button>
   </div>
   <button class="btn-sonido" id="btnSonido" aria-label="Silenciar o activar sonido" title="Sonido">🔊</button>
   <button class="btn-pausa" id="btnPausa" aria-label="Pausar" title="Pausa (Esc)" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
@@ -426,6 +481,8 @@
     <div class="mejor-menu" id="mejorMenu"></div>
     <div class="menu-col">
       <button class="btn" id="btnJugar" data-foco><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Jugar</button>
+      <button class="btn-sec" id="btnMis"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>Misiones y logros<span class="insignia" id="insMis" hidden>0</span></button>
+      <button class="btn-sec" id="btnIndice"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-right:8px"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg>Índice de objetos</button>
       <div class="menu-fila">
         <button class="btn-sec" id="btnTienda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.4 10.2a1 1 0 0 1-1 .8H6.4a1 1 0 0 1-1-.8z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/></svg>Tienda</button>
         <button class="btn-sec" id="btnAyuda"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/></svg>Cómo se juega</button>
@@ -443,7 +500,7 @@
     <div class="reglas">
       <span><b>Tocá</b> la pantalla o apretá <b>espacio</b> para soltar</span>
       <span>Soltá en movimiento y la pieza <b>sale con impulso</b></span>
-      <span>Arriba hay <b>viento</b> que empuja la torre</span>
+      <span>Cada pocos metros pasás a otro <b>mundo</b>: cielo, espacio, galaxia…</span>
       <span>Si una pieza cae de la plataforma, <b>se terminó</b></span>
       <span><b>R</b> rotar, <b>C</b> cambiar pieza, <b>G</b> pegamento (si los comprás)</span>
       <span><b>Esc</b> o <b>P</b> para pausar</span>
@@ -477,6 +534,21 @@
     <button class="btn" id="btnVolverT" data-foco>Volver</button>
   </div>
 
+  <div class="overlay" id="indice" hidden>
+    <h2 class="titulo" style="font-size:clamp(34px,10vw,44px)">Índi<em>ce</em></h2>
+    <div class="conteo"><span id="indiceN">0 / 0</span><small>descubiertos</small></div>
+    <div class="lista-tienda" id="listaIndice"></div>
+    <button class="btn" id="btnVolverI" data-foco>Volver</button>
+  </div>
+
+  <div class="overlay" id="misiones" hidden>
+    <h2 class="titulo" style="font-size:clamp(34px,10vw,44px)">Mis<em>iones</em></h2>
+    <div class="saldo"><span class="moneda"></span><span id="saldoMis">0</span><small>monedas</small></div>
+    <div class="tabs" role="tablist"><button class="tab" id="tabMis" role="tab" aria-selected="true">Diarias<span class="insignia" id="insTabMis" hidden>0</span></button><button class="tab" id="tabLog" role="tab" aria-selected="false">Logros<span class="insignia" id="insTabLog" hidden>0</span></button></div>
+    <div class="lista-tienda" id="listaMis"></div>
+    <button class="btn" id="btnVolverM" data-foco>Volver</button>
+  </div>
+
   <div class="overlay" id="pausa" hidden>
     <div class="cab"><h2 class="titulo"><em>Pausa</em></h2><div class="franja" aria-hidden="true"></div></div>
     <div class="tarjeta"><span class="etiqueta">Altura actual</span><div class="pausa-alt" id="pausaAlt">0,0 m</div></div>
@@ -498,7 +570,7 @@
     </div>
     <div class="menu-col">
       <button class="btn" id="btnOtra" data-foco><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Otra vez</button>
-      <div class="menu-fila"><button class="btn-sec" id="btnTiendaFin">Tienda</button><button class="btn-sec" id="btnMenuFin">Menú</button></div>
+      <div class="menu-fila"><button class="btn-sec" id="btnTiendaFin">Tienda</button><button class="btn-sec" id="btnMisFin">Misiones<span class="insignia" id="insMisFin" hidden>0</span></button><button class="btn-sec" id="btnMenuFin">Menú</button></div>
     </div>
   </div>
 </main>
@@ -529,14 +601,106 @@
     { id: "gato",     nombre: "Gato",     emoji: "🐈", w: 64,  h: 36, col: "#9a8f86", borde: "#5a5049", fric: 0.35, dens: 0.0010, desde: 8,  cham: 14 },
     { id: "pinguino", nombre: "Pingüino", emoji: "🐧", w: 38,  h: 58, col: "#35465e", borde: "#16202f", fric: 0.5,  dens: 0.0014, desde: 8,  cham: 14 },
     { id: "cuna",     nombre: "Cuña",     emoji: "",   w: 92,  h: 44, col: "#7bb36a", borde: "#3d6b30", fric: 0.9,  dens: 0.0011, desde: 8,  tri: true },
-    { id: "pelota",   nombre: "Pelota",   emoji: "⚽", w: 50,  h: 50, col: "#e8e6df", borde: "#8a877d", fric: 0.9,  dens: 0.0009, desde: 14, circulo: true }
+    { id: "pelota",   nombre: "Pelota",   emoji: "⚽", w: 50,  h: 50, col: "#e8e6df", borde: "#8a877d", fric: 0.9,  dens: 0.0009, desde: 14, circulo: true },
+    // objetos de mundos: aparecen al llegar a cada mundo en la partida
+    { id: "nube",     nombre: "Nube",       emoji: "", w: 80,  h: 40, col: "#eef3fb", borde: "#9fb0c8", fric: 0.5,  dens: 0.0004, desde: 0, mundo: 1, cham: 18 },
+    { id: "globo",    nombre: "Globo",      emoji: "", w: 46,  h: 46, col: "#e8493f", borde: "#8f1f19", fric: 0.4,  dens: 0.0003, desde: 0, mundo: 1, circulo: true },
+    { id: "cohete",   nombre: "Cohete",     emoji: "", w: 30,  h: 78, col: "#e9edf5", borde: "#7a8499", fric: 0.6,  dens: 0.0013, desde: 0, mundo: 2, cham: 10 },
+    { id: "hielo",    nombre: "Hielo",      emoji: "", w: 60,  h: 50, col: "#a9dcf5", borde: "#5aa0c8", fric: 0.15, dens: 0.0010, desde: 0, mundo: 2, cham: 6 },
+    { id: "meteorito", nombre: "Meteorito", emoji: "", w: 56,  h: 56, col: "#6e6660", borde: "#3b3631", fric: 1.0,  dens: 0.0022, desde: 0, mundo: 3, circulo: true },
+    { id: "satelite", nombre: "Satélite",   emoji: "", w: 84,  h: 40, col: "#c9d2de", borde: "#5b6678", fric: 0.7,  dens: 0.0006, desde: 0, mundo: 3, cham: 4 },
+    { id: "ovni",     nombre: "OVNI",       emoji: "", w: 90,  h: 34, col: "#9aa7b8", borde: "#4a5568", fric: 0.4,  dens: 0.0009, desde: 0, mundo: 4, cham: 16 },
+    { id: "estrella", nombre: "Estrella",   emoji: "", w: 58,  h: 58, col: "#ffd54a", borde: "#b8860b", fric: 0.55, dens: 0.0010, desde: 0, mundo: 4, cham: 20 },
+    { id: "materia",  nombre: "Materia oscura", emoji: "", w: 52, h: 52, col: "#1b1230", borde: "#7b4bd6", fric: 0.8, dens: 0.0038, desde: 0, mundo: 5, circulo: true },
+    { id: "cristal",  nombre: "Cristal de energía", emoji: "", w: 34, h: 80, col: "#3be0d0", borde: "#127a72", fric: 0.3, dens: 0.0008, desde: 0, mundo: 5, cham: 12 }
   ];
+
+  // ---------- Siluetas ----------
+  // Cada objeto con "partes" tiene la forma real: un conjunto de polígonos convexos y círculos (coordenadas crudas).
+  // La física usa un cuerpo compuesto con esas partes y el dibujo traza el contorno completo.
+  (function () {
+    function ELP(cx, cy, rx, ry, n, a0, a1) {
+      var o = [], full = a1 === undefined, k, a;
+      if (full) { a0 = 0; a1 = Math.PI * 2; }
+      var m = full ? n : n + 1;
+      for (k = 0; k < m; k++) { a = a0 + (a1 - a0) * k / n; o.push([cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]); }
+      return o;
+    }
+    function RRP(x, y, w, h, r) {
+      return [[x + r, y], [x + w - r, y], [x + w, y + r], [x + w, y + h - r], [x + w - r, y + h], [x + r, y + h], [x, y + h - r], [x, y + r]];
+    }
+    function HULL(p) {
+      p = p.slice().sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+      function cr(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+      var lo = [], up = [], i;
+      for (i = 0; i < p.length; i++) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p[i]) <= 0) lo.pop(); lo.push(p[i]); }
+      for (i = p.length - 1; i >= 0; i--) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p[i]) <= 0) up.pop(); up.push(p[i]); }
+      lo.pop(); up.pop(); return lo.concat(up);
+    }
+    function C(x, y, r) { return { c: [x, y, r] }; }
+    var FR = { estrella: 0.8, cohete: 0.9, cristal: 0.6, hielo: 0.3, gato: 0.5, pinguino: 0.7, ovni: 0.6, globo: 0.6 };
+    PIEZAS.forEach(function (p) { if (FR[p.id]) p.fric = FR[p.id]; });
+    var R = {};
+    // estrella: pentágono central + 5 puntas
+    (function () {
+      var inn = [], k, a, o = [];
+      for (k = 0; k < 5; k++) { a = -Math.PI / 2 + Math.PI / 5 + k * 2 * Math.PI / 5; inn.push([Math.cos(a) * 13.5, Math.sin(a) * 13.5]); }
+      o.push(inn);
+      for (k = 0; k < 5; k++) { a = -Math.PI / 2 + k * 2 * Math.PI / 5; o.push([[Math.cos(a) * 32, Math.sin(a) * 32], inn[(k + 4) % 5], inn[k]]); }
+      R.estrella = o;
+    })();
+    R.cohete = [
+      [[0, -40], [4.5, -33], [7.5, -24], [9, -14], [9, 28], [-9, 28], [-9, -14], [-7.5, -24], [-4.5, -33]],
+      [[9, 6], [15, 24], [15, 35], [9, 31]], [[-9, 6], [-15, 24], [-15, 35], [-9, 31]],
+      [[-5, 28], [5, 28], [6.5, 35], [-6.5, 35]]
+    ];
+    R.nube = [[[-28, 0], [28, 0], [28, 16], [-28, 16]], C(-28, 8, 8), C(28, 8, 8), C(-17, -3, 13), C(3, -8, 18), C(22, -1, 12)];
+    R.globo = [C(0, -4, 22), [[-4, 17], [4, 17], [0, 25]]];
+    R.satelite = [[[-15, -15], [15, -15], [15, 15], [-15, 15]], [[-42, -12], [-21, -12], [-21, 12], [-42, 12]], [[21, -12], [42, -12], [42, 12], [21, 12]],
+      [[-21, -2], [-15, -2], [-15, 2], [-21, 2]], [[15, -2], [21, -2], [21, 2], [15, 2]], [[-8, -15], [8, -15], [5, -21], [-5, -21]]];
+    R.ovni = [ELP(0, 6, 45, 11, 20), ELP(0, 2, 17, 16, 10, Math.PI, Math.PI * 2)];
+    (function () {
+      var rs = [28, 24, 29, 25, 30, 23, 28, 26, 29, 24], js = [0.1, -0.15, 0.05, 0.2, -0.1, 0.12, -0.2, 0.08, -0.05, 0.15], p = [], k, a;
+      for (k = 0; k < 10; k++) { a = k * Math.PI / 5 + js[k]; p.push([Math.cos(a) * rs[k], Math.sin(a) * rs[k]]); }
+      R.meteorito = [HULL(p)];
+    })();
+    R.hielo = [HULL([[-30, 8], [-23, -12], [-6, -23], [16, -19], [29, -4], [26, 16], [6, 23], [-20, 20]])];
+    R.cristal = [[[0, -40], [9, -30], [9, 34], [-9, 34], [-9, -30]], [[9, 34], [9, -2], [17, -12], [25, -2], [25, 34]], [[-9, 34], [-9, 8], [-16, -2], [-23, 8], [-23, 34]]];
+    R.pinguino = [ELP(0, 4, 15, 26, 16), [[-14, -6], [-22, 8], [-20, 16], [-14, 10]], [[14, -6], [22, 8], [20, 16], [14, 10]],
+      [[-15, 29], [-2, 29], [-1, 34], [-17, 34]], [[2, 29], [15, 29], [17, 34], [1, 34]]];
+    R.barril = [[[-18, -31], [18, -31], [22, -14], [22, 14], [18, 31], [-18, 31], [-22, 14], [-22, -14]]];
+
+    function area2(p) { var a = 0, i, q; for (i = 0; i < p.length; i++) { q = p[(i + 1) % p.length]; a += p[i][0] * q[1] - q[0] * p[i][1]; } return a / 2; }
+    for (var i = 0; i < PIEZAS.length; i++) {
+      var d = PIEZAS[i], raw = R[d.id];
+      if (!raw) continue;
+      d.masa0 = (d.circulo ? Math.PI * d.w * d.w / 4 : d.w * d.h) * d.dens;
+      var mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9, k, j, pt;
+      for (k = 0; k < raw.length; k++) {
+        if (raw[k].c) { var c = raw[k].c; mnx = Math.min(mnx, c[0] - c[2]); mxx = Math.max(mxx, c[0] + c[2]); mny = Math.min(mny, c[1] - c[2]); mxy = Math.max(mxy, c[1] + c[2]); }
+        else for (j = 0; j < raw[k].length; j++) { pt = raw[k][j]; mnx = Math.min(mnx, pt[0]); mxx = Math.max(mxx, pt[0]); mny = Math.min(mny, pt[1]); mxy = Math.max(mxy, pt[1]); }
+      }
+      d.ox = (mnx + mxx) / 2; d.oy = (mny + mxy) / 2;
+      d.w = Math.round(mxx - mnx); d.h = Math.round(mxy - mny);
+      var ar = 0; d.partes = [];
+      for (k = 0; k < raw.length; k++) {
+        if (raw[k].c) { var cc = raw[k].c; d.partes.push({ c: [cc[0] - d.ox, cc[1] - d.oy, cc[2]] }); ar += Math.PI * cc[2] * cc[2]; }
+        else {
+          var poly = raw[k].map(function (q) { return [q[0] - d.ox, q[1] - d.oy]; });
+          if (area2(poly) < 0) poly.reverse();
+          d.partes.push(poly); ar += area2(poly);
+        }
+      }
+      d.dens = d.masa0 / ar;      // conserva la masa de siempre aunque la silueta ocupe menos
+      delete d.cham;
+    }
+  })();
 
   // ---------- DOM ----------
   var cv = document.getElementById("cv"), ctx = cv.getContext("2d");
   var elStage = document.getElementById("stage");
   var elAltura = document.getElementById("alturaTxt"), elMejor = document.getElementById("mejorTxt");
-  var elSigue = document.getElementById("sigueTxt"), elViento = document.getElementById("vientoTxt");
+  var elSigue = document.getElementById("sigueTxt"), elViento = null;
   var elAlerta = document.getElementById("alertaTemblor"), elPista = document.getElementById("pista");
   var elMenu = document.getElementById("menu"), elFin = document.getElementById("fin");
   var elFinalNum = document.getElementById("finalNum"), elRecord = document.getElementById("recordTxt"), elMotivo = document.getElementById("motivoTxt");
@@ -799,20 +963,30 @@
   var MEJORAS = [
     { id: "grua", sec: "Ayudas", n: "Grúa más lenta",       d: "La grúa se mueve 6 % más despacio por nivel.", p: [50, 100, 180, 300, 500] },
     { id: "agarre",  n: "Agarre firme",         d: "Las piezas resbalan menos al apoyarse.", p: [60, 120, 220, 350, 550] },
-    { id: "viento",  n: "Viento amortiguado",   d: "El viento empuja 8 % menos por nivel.", p: [60, 120, 220, 350, 550] },
     { id: "vista",   n: "Vista previa",         d: "Muestra las dos próximas piezas.", p: [150] },
     { id: "guia",    n: "Sombra de caída",      d: "Marca dónde va a quedar la pieza.", p: [200] },
-    { id: "segunda", n: "Segunda oportunidad",  d: "Salva una pieza que se cae, una vez por nivel y por partida.", p: [500, 1200, 2400] },
+    { id: "segunda", n: "Vidas",  d: "Cada vida salva una pieza que se cae de la plataforma. Vidas por partida: 1, 2 o 3.", p: [900, 2000, 3800] },
     { id: "rotar",   sec: "Habilidades", n: "Rotar pieza",   d: "Gira la pieza antes de soltarla. Usos por partida: 3, 6 o 10.", p: [120, 300, 600] },
-    { id: "cambiar", n: "Cambiar pieza", d: "Cambia la pieza por la siguiente. Usos por partida: 1, 2 o 4.", p: [150, 350, 700] },
-    { id: "pegar",   n: "Pegamento",     d: "La pieza queda pegada a lo primero que toque. Usos por partida: 1, 2 o 3.", p: [200, 450, 900] }
+    { id: "cambiar", n: "Cambiar pieza", d: "Descarta la pieza actual y pasás a la siguiente. Usos por partida: 1, 2 o 4.", p: [150, 350, 700] },
+    { id: "pegar",   n: "Pegamento",     d: "La pieza queda pegada a lo primero que toque. Usos por partida: 1, 2 o 3.", p: [200, 450, 900] },
+    { id: "freno",   n: "Freno",         d: "Frena toda la torre al instante y la deja quieta. Usos por partida: 1, 2 o 3.", p: [250, 550, 1000] },
+    { id: "tam",     n: "Tamaño",        d: "Agranda o achica la pieza actual. Usos por partida: 1, 2 o 3.", p: [300, 650, 1200] },
+    { id: "nivel",   n: "Nivelar",       d: "Endereza suavemente las piezas torcidas. Usos por partida: 1, 2 o 3.", p: [350, 750, 1400] }
   ];
   var tienda = leerTienda();
   (function () {   // los temblores se quitaron: se devuelven las monedas gastadas en su mejora
     var n = tienda.n.temblor | 0, pr = [40, 90, 160, 260], r = 0;
     if (n > 0) { for (var i = 0; i < n && i < pr.length; i++) r += pr[i]; tienda.m += r; delete tienda.n.temblor; guardarTienda(); }
+    // los fondos comprables y la mejora de viento se quitaron: se devuelven las monedas
+    var FP = { "f-desierto": 250, "f-puerto": 300, "f-montana": 350, "f-neon": 500 }, ch = false, k;
+    for (k in FP) if (tienda.c.own[k]) { tienda.m += FP[k]; delete tienda.c.own[k]; ch = true; }
+    if (tienda.c.eq.fondo) { delete tienda.c.eq.fondo; ch = true; }
+    var vn = tienda.n.viento | 0, vp = [60, 120, 220, 350, 550];
+    if (tienda.n.viento !== undefined) { for (k = 0; k < vn && k < vp.length; k++) tienda.m += vp[k]; delete tienda.n.viento; ch = true; }
+    if (ch) guardarTienda();
   })();
-  var vidas = 0, sig2 = null, avisoT = 0;
+  var altAct = 0, mundoMax = 0, baseAlt = 0, resetMundoT = 0, vidas = 0, errores = 0, errDrops = 0, errCool = 0, reseteoTope = false, dropsMundo = 0, ultDif = false, sig2 = null, avisoT = 0;
+  var DIF = { gato: 1, pinguino: 1, hielo: 1, cohete: 1, estrella: 1, cristal: 1, globo: 1, ovni: 1 };
   var elTienda = document.getElementById("tienda"), elLista = document.getElementById("listaTienda"), elSaldo = document.getElementById("saldoTxt");
   var elGan = document.getElementById("ganTxt"), elAviso = document.getElementById("aviso");
   var elChipVida = document.getElementById("chipVida"), elVidas = document.getElementById("vidasTxt");
@@ -851,7 +1025,7 @@
       var nv = nivel(id);
       if (nv >= MEJORAS[i].p.length || tienda.m < MEJORAS[i].p[nv]) return;
       tienda.m -= MEJORAS[i].p[nv]; tienda.n[id] = nv + 1; guardarTienda();
-      sfx.nuevo(); renderTienda(); actualizarMenuTxt();
+      sfx.nuevo(); renderTienda(); actualizarMenuTxt(); insignias();
       return;
     }
   }
@@ -866,15 +1040,71 @@
   }
   function iconoPieza(p) { return p.emoji || (p.id === "tabla" ? "🪵" : "🔺"); }
 
+
+  // ---------- Mundos ----------
+  var MUNDOS = [
+    { n: "Ciudad", h: 0, top: [88, 150, 214], bot: [214, 182, 150] },
+    { n: "Cielo", h: 8, top: [58, 136, 232], bot: [172, 216, 250] },
+    { n: "Estratosfera", h: 17, top: [16, 22, 84], bot: [66, 92, 176] },
+    { n: "Espacio", h: 28, top: [3, 4, 16], bot: [16, 12, 44] },
+    { n: "Galaxia", h: 41, top: [22, 6, 50], bot: [78, 22, 96] },
+    { n: "Agujero negro", h: 56, top: [2, 2, 6], bot: [44, 16, 8] }
+  ];
+  var BANDA = 1.4;
+  function pesosMundo(a) {
+    var w = [], i, ini, fin;
+    for (i = 0; i < MUNDOS.length; i++) {
+      ini = i === 0 ? 1 : clamp((a - (MUNDOS[i].h - BANDA)) / (2 * BANDA), 0, 1);
+      fin = i === MUNDOS.length - 1 ? 0 : clamp((a - (MUNDOS[i + 1].h - BANDA)) / (2 * BANDA), 0, 1);
+      w.push(Math.max(0, ini - fin));
+    }
+    return w;
+  }
+  function mundoDe(m) { var k = 0; for (var i = 0; i < MUNDOS.length; i++) if (m >= MUNDOS[i].h) k = i; return k; }
+  var mundoRun = 0, elBanner = document.getElementById("mundoBanner"), bannerT = 0, elMundoChip = document.getElementById("mundoChip");
+  function chipMundo() { elMundoChip.textContent = "Mundo " + (mundoRun + 1) + " · " + MUNDOS[mundoRun].n; }
+  function mostrarMundo(i) {
+    document.getElementById("mundoNum").textContent = "Mundo " + (i + 1);
+    document.getElementById("mundoNom").textContent = MUNDOS[i].n;
+    var nv = PIEZAS.filter(function (p) { return p.mundo === i; }).map(function (p) { return p.nombre; });
+    document.getElementById("mundoNuevos").textContent = nv.length ? "Nuevos objetos: " + nv.join(" y ") : "";
+    elBanner.hidden = false; elBanner.classList.remove("anim"); void elBanner.offsetWidth; elBanner.classList.add("anim");
+    clearTimeout(bannerT); bannerT = setTimeout(function () { elBanner.hidden = true; }, 2600);
+    sfx.nuevo(); vibrar([40, 60, 40]);
+  }
+  // Al llegar a un mundo nuevo se arranca con una plataforma vacía; la altura sigue contando desde donde estabas
+  function nuevaPlataforma() {
+    if (estado !== "juego") return;
+    for (var i = 0; i < cuerpos.length; i++) Composite.remove(engine.world, cuerpos[i]);
+    cuerpos = []; pegarCola = [];
+    baseAlt = MUNDOS[mundoMax].h; topEstable = 0; altAct = baseAlt;
+    camTop = -TORRE_PANTALLA; camObj = camTop;
+    actualizarHUD(true);
+    aviso("¡Plataforma nueva!"); sfx.nuevo();
+  }
+  function revisarMundo(h) {
+    var mi = mundoDe(h);
+    if (mi !== mundoRun) { mundoRun = mi; chipMundo(); }   // el mundo sigue a la altura actual
+    if (mi > mundoMax) {
+      mundoMax = mi; dropsMundo = drops; mostrarMundo(mi); resetMundoT = 1.1;
+      if (algunaHab()) {
+        for (var id in HAB_USOS) usos[id] = Math.max(usos[id], HAB_USOS[id][nivel(id)]);
+        setTimeout(function () { aviso("¡Habilidades recargadas!"); }, 1400);
+      }
+    }
+  }
+
   // ---------- Ambiente, vibración y cámara lenta ----------
   var ESPACIO = [[1, 2, 8], [10, 8, 30]];
   var nubes = [], aviones = [], fugaces = [], estrellas2 = [], fxPlane = 2, fxFug = 3;
   var escala = 1, objetivo = 1;
-  for (var ni = 0; ni < 18; ni++) nubes.push({ x: rnd(-20, W + 20), alt: rnd(1, 48), s: rnd(0.7, 1.7), v: rnd(0.04, 0.16) });
-  for (var si = 0; si < 90; si++) estrellas2.push({ x: Math.random() * W, y: Math.random(), r: rnd(0.5, 1.8), a: rnd(0.3, 1), k: rnd(0.1, 0.6) });
+  var pajaros = [];
+  for (var ni = 0; ni < 30; ni++) nubes.push({ x: rnd(-20, W + 20), alt: rnd(2, 30), s: rnd(0.8, 1.9), v: rnd(0.04, 0.16) });
+  for (var pj = 0; pj < 7; pj++) pajaros.push({ x: rnd(0, W), alt: rnd(5, 13), v: rnd(10, 22) * (Math.random() < 0.5 ? 1 : -1), ph: rnd(0, 6) });
+  for (var si = 0; si < 150; si++) estrellas2.push({ x: Math.random() * W, y: Math.random(), r: rnd(0.5, 1.8), a: rnd(0.3, 1), k: rnd(0.1, 0.6) });
   function mezclaA(a, b, t) { return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]; }
   function rgbA(a) { return "rgb(" + Math.round(a[0]) + "," + Math.round(a[1]) + "," + Math.round(a[2]) + ")"; }
-  function camAlt() { return Math.max(0, -camTop - TORRE_PANTALLA) / PX_POR_M; }
+  function camAlt() { return baseAlt + Math.max(0, -camTop - TORRE_PANTALLA) / PX_POR_M; }
 
   function ambiente(dt) {
     var ca = camAlt(), i;
@@ -886,16 +1116,17 @@
     fxPlane -= dt;
     if (fxPlane <= 0) {
       fxPlane = rnd(14, 26);
-      if (ca < 45) { var d = Math.random() < 0.5 ? 1 : -1; aviones.push({ x: d > 0 ? -40 : W + 40, alt: ca + rnd(4, 12), d: d, v: rnd(26, 40) }); }
+      if (ca < 14) { var d = Math.random() < 0.5 ? 1 : -1; aviones.push({ x: d > 0 ? -40 : W + 40, alt: ca + rnd(4, 12), d: d, v: rnd(26, 40) }); }
     }
     for (i = aviones.length - 1; i >= 0; i--) {
       var a = aviones[i]; a.x += a.d * a.v * dt;
       if (a.x < -60 || a.x > W + 60) aviones.splice(i, 1);
     }
+    for (i = 0; i < pajaros.length; i++) { var pa = pajaros[i]; pa.x += pa.v * dt; if (pa.x > W + 30) pa.x = -30; if (pa.x < -30) pa.x = W + 30; }
     fxFug -= dt;
     if (fxFug <= 0) {
       fxFug = rnd(2.5, 6);
-      if (ca > 20) fugaces.push({ x: rnd(W * 0.3, W), y: rnd(20, H * 0.4), vx: -rnd(220, 320), vy: rnd(80, 140), life: 0.7, max: 0.7 });
+      if (ca > 15) fugaces.push({ x: rnd(W * 0.3, W), y: rnd(20, H * 0.4), vx: -rnd(220, 320), vy: rnd(80, 140), life: 0.7, max: 0.7 });
     }
     for (i = fugaces.length - 1; i >= 0; i--) {
       var f = fugaces[i]; f.x += f.vx * dt; f.y += f.vy * dt; f.life -= dt;
@@ -919,13 +1150,18 @@
   }
 
   // ---------- Habilidades ----------
-  var HAB_USOS = { rotar: [0, 3, 6, 10], cambiar: [0, 1, 2, 4], pegar: [0, 1, 2, 3] };
-  var usos = { rotar: 0, cambiar: 0, pegar: 0 }, pegarCola = [];
+  var HAB_USOS = { rotar: [0, 3, 6, 10], cambiar: [0, 1, 2, 4], pegar: [0, 1, 2, 3], freno: [0, 1, 2, 3], tam: [0, 1, 2, 3], nivel: [0, 1, 2, 3] };
+  var HAB_IDS = ["rotar", "cambiar", "pegar", "freno", "tam", "nivel"], HAB_NOM = { rotar: "Rotar", cambiar: "Cambiar pieza", pegar: "Pegamento", freno: "Freno", tam: "Tamaño", nivel: "Nivelar" };
+  function algunaHab() { for (var i = 0; i < HAB_IDS.length; i++) if (nivel(HAB_IDS[i]) > 0) return true; return false; }
+  var usos = { rotar: 0, cambiar: 0, pegar: 0, freno: 0, tam: 0, nivel: 0 }, pegarCola = [], nivelarN = 0;
   var habsEl = document.getElementById("habs"), habKey = "";
   var HB = {
     rotar: [document.getElementById("habRotar"), document.getElementById("usosRotar")],
     cambiar: [document.getElementById("habCambiar"), document.getElementById("usosCambiar")],
-    pegar: [document.getElementById("habPegar"), document.getElementById("usosPegar")]
+    pegar: [document.getElementById("habPegar"), document.getElementById("usosPegar")],
+    freno: [document.getElementById("habFreno"), document.getElementById("usosFreno")],
+    tam: [document.getElementById("habTam"), document.getElementById("usosTam")],
+    nivel: [document.getElementById("habNivel"), document.getElementById("usosNivel")]
   };
   function actualizarSigue() {
     var dos = nivel("vista") > 0;
@@ -941,16 +1177,49 @@
   }
   function rotarPieza() {
     if (estado !== "juego" || !cur || usos.rotar <= 0 || cur.def.circulo) return;
-    usos.rotar--;
+    usos.rotar--; misEv("hab", 1);
     cur.ang = ((cur.ang || 0) + Math.PI / 2) % (Math.PI * 2);
     tono(420, 0.07, "triangle", 0.05, 560);
   }
   function cambiarPieza() {
     if (estado !== "juego" || !cur || usos.cambiar <= 0) return;
-    usos.cambiar--;
-    var t = cur.def; cur.def = sig; sig = t; cur.ang = 0;
+    usos.cambiar--; misEv("hab", 1);
+    cur.def = sig; cur.ang = 0; cur.pega = false; marcarVista(cur.def);      // la pieza actual se descarta y entra la siguiente
+    sig = sig2 || elegirPieza(); sig2 = elegirPieza();
     actualizarSigue();
     tono(560, 0.08, "square", 0.03, 380);
+  }
+  // Tamaño: normal -> grande -> mini -> normal (volver a normal devuelve el uso)
+  function escalarDef(d, k) {
+    var c = {}, p;
+    for (p in d) c[p] = d[p];
+    c.orig = d; c.k = k; c.w = d.w * k; c.h = d.h * k;
+    if (d.cham) c.cham = d.cham * k;
+    if (d.partes) c.partes = d.partes.map(function (pr) { return pr.c ? { c: [pr.c[0] * k, pr.c[1] * k, pr.c[2] * k] } : pr.map(function (v) { return [v[0] * k, v[1] * k]; }); });
+    return c;
+  }
+  function tamPieza() {
+    if (estado !== "juego" || !cur) return;
+    var base = cur.def.orig || cur.def, k = cur.def.k || 1;
+    if (k === 1) { if (usos.tam <= 0) return; usos.tam--; misEv("hab", 1); cur.def = escalarDef(base, 1.45); }
+    else if (k > 1) cur.def = escalarDef(base, 0.65);
+    else { usos.tam++; cur.def = base; }
+    tono(k === 1 ? 480 : 360, 0.08, "triangle", 0.05, k === 1 ? 700 : 260);
+  }
+  function frenarTorre() {
+    if (estado !== "juego" || usos.freno <= 0 || !cuerpos.length) return;
+    usos.freno--; misEv("hab", 1);
+    for (var i = 0; i < cuerpos.length; i++) {
+      var b = cuerpos[i];
+      if (b.plugin.sigue || b.speed >= 2.5) continue;
+      Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0); b.plugin.calm = 40;
+    }
+    aviso("Torre frenada"); tono(140, 0.18, "sine", 0.08, 90);
+  }
+  function nivelarTorre() {
+    if (estado !== "juego" || usos.nivel <= 0 || !cuerpos.length) return;
+    usos.nivel--; misEv("hab", 1); nivelarN = 70;
+    aviso("Nivelando…"); tono(330, 0.1, "triangle", 0.05, 440);
   }
   function pegarPieza() {
     if (estado !== "juego" || !cur) return;
@@ -997,18 +1266,18 @@
   function quitarPegas() {}
   function actualizarHabs() {
     var vis = estado === "juego";
-    var key = vis ? [nivel("rotar"), nivel("cambiar"), nivel("pegar"), usos.rotar, usos.cambiar, usos.pegar,
-      cur ? 1 : 0, cur && cur.pega ? 1 : 0, cur && cur.def.circulo ? 1 : 0].join() : "x";
+    var key = vis ? HAB_IDS.map(nivel).concat(HAB_IDS.map(function (q) { return usos[q]; }),
+      [cur ? 1 : 0, cur && cur.pega ? 1 : 0, cur && cur.def.circulo ? 1 : 0, cur && cur.def.k ? cur.def.k : 1, cuerpos.length > 0 ? 1 : 0]).join() : "x";
     if (key === habKey) return;
     habKey = key;
-    habsEl.hidden = !vis || (nivel("rotar") + nivel("cambiar") + nivel("pegar") === 0);
+    habsEl.hidden = !vis || !algunaHab();
     for (var id in HB) {
       var el = HB[id][0];
       el.hidden = nivel(id) === 0;
       HB[id][1].textContent = usos[id];
-      var armado = id === "pegar" && cur && cur.pega;
-      el.disabled = !cur || (usos[id] <= 0 && !armado) || (id === "rotar" && cur.def.circulo);
-      if (id === "pegar") el.setAttribute("aria-pressed", armado ? "true" : "false");
+      var armado = (id === "pegar" && cur && cur.pega) || (id === "tam" && cur && cur.def.k && cur.def.k !== 1);
+      el.disabled = !cur || (usos[id] <= 0 && !armado) || (id === "rotar" && cur.def.circulo) || ((id === "freno" || id === "nivel") && !cuerpos.length);
+      if (id === "pegar" || id === "tam") el.setAttribute("aria-pressed", armado ? "true" : "false");
     }
   }
 
@@ -1034,18 +1303,6 @@
       { id: "pl-plata", n: "Plata", d: "Plata pulida con destellos.", p: 700, pl: { cu: "#c3ccda", to: "#ffffff", fr: "#4a5262", pi: "#6b7484", la: "#99a3b4", ba: "#3c4352" }, metal: "plata" },
       { id: "pl-oro", n: "Oro", d: "Oro metálico. Lo más caro.", p: 900, pl: { cu: "#d9ae3f", to: "#fff1a6", fr: "#7a5210", pi: "#6b4c10", la: "#a8771a", ba: "#4a3208" }, metal: "oro" }
     ] },
-    fondo: { nombre: "Fondo", items: [
-      { id: "f-ciudad", n: "Ciudad", d: "Skyline al atardecer, con antenas y ventanas.", p: 0, tipo: "edif", ventanas: true,
-        dia: [[88, 150, 214], [214, 182, 150]], noche: [[8, 12, 30], [28, 24, 60]], ed: [[46, 66, 104], [10, 14, 30]], vent: [[255, 226, 150], [255, 214, 120]] },
-      { id: "f-desierto", n: "Desierto", d: "Mesetas al atardecer.", p: 250, tipo: "mesa", ventanas: false,
-        dia: [[232, 150, 90], [250, 210, 150]], noche: [[20, 12, 34], [60, 34, 52]], ed: [[158, 90, 60], [40, 22, 30]], top: [[190, 112, 74], [60, 34, 44]] },
-      { id: "f-puerto", n: "Puerto", d: "Pilas de contenedores.", p: 300, tipo: "cont", ventanas: false,
-        dia: [[110, 170, 190], [205, 215, 205]], noche: [[8, 16, 30], [26, 36, 52]], ed: [[70, 100, 120], [14, 20, 32]] },
-      { id: "f-montana", n: "Montañas", d: "Picos nevados.", p: 350, tipo: "mont", ventanas: false,
-        dia: [[120, 150, 215], [236, 208, 214]], noche: [[10, 12, 36], [40, 30, 70]], ed: [[86, 100, 140], [14, 16, 38]] },
-      { id: "f-neon", n: "Neón", d: "Ciudad synthwave.", p: 500, tipo: "edif", ventanas: true,
-        dia: [[40, 14, 90], [255, 96, 160]], noche: [[14, 6, 40], [90, 20, 90]], ed: [[34, 12, 66], [10, 4, 28]], vent: [[60, 240, 255], [255, 80, 200]] }
-    ] },
     piezas: { nombre: "Piezas", items: [
       { id: "p-clasico", n: "Clásico", d: "Colores originales.", p: 0, m: ["#c9944f", "#7d5420"] },
       { id: "p-pastel", n: "Pastel", d: "Colores suaves.", p: 200, m: ["#e8d2b8", "#b59a7c"] },
@@ -1065,11 +1322,9 @@
   }
   function equipado(cat) { return itemCosm(cat, tienda.c.eq[cat]).id; }
   function posee(it) { return it.p === 0 || !!tienda.c.own[it.id]; }
-  function tema() {
-    var id = equipado("fondo");
-    if (id !== temaId) { temaId = id; temaObj = itemCosm("fondo", id); }
-    return temaObj;
-  }
+  var CIUDAD = { id: "f-ciudad", tipo: "edif", ventanas: true,
+    dia: [[88, 150, 214], [214, 182, 150]], noche: [[8, 12, 30], [28, 24, 60]], ed: [[46, 66, 104], [10, 14, 30]], vent: [[255, 226, 150], [255, 214, 120]] };
+  function tema() { return CIUDAD; }
   function gruaCol() { return itemCosm("grua", tienda.c.eq.grua); }
   function hexA(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
   function mezHex(a, b, k) { return rgbA(mezclaA(hexA(a), hexA(b), k)); }
@@ -1079,7 +1334,7 @@
     var r;
     if (id === "p-pastel") r = { f: mezHex(def.col, "#ffffff", 0.55), s: mezHex(def.borde, "#ffffff", 0.35) };
     else if (id === "p-plano") r = { f: "#1d4a86", s: "#cfe6ff" };
-    else if (id === "p-neon") r = { f: "#0d1222", s: NEON[PIEZAS.indexOf(def) % NEON.length], g: true };
+    else if (id === "p-neon") r = { f: "#0d1222", s: NEON[PIEZAS.indexOf(def.orig || def) % NEON.length], g: true };
     else if (id === "p-dorado") r = { f: "#d9ae3f", s: METALES.oro.bo, metal: "oro" };
     else if (id === "p-plata") r = { f: "#c3ccda", s: METALES.plata.bo, metal: "plata" };
     else if (id === "p-bronce") r = { f: "#b06a34", s: METALES.bronce.bo, metal: "bronce" };
@@ -1091,7 +1346,6 @@
     if (it.metal) return "background:" + METALES[it.metal].css + ";border:2px solid " + METALES[it.metal].bo;
     if (cat === "plataforma") return "background:linear-gradient(180deg," + it.pl.to + " 30%," + it.pl.cu + " 30%);border:3px solid " + it.pl.fr;
     if (cat === "grua") return "background:linear-gradient(90deg," + it.c1 + " 50%," + it.c2 + " 50%)";
-    if (cat === "fondo") return "background:linear-gradient(180deg," + rgbA(it.dia[0]) + "," + rgbA(it.dia[1]) + ")";
     return "background:" + it.m[0] + ";border:3px solid " + it.m[1];
   }
   function renderCosm() {
@@ -1117,13 +1371,242 @@
       if (tienda.m < it.p) return;
       tienda.m -= it.p; tienda.c.own[id] = true; sfx.nuevo();
     }
-    tienda.c.eq[cat] = id; guardarTienda(); renderTienda(); actualizarMenuTxt();
+    tienda.c.eq[cat] = id; guardarTienda(); renderTienda(); actualizarMenuTxt(); insignias();
   }
   function setTab(t) {
     tiendaTab = t;
     document.getElementById("tabMejoras").setAttribute("aria-selected", t === "mejoras" ? "true" : "false");
     document.getElementById("tabCosm").setAttribute("aria-selected", t === "cosm" ? "true" : "false");
     renderTienda();
+  }
+
+
+  // ---------- Misiones diarias y logros ----------
+  var BONUS_DIA = 25, MIS_R = [15, 25, 40];
+  var MIS_TIPOS = {
+    alt:      { txt: function (n) { return "Llegá a " + n + " m en una partida"; }, max: true },
+    piezas:   { txt: function (n) { return "Soltá " + n + " piezas"; }, m: [12, 25, 40] },
+    partidas: { txt: function (n) { return "Jugá " + n + " partidas"; }, m: [2, 3, 5] },
+    hab:      { txt: function (n) { return "Usá " + n + " habilidades"; }, m: [2, 4, 7] },
+    monedas:  { txt: function (n) { return "Ganá " + n + " monedas jugando"; }, m: [100, 250, 450] }
+  };
+  var LOGROS = [
+    { id: "a1", g: "Mundos", n: "Mundo 2: Cielo", d: "Llegá a 8 m", k: "alt", m: 8, r: 20 },
+    { id: "a2", n: "Mundo 3: Estratosfera", d: "Llegá a 17 m", k: "alt", m: 17, r: 40 },
+    { id: "a3", n: "Mundo 4: Espacio", d: "Llegá a 28 m", k: "alt", m: 28, r: 80 },
+    { id: "a4", n: "Mundo 5: Galaxia", d: "Llegá a 41 m", k: "alt", m: 41, r: 150 },
+    { id: "a5", n: "Mundo 6: Agujero negro", d: "Llegá a 56 m", k: "alt", m: 56, r: 300 },
+    { id: "p1", g: "Partidas", n: "Constructor", d: "Jugá 10 partidas", k: "partidas", m: 10, r: 30 },
+    { id: "p2", n: "Obrero incansable", d: "Jugá 50 partidas", k: "partidas", m: 50, r: 80 },
+    { id: "p3", n: "Capataz", d: "Jugá 200 partidas", k: "partidas", m: 200, r: 200 },
+    { id: "z1", g: "Piezas", n: "Apilador", d: "Soltá 100 piezas", k: "piezas", m: 100, r: 30 },
+    { id: "z2", n: "Pila de pilas", d: "Soltá 500 piezas", k: "piezas", m: 500, r: 100 },
+    { id: "z3", n: "Mil y una", d: "Soltá 2000 piezas", k: "piezas", m: 2000, r: 250 },
+    { id: "m1", g: "Monedas", n: "Ahorrista", d: "Ganá 1000 monedas jugando", k: "monedas", m: 1000, r: 40 },
+    { id: "m2", n: "Inversor", d: "Ganá 5000 monedas jugando", k: "monedas", m: 5000, r: 120 },
+    { id: "h1", g: "Habilidades", n: "Con ayuda", d: "Usá 10 habilidades", k: "hab", m: 10, r: 30 },
+    { id: "h2", n: "Maestro de trucos", d: "Usá 100 habilidades", k: "hab", m: 100, r: 100 },
+    { id: "t1", g: "Tienda", n: "De compras", d: "Hacé tu primera compra", k: "compras", m: 1, r: 15 },
+    { id: "t2", n: "Coleccionista", d: "Hacé 10 compras", k: "compras", m: 10, r: 80 },
+    { id: "t3", n: "Brillo de oro", d: "Comprá algo de oro", k: "oro", m: 1, r: 100 },
+    { id: "o1", g: "Índice", n: "Curioso", d: "Descubrí 5 objetos", k: "objetos", m: 5, r: 30 },
+    { id: "o2", n: "Catálogo completo", d: "Descubrí todos los objetos", k: "objetos", m: PIEZAS.length, r: 100 },
+    { id: "d1", g: "Misiones", n: "Cumplidor", d: "Cobrá 5 misiones diarias", k: "misiones", m: 5, r: 30 },
+    { id: "d2", n: "Dedicado", d: "Cobrá 30 misiones diarias", k: "misiones", m: 30, r: 120 },
+    { id: "d3", n: "Día perfecto", d: "Completá las 3 misiones de un día", k: "dias", m: 1, r: 40 },
+    { id: "d4", n: "Constancia", d: "Completá las 3 misiones en 7 días", k: "dias", m: 7, r: 200 }
+  ];
+  function diaClave() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function semilla(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed) { var a = seed; return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function leerMis() {
+    try { var m = JSON.parse(localStorage.getItem("equilibrio-misiones")); if (m && m.m && m.st && m.lg) return m; } catch (e) {}
+    return { dia: "", m: [], bonus: 0, st: { partidas: 0, piezas: 0, hab: 0, monedas: 0, misiones: 0, dias: 0 }, lg: {} };
+  }
+  var mis = leerMis();
+  function guardarMis() { try { localStorage.setItem("equilibrio-misiones", JSON.stringify(mis)); } catch (e) {} }
+  function generarMisiones() {
+    var r = rng(semilla(mis.dia)), tipos = ["alt", "piezas", "partidas", "monedas"];
+    if (algunaHab()) tipos.push("hab");
+    for (var i = tipos.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = tipos[i]; tipos[i] = tipos[j]; tipos[j] = t; }
+    var dif = [0, 1, 2];
+    for (i = 2; i > 0; i--) { j = Math.floor(r() * (i + 1)); t = dif[i]; dif[i] = dif[j]; dif[j] = t; }
+    var base = Math.max(8, Math.round(mejor)), out = [];
+    for (i = 0; i < 3; i++) {
+      var tp = tipos[i], d = dif[i], n;
+      if (tp === "alt") n = Math.max(4, Math.round(base * [0.5, 0.75, 0.95][d])); else n = MIS_TIPOS[tp].m[d];
+      out.push({ t: tp, n: n, r: MIS_R[d], p: 0, c: 0 });
+    }
+    out.sort(function (a, b) { return a.r - b.r; });
+    mis.m = out; mis.bonus = 0;
+  }
+  function misDia() {
+    var hoy = diaClave();
+    if (mis.dia !== hoy) { mis.dia = hoy; generarMisiones(); guardarMis(); }
+  }
+  function statLogro(k) {
+    if (k === "alt") return mejor;
+    if (k === "compras") { var c = Object.keys(tienda.c.own).length; for (var id in tienda.n) c += tienda.n[id] | 0; return c; }
+    if (k === "objetos") return contarIndice();
+    if (k === "oro") return (tienda.c.own["g-dorada"] || tienda.c.own["p-dorado"] || tienda.c.own["pl-oro"]) ? 1 : 0;
+    return mis.st[k] || 0;
+  }
+  function pendMis() { var n = 0; for (var i = 0; i < mis.m.length; i++) if (mis.m[i].p >= mis.m[i].n && !mis.m[i].c) n++; return n; }
+  function pendLog() { var n = 0; for (var i = 0; i < LOGROS.length; i++) if (statLogro(LOGROS[i].k) >= LOGROS[i].m && !mis.lg[LOGROS[i].id]) n++; return n; }
+  function pendientes() { return pendMis() + pendLog(); }
+  function ponerInsignia(id, n) { var e = document.getElementById(id); if (e) { e.hidden = n === 0; e.textContent = n; } }
+  function insignias() {
+    var a = pendMis(), l = pendLog();
+    ponerInsignia("insMis", a + l); ponerInsignia("insMisFin", a + l); ponerInsignia("insTabMis", a); ponerInsignia("insTabLog", l);
+  }
+  function misEv(tipo, n) {
+    misDia();
+    var antes = pendientes();
+    for (var i = 0; i < mis.m.length; i++) {
+      var q = mis.m[i];
+      if (q.t !== tipo || q.c) continue;
+      var era = q.p >= q.n;
+      q.p = MIS_TIPOS[tipo].max ? Math.max(q.p, n) : q.p + n;
+      if (!era && q.p >= q.n && estado === "juego") aviso("Misión cumplida ✓");
+    }
+    if (mis.st[tipo] !== undefined) mis.st[tipo] += n;
+    guardarMis(); insignias();
+  }
+  function hMis() { return Math.max(0, Math.floor((new Date(new Date().setHours(24, 0, 0, 0)) - new Date()) / 60000)); }
+  var misTab = "mis", elMis = document.getElementById("misiones"), elListaMis = document.getElementById("listaMis"), volverM = "menu";
+  function fila(titulo, desc, p, n, r, hecha, cobrada, attr, esAlt) {
+    var pct = Math.min(100, Math.round(p / n * 100)), pt = esAlt ? fmt(Math.min(p, n)) : Math.min(Math.floor(p), n);
+    return '<div class="mejora' + (hecha ? " hecha" : "") + (cobrada ? " cobrada" : "") + '"><div class="mejora-txt"><b>' + titulo + '</b><span>' + desc + '</span>' +
+      '<div class="barra"><i style="width:' + pct + '%"></i></div><div class="prog"><span>' + pt + ' / ' + n + '</span></div></div>' +
+      '<button class="btn-sec compra" ' + attr + (hecha && !cobrada ? "" : " disabled") + '>' + (cobrada ? "✓" : '<span class="moneda"></span>' + (hecha ? "Cobrar " : "") + "+" + r) + '</button></div>';
+  }
+  function renderMis() {
+    misDia();
+    document.getElementById("saldoMis").textContent = tienda.m;
+    var h = "", i;
+    if (misTab === "mis") {
+      var mn = hMis();
+      h += '<div class="reloj"><span>Nuevas misiones en <b>' + Math.floor(mn / 60) + ' h ' + ("0" + (mn % 60)).slice(-2) + ' min</b></span></div>';
+      for (i = 0; i < mis.m.length; i++) {
+        var q = mis.m[i];
+        h += fila(MIS_TIPOS[q.t].txt(q.n), "Misión del día", q.p, q.n, q.r, q.p >= q.n, !!q.c, 'data-mis="' + i + '"', q.t === "alt");
+      }
+      var todas = mis.m.every(function (x) { return x.c; });
+      h += '<div class="mejora' + (mis.bonus ? " cobrada hecha" : "") + '"><div class="mejora-txt"><b>Bonus del día</b><span>' + (todas ? "¡Completaste las tres!" : "Cobrá las tres misiones para llevártelo.") + '</span></div>' +
+        '<button class="btn-sec compra" disabled>' + (mis.bonus ? "✓" : '<span class="moneda"></span>+' + BONUS_DIA) + '</button></div>';
+    } else {
+      for (i = 0; i < LOGROS.length; i++) {
+        var l = LOGROS[i], pr = statLogro(l.k), ok = pr >= l.m;
+        if (l.g) h += '<div class="sec-tienda">' + l.g + '</div>';
+        h += fila(l.n, l.d, pr, l.m, l.r, ok, !!mis.lg[l.id], 'data-log="' + l.id + '"', l.k === "alt");
+      }
+    }
+    elListaMis.innerHTML = h;
+    insignias();
+  }
+  function cobrarMis(i) {
+    var q = mis.m[i]; if (!q || q.c || q.p < q.n) return;
+    q.c = 1; tienda.m += q.r; mis.st.misiones++;
+    if (!mis.bonus && mis.m.every(function (x) { return x.c; })) { mis.bonus = 1; tienda.m += BONUS_DIA; mis.st.dias++; }
+    guardarTienda(); guardarMis(); sfx.nuevo(); renderMis(); actualizarMenuTxt();
+  }
+  function cobrarLogro(id) {
+    for (var i = 0; i < LOGROS.length; i++) {
+      var l = LOGROS[i];
+      if (l.id !== id || mis.lg[id] || statLogro(l.k) < l.m) continue;
+      mis.lg[id] = 1; tienda.m += l.r; guardarTienda(); guardarMis(); sfx.nuevo(); renderMis(); actualizarMenuTxt(); return;
+    }
+  }
+  function setTabMis(t) {
+    misTab = t;
+    document.getElementById("tabMis").setAttribute("aria-selected", t === "mis" ? "true" : "false");
+    document.getElementById("tabLog").setAttribute("aria-selected", t === "logros" ? "true" : "false");
+    renderMis();
+  }
+  function registrarPartida(gan) {
+    if (drops > 0) misEv("partidas", 1);
+    if (gan > 0) misEv("monedas", gan);
+    misEv("alt", puntaje);
+  }
+
+
+  // ---------- Índice de objetos ----------
+  var INFO_PIEZA = {
+    caja: "La de siempre: pareja, estable y fácil de apilar.",
+    tabla: "Ancha y finita. Cubre mucho espacio, pero si cae torcida cuesta mucho acomodar lo que viene.",
+    ladrillo: "Pequeño y macizo. Se agarra bien y aguanta peso sin quejarse.",
+    barril: "Alto y de bordes redondeados. Se apoya bien parado, pero tiende a rodar de costado.",
+    torta: "Blanda y con glaseado: resbala un poco al apoyarse.",
+    gato: "Casi no agarra nada: se desliza como si todo fuera hielo. Mucho cuidado.",
+    pingüino: "Alto, angosto y resbaloso. Un pequeño desvío y se va para el costado.",
+    pinguino: "Alto, angosto y resbaloso. Un pequeño desvío y se va para el costado.",
+    cuna: "Triangular: sirve para rellenar huecos, pero su pendiente empuja lo que apoyes encima.",
+    nube: "Blanda y esponjosa, con bordes redondeados. Se apoya bien si caés justo en el centro.",
+    globo: "Redondo y con nudo abajo: rueda con facilidad. Dejalo caer justo en el centro.",
+    cohete: "Alto y fino, con aletas y tobera. Se apoya sobre sus aletas, pero cualquier roce lo tumba.",
+    hielo: "Un bloque helado: nada lo agarra. Todo lo que apoyes encima tiende a deslizarse.",
+    meteorito: "Roca espacial de forma irregular. Buscale la cara más plana para apoyarla.",
+    satelite: "Ancho, con paneles solares. Cubre mucho espacio y se apoya con estabilidad.",
+    ovni: "Un platillo bajito y resbaloso. Parece estable, pero se desliza hacia los costados.",
+    estrella: "Una estrella de cinco puntas de verdad: se apoya sobre dos puntas y cuesta mantenerla firme.",
+    materia: "Una esfera perfecta de energía oscura: rueda ante el menor desvío, apoyala justo en el centro.",
+    cristal: "Un racimo de cristales de energía: alto, resbaloso y con la cima en punta.",
+    pelota: "Una esfera perfecta. Rueda ante el menor desvío: apoyala justo en el centro."
+  };
+  function leerIndice() { try { var o = JSON.parse(localStorage.getItem("equilibrio-indice")); if (o && typeof o === "object") return o; } catch (e) {} return {}; }
+  var indice = leerIndice(), elIndice = document.getElementById("indice"), elListaIndice = document.getElementById("listaIndice");
+  function guardarIndice() { try { localStorage.setItem("equilibrio-indice", JSON.stringify(indice)); } catch (e) {} }
+  function contarIndice() { var n = 0; for (var i = 0; i < PIEZAS.length; i++) if (indice[PIEZAS[i].id]) n++; return n; }
+  function marcarVista(def) {
+    var nuevo = !indice[def.id];
+    indice[def.id] = (indice[def.id] | 0) + 1;
+    guardarIndice();
+    if (nuevo) { aviso("¡Nuevo objeto: " + def.nombre + "!"); if (typeof insignias === "function") insignias(); }
+  }
+  function rasgosPieza(d) {
+    var r = [], area = d.circulo ? Math.PI * d.w * d.w / 4 : d.tri ? d.w * d.h / 2 : d.w * d.h, masa = d.masa0 || area * d.dens;
+    r.push(d.fric >= 0.95 ? ["Muy agarrada", ""] : d.fric >= 0.8 ? ["Agarra bien", ""] : d.fric >= 0.6 ? ["Algo resbalosa", "neu"] : d.fric >= 0.45 ? ["Resbalosa", "mal"] : ["Muy resbalosa", "mal"]);
+    if (d.circulo) r.push(["Rueda", "mal"]);
+    else if (d.partes) { if (d.w > d.h * 1.9) r.push(["Ancha y plana", "neu"]); else if (d.h > d.w * 1.35) r.push(["Alta e inestable", "mal"]); r.push(["Forma irregular", "neu"]); return r; }
+    else if (d.tri) r.push(["Forma de cuña", "neu"]);
+    else if (d.w > d.h * 3) r.push(["Ancha y plana", "neu"]);
+    else if (d.h > d.w * 1.35) r.push(["Alta e inestable", "mal"]);
+    if (d.cham >= 10 && !d.circulo) r.push(["Bordes redondeados", "neu"]);
+    return r;
+  }
+  function cuando(d) {
+    if (d.mundo) return "Aparece desde el mundo " + (d.mundo + 1) + ": " + MUNDOS[d.mundo].n;
+    return d.desde > 0 ? "Aparece desde la pieza " + d.desde : "Desde el inicio";
+  }
+  function renderIndice() {
+    var h = "", i, d, mu = -1;
+    for (i = 0; i < PIEZAS.length; i++) {
+      d = PIEZAS[i];
+      if ((d.mundo || 0) !== mu) { mu = d.mundo || 0; h += '<div class="sec-tienda">Mundo ' + (mu + 1) + ' · ' + MUNDOS[mu].n + '</div>'; }
+      var vista = !!indice[d.id];
+      h += '<div class="ficha' + (vista ? "" : " oculta") + '"><div class="ficha-ico"><canvas width="120" height="120" data-i="' + i + '"></canvas></div><div class="ficha-txt">';
+      if (vista) {
+        h += '<b>' + d.nombre + '</b><div class="rasgos">' + rasgosPieza(d).map(function (x) { return '<span class="rasgo ' + x[1] + '">' + x[0] + '</span>'; }).join("") + '</div>' +
+          '<p>' + (INFO_PIEZA[d.id] || "") + '</p><span class="veces">' + cuando(d) + " · Te salió " + indice[d.id] + (indice[d.id] === 1 ? " vez" : " veces") + '</span>';
+      } else {
+        h += '<b>???</b><p>Todavía no te salió. Seguí jugando para descubrirlo.</p><span class="pista-i">Pista: ' + cuando(d).toLowerCase() + '</span>';
+      }
+      h += '</div></div>';
+    }
+    elListaIndice.innerHTML = h;
+    document.getElementById("indiceN").textContent = contarIndice() + " / " + PIEZAS.length;
+    var cs = elListaIndice.querySelectorAll("canvas");
+    for (i = 0; i < cs.length; i++) {
+      d = PIEZAS[+cs[i].getAttribute("data-i")];
+      dibujarIcono(d, cs[i]);
+      var c2 = cs[i].getContext("2d");
+      if (!indice[d.id]) {
+        c2.setTransform(1, 0, 0, 1, 0, 0);
+        c2.globalCompositeOperation = "source-atop"; c2.fillStyle = "#0b0f18"; c2.fillRect(0, 0, 120, 120);
+        c2.globalCompositeOperation = "source-over";
+        c2.fillStyle = "#8f9bb0"; c2.font = "bold 40px sans-serif"; c2.textAlign = "center"; c2.textBaseline = "middle"; c2.fillText("?", 60, 62);
+      }
+    }
   }
 
   // ---------- Tutorial ----------
@@ -1171,6 +1654,7 @@
   // ---------- Estado ----------
   var engine, base, cuerpos, cur, sig, fase, drops, mejor = leerMejor(), puntaje, camTop, camObj, topEstable;
   var estado = "menu";            // menu | juego | cayendo | fin
+  var VIENTO = false;   // el viento se reactivará en otros modos de juego
   var tSpawn, tCaida, tiempo, vientoFase, vientoVal, temblorAviso, temblorT, temblorProx, sacudida, hookVx;
   var rayas = [], estrellas = [], edificios = [];
   var ultimaPieza = "", repetida = 0;
@@ -1183,9 +1667,15 @@
   for (var j = 0; j < 14; j++) rayas.push({ x: Math.random() * W, y: Math.random(), l: rnd(14, 38), v: rnd(0.6, 1.4) });
 
   function elegirPieza() {
-    var pool = PIEZAS.filter(function (p) { return p.desde <= drops + 1; });
+    var pool = [];
+    PIEZAS.forEach(function (p) {
+      if (p.desde > drops + 1 || (p.mundo || 0) > mundoRun) return;
+      pool.push(p);
+      if (p.mundo && p.mundo === mundoRun) pool.push(p);   // los del mundo actual salen un poco más
+    });
     var p, n = 0;
-    do { p = pool[Math.floor(Math.random() * pool.length)]; n++; } while (p.id === ultimaPieza && repetida >= 1 && n < 8);
+    do { p = pool[Math.floor(Math.random() * pool.length)]; n++; } while (((p.id === ultimaPieza && repetida >= 1) || (ultDif && DIF[p.id])) && n < 12);
+    ultDif = !!DIF[p.id];
     if (p.id === ultimaPieza) repetida++; else { ultimaPieza = p.id; repetida = 0; }
     return p;
   }
@@ -1197,7 +1687,7 @@
     Composite.add(engine.world, base);
     Events.on(engine, "collisionStart", function (ev) {
       for (var n = 0; n < ev.pairs.length; n++) {
-        var a = ev.pairs[n].bodyA, b = ev.pairs[n].bodyB;
+        var a = ev.pairs[n].bodyA.parent || ev.pairs[n].bodyA, b = ev.pairs[n].bodyB.parent || ev.pairs[n].bodyB;
         if (a.plugin && a.plugin.pega && !a.plugin.pegada && b.position.y > a.position.y) { a.plugin.pegada = true; pegarCola.push([a, b]); }
         else if (b.plugin && b.plugin.pega && !b.plugin.pegada && a.position.y > b.position.y) { b.plugin.pegada = true; pegarCola.push([b, a]); }
         var v = Math.max(a.speed || 0, b.speed || 0);
@@ -1205,13 +1695,14 @@
       }
     });
     cuerpos = []; drops = 0; puntaje = 0; topEstable = 0;
-    vidas = nivel("segunda"); sig2 = null; actualizarVidas();
+    vidas = nivel("segunda"); errores = 0; errDrops = 0; errCool = 0; reseteoTope = false; dropsMundo = 0; ultDif = false; sig2 = null; actualizarVidas();
     escala = 1; objetivo = 1; elStage.classList.remove("lento");
-    usos = { rotar: HAB_USOS.rotar[nivel("rotar")], cambiar: HAB_USOS.cambiar[nivel("cambiar")], pegar: HAB_USOS.pegar[nivel("pegar")] };
+    usos = {}; HAB_IDS.forEach(function (q) { usos[q] = HAB_USOS[q][nivel(q)]; });
     pegarCola = [];
     camTop = -TORRE_PANTALLA; camObj = camTop;
     fase = 0; tiempo = 0; tSpawn = 0; tCaida = 0;
     vientoFase = Math.random() * 6; vientoVal = 0;
+    mundoRun = 0; mundoMax = 0; altAct = 0; baseAlt = 0; resetMundoT = 0; chipMundo(); elBanner.hidden = true;
     temblorAviso = 0; temblorT = 0; temblorProx = Infinity; sacudida = 0; hookVx = 0;
     ultimaPieza = ""; repetida = 0;
     sig = elegirPieza(); cur = null;
@@ -1221,19 +1712,41 @@
 
   function pasarSiguiente() {
     cur = { def: sig };
+    marcarVista(sig);
     sig = sig2 || elegirPieza();
     sig2 = elegirPieza();
     actualizarSigue();
   }
 
-  function velocidadGrua() { return Math.min(1.5 + drops * 0.04, 3.5) * (1 - 0.06 * nivel("grua")); }
+  function velocidadGrua() { return (1.4 + Math.min((drops - dropsMundo) * 0.035, 1.1) + 0.1 * mundoRun) * (1 - 0.06 * nivel("grua")); }
   function amplitudGrua() { return 140; }
   function hookX() { return BASE_X + amplitudGrua() * Math.sin(fase); }
 
+  var MASA_UNICA = 1.6;   // todas las piezas pesan igual: se apilan como bloques
   function crearCuerpo(def, x, y) {
     var ag = nivel("agarre");
-    var op = { friction: Math.min(1.3, def.fric * (1 + 0.06 * ag)), frictionStatic: 1.2 * (1 + 0.1 * ag), restitution: 0.0, density: def.dens, slop: 0.04, frictionAir: 0.022 };
+    var op = { friction: Math.min(1.5, (0.96 + 0.04 * def.fric) * (1 + 0.06 * ag)), frictionStatic: 2.2 * (1 + 0.1 * ag), restitution: 0.0, density: def.dens, slop: 0.04, frictionAir: 0.022 };
     var b;
+    if (def.partes) {
+      var ps = [], k, pr, ar = 0, cx = 0, cy = 0, j, q, p2, cr;
+      for (k = 0; k < def.partes.length; k++) {
+        pr = def.partes[k];
+        if (pr.c) ps.push(Bodies.circle(x + pr.c[0], y + pr.c[1], pr.c[2], op));
+        else {
+          ar = 0; cx = 0; cy = 0;
+          for (j = 0; j < pr.length; j++) {
+            q = pr[j]; p2 = pr[(j + 1) % pr.length]; cr = q[0] * p2[1] - p2[0] * q[1];
+            ar += cr; cx += (q[0] + p2[0]) * cr; cy += (q[1] + p2[1]) * cr;
+          }
+          cx /= 3 * ar; cy /= 3 * ar;
+          ps.push(Bodies.fromVertices(x + cx, y + cy, [pr.map(function (v) { return { x: v[0] - cx, y: v[1] - cy }; })], op));
+        }
+      }
+      b = Body.create({ parts: ps, friction: op.friction, frictionStatic: op.frictionStatic, restitution: 0, frictionAir: op.frictionAir, slop: op.slop });
+      b.plugin = { def: def, calm: 0, off: { x: x - b.position.x, y: y - b.position.y } };
+      Body.setMass(b, MASA_UNICA);
+      return b;
+    }
     if (def.circulo) b = Bodies.circle(x, y, def.w / 2, op);
     else if (def.tri) {
       b = Bodies.fromVertices(x, y, [[{ x: -def.w / 2, y: def.h / 2 }, { x: def.w / 2, y: def.h / 2 }, { x: -def.w / 2, y: -def.h / 2 }]], op);
@@ -1242,6 +1755,7 @@
       b = Bodies.rectangle(x, y, def.w, def.h, op);
     }
     b.plugin = { def: def, calm: 0 };
+    Body.setMass(b, MASA_UNICA);
     return b;
   }
 
@@ -1251,6 +1765,7 @@
     var x = hookX();
     var top = camTop + COLGAR_TOP;
     var b = crearCuerpo(def, x, top + def.h / 2);
+    b.plugin.n = drops;
     if (ang) {
       Body.rotate(b, ang);
       var mn = Infinity;
@@ -1261,7 +1776,8 @@
     Body.setVelocity(b, { x: hookVx * 0.3, y: 0 });
     Composite.add(engine.world, b);
     cuerpos.push(b);
-    cur = null; drops++; tSpawn = 0.75;
+    if (cur.pega) misEv("hab", 1);
+    cur = null; drops++; tSpawn = 0.75; misEv("piezas", 1);
     sfx.soltar();
     if (drops >= temblorProx && temblorAviso <= 0 && temblorT <= 0) { temblorAviso = 1.3 + 0.3 * nivel("temblor"); sfx.temblor(); }
     elPista.hidden = true;
@@ -1272,8 +1788,10 @@
     escala += (objetivo - escala) * 0.15;
     var dt = escala / 60;
     tiempo += dt;
+    errCool = Math.max(0, errCool - dt);
     ambiente(dt);
-    var alturaM = -topEstable / PX_POR_M;
+    var alturaM = baseAlt - topEstable / PX_POR_M;
+    if (resetMundoT > 0) { resetMundoT -= dt; if (resetMundoT <= 0) nuevaPlataforma(); }
 
     // grúa
     var vel = velocidadGrua();
@@ -1282,7 +1800,7 @@
     hookVx = amplitudGrua() * Math.sin(fase) - prev;
 
     // viento: crece con la altura
-    var fuerza = clamp((alturaM - 6) / 30, 0, 1) * (1 - 0.08 * nivel("viento"));
+    var fuerza = VIENTO ? clamp((alturaM - 6) / 30, 0, 1) * (1 - 0.08 * nivel("viento")) : 0;
     vientoFase += dt * 0.35;
     var onda = Math.sin(vientoFase) * 0.8 + Math.sin(vientoFase * 2.3 + 1) * 0.2;
     vientoVal = onda * fuerza;                    // -1..1
@@ -1317,26 +1835,39 @@
     Engine.update(engine, DT * escala);
     seguirPegas();
     // asentado: amortigua el balanceo de las piezas que ya casi están quietas
+    if (nivelarN > 0) nivelarN--;
     for (var sq = 0; sq < cuerpos.length; sq++) {
       var bq = cuerpos[sq];
       if (bq.plugin.sigue) continue;
+      if (nivelarN > 0) {                 // Nivelar: cada pieza gira suavemente hacia el ángulo recto más cercano
+        if (!bq.plugin.def.circulo) {
+          var tgt = Math.round(bq.angle / (Math.PI / 2)) * (Math.PI / 2), df = tgt - bq.angle;
+          if (Math.abs(df) > 0.012) { Body.setAngularVelocity(bq, Math.max(-0.045, Math.min(0.045, df * 0.12))); bq.plugin.calm = 0; continue; }
+        }
+      }
+      if (bq.plugin.calm >= 40) {          // pieza ya asentada: no se deja deslizar ni girar sola hasta que algo la golpee
+        Body.setVelocity(bq, { x: 0, y: bq.velocity.y }); Body.setAngularVelocity(bq, 0); continue;
+      }
       if (bq.speed < 1.6 && Math.abs(bq.angularVelocity) < 0.09) {
-        Body.setAngularVelocity(bq, bq.angularVelocity * 0.82);
-        if (bq.speed < 0.7) Body.setVelocity(bq, { x: bq.velocity.x * 0.93, y: bq.velocity.y });
+        Body.setAngularVelocity(bq, bq.angularVelocity * 0.7);
+        if (bq.speed < 0.7) Body.setVelocity(bq, { x: bq.velocity.x * 0.6, y: bq.velocity.y });
       }
     }
 
     // calma + altura de la torre
-    var tope = 0;
+    var tope = 0, todas = true;
     for (var n = 0; n < cuerpos.length; n++) {
       var b = cuerpos[n];
       if (b.speed < 0.25 && Math.abs(b.angularSpeed) < 0.012) b.plugin.calm++; else b.plugin.calm = 0;
-      if (b.plugin.calm >= 25 && b.bounds.min.y < tope) tope = b.bounds.min.y;
+      if (b.plugin.calm >= 25) { if (b.bounds.min.y < tope) tope = b.bounds.min.y; } else todas = false;
     }
     if (estado === "juego") {
-      topEstable = Math.min(topEstable, tope);          // el cielo solo sube
-      var h = -topEstable / PX_POR_M;
-      if (h > puntaje) { puntaje = h; actualizarHUD(false, true); }
+      // la altura actual sigue a la pieza más alta: sube enseguida y baja cuando todo se asienta
+      if (tope < topEstable || todas) topEstable = tope;
+      var h = baseAlt - topEstable / PX_POR_M, subio = h > altAct + 0.001;
+      if (h > puntaje) { puntaje = h; misEv("alt", h); }
+      if (Math.abs(h - altAct) > 0.001) { altAct = h; actualizarHUD(false, subio); }
+      revisarMundo(h);
     }
     camObj = Math.min(-TORRE_PANTALLA, topEstable - TORRE_PANTALLA);
     camTop += (camObj - camTop) * 0.045;
@@ -1348,7 +1879,7 @@
         if (cuerpos[m].bounds.min.y > 70) {
           if (vidas > 0) {
             vidas--; quitarPegas(cuerpos[m]); Composite.remove(engine.world, cuerpos[m]); cuerpos.splice(m, 1);
-            actualizarVidas(); aviso("¡Segunda oportunidad!"); sfx.nuevo();
+            actualizarVidas(); aviso("¡Perdiste una vida!"); sfx.nuevo();
           } else { terminar(cuerpos[m].plugin.def); break; }
         }
       }
@@ -1378,7 +1909,7 @@
     var nuevo = puntaje > mejor + 0.049;
     if (puntaje > mejor) { mejor = puntaje; guardarMejor(mejor); }
     elFinalNum.innerHTML = fmt(puntaje) + "<small>m</small>";
-    var gan = cobrar();
+    var gan = cobrar(); registrarPartida(gan);
     elGan.innerHTML = '<span class="moneda"></span><span>+<b>' + gan + '</b> monedas · total <b>' + tienda.m + '</b></span>';
     elRecord.textContent = nuevo ? "¡Nuevo récord!" : (mejor > 0 ? "Tu récord: " + fmt(mejor) + " m" : "");
     mostrar("fin");
@@ -1392,7 +1923,7 @@
   // ---------- HUD ----------
   var _hAlt = "", _hMej = "", _hVien = "", _hAl = null;
   function actualizarHUD(forzar, pulso) {
-    var a = fmt(puntaje) + "<small>m</small>";
+    var a = fmt(altAct) + "<small>m</small>";
     if (a !== _hAlt) {
       elAltura.innerHTML = a; _hAlt = a;
       if (pulso && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -1404,9 +1935,6 @@
     actualizarMenuTxt();
   }
   function actualizarViento() {
-    var v = Math.abs(vientoVal), n = v < 0.08 ? 0 : v < 0.35 ? 1 : v < 0.7 ? 2 : 3;
-    var s = n === 0 ? "calmo" : (vientoVal < 0 ? "◀" : "▶").repeat(n);
-    if (s !== _hVien) { elViento.textContent = s; elViento.classList.toggle("calmo", n === 0); _hVien = s; }
     var al = temblorAviso > 0 || temblorT > 0;
     if (al !== _hAl) { elAlerta.hidden = !al; _hAl = al; }
   }
@@ -1421,31 +1949,18 @@
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    var alturaM = Math.max(0, -camTop - TORRE_PANTALLA) / PX_POR_M + puntaje * 0;
-    var t = clamp(Math.max(puntaje, alturaM) / 55, 0, 1);
-    var g = ctx.createLinearGradient(0, 0, 0, H);
-    var sp = clamp((alturaM - 50) / 50, 0, 1);
-    g.addColorStop(0, rgbA(mezclaA(mezclaA(tema().dia[0], tema().noche[0], t), ESPACIO[0], sp)));
-    g.addColorStop(1, rgbA(mezclaA(mezclaA(tema().dia[1], tema().noche[1], t), ESPACIO[1], sp)));
+    var alturaM = baseAlt + Math.max(0, -camTop - TORRE_PANTALLA) / PX_POR_M;
+    var w = pesosMundo(alturaM), g = ctx.createLinearGradient(0, 0, 0, H), c0 = [0, 0, 0], c1 = [0, 0, 0], k;
+    for (k = 0; k < MUNDOS.length; k++) for (var q = 0; q < 3; q++) { c0[q] += w[k] * MUNDOS[k].top[q]; c1[q] += w[k] * MUNDOS[k].bot[q]; }
+    g.addColorStop(0, rgbA(c0)); g.addColorStop(1, rgbA(c1));
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
-    // estrellas
-    if (t > 0.25) {
-      var sa = clamp((t - 0.25) / 0.5, 0, 1);
-      for (var s = 0; s < estrellas.length; s++) {
-        var st = estrellas[s];
-        ctx.globalAlpha = sa * st.a * (0.7 + 0.3 * Math.sin(tiempo * 2 + s));
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(st.x, st.y * H * 0.8, st.r, st.r);
-      }
-      ctx.globalAlpha = 1;
+    if (w[0] > 0.01) {
+      dibujarAviones(w[0]);
+      dibujarSiluetas(0, sh, H - 6 + 0.35 * (-camTop - TORRE_PANTALLA), 0);
+      if (w[0] < 1) { ctx.globalAlpha = 1 - w[0]; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
     }
-
-    dibujarAmbiente(t, alturaM, sp);
-
-    // siluetas (parallax)
-    var baseY = H - 6 + 0.22 * (-camTop - TORRE_PANTALLA);
-    dibujarSiluetas(t, sh, baseY, sp);
+    dibujarMundos(w, alturaM);
 
     // mundo
     ctx.save();
@@ -1570,94 +2085,7 @@
     var tm = tema(), i, e, ce = mezclaA(tm.ed[0], tm.ed[1], t), sb = mezclaA(tm.dia[1], tm.noche[1], t);
     var dia = (1 - t) * (1 - sp), oy = baseY - (H - 6), fy = (H - 6) + oy * 0.5 - 26, tipo = tm.tipo;
     var lejos = mezclaA(ce, sb, 0.6), medio = mezclaA(ce, sb, 0.3);
-    if (tipo === "mont") {
-      sol(W * 0.72, fy - 120, 30, [255, 238, 215], dia * 0.9);
-      ctx.fillStyle = rgbA(lejos); ctx.beginPath(); ctx.moveTo(-5, fy + 400); ctx.lineTo(-5, fy);
-      for (var x = -5; x <= W + 5; x += 8) ctx.lineTo(x, fy - 52 - 30 * Math.sin(x * 0.021 + 1) - 16 * Math.sin(x * 0.057 + 3) - 7 * Math.sin(x * 0.14));
-      ctx.lineTo(W + 5, fy + 400); ctx.closePath(); ctx.fill();
-      neblina(fy, 60, mezclaA([255, 215, 225], sb, t), 0.45);
-      ctx.fillStyle = rgbA(medio); ctx.beginPath(); ctx.moveTo(-5, fy + 400); ctx.lineTo(-5, fy + 10);
-      for (x = -5; x <= W + 5; x += 8) ctx.lineTo(x, fy - 24 - 34 * Math.abs(Math.sin(x * 0.017 + 2)) - 12 * Math.sin(x * 0.07 + 1));
-      ctx.lineTo(W + 5, fy + 400); ctx.closePath(); ctx.fill();
-      var cl = mezclaA(ce, [255, 255, 255], 0.18), cd = mezclaA(ce, [0, 0, 20], 0.28), nv = mezcla([244, 247, 255], [130, 140, 185], t);
-      for (i = 0; i < edificios.length; i++) {
-        e = edificios[i];
-        var cx = e.x + e.w / 2 + sh, ph = e.h * 1.15 + 30, hw = e.w * 1.15, pk = cx + (hz(i, 1) - 0.5) * 10;
-        ctx.fillStyle = rgbA(cl); ctx.beginPath(); ctx.moveTo(cx - hw, baseY); ctx.lineTo(pk, baseY - ph); ctx.lineTo(pk + 4, baseY); ctx.closePath(); ctx.fill();
-        ctx.fillStyle = rgbA(cd); ctx.beginPath(); ctx.moveTo(pk, baseY - ph); ctx.lineTo(cx + hw, baseY); ctx.lineTo(pk + 4, baseY); ctx.closePath(); ctx.fill();
-        var sy = baseY - ph * 0.72, kx = (pk - (cx - hw)) / ph;
-        ctx.fillStyle = nv; ctx.beginPath(); ctx.moveTo(pk - (ph - (ph * 0.72)) * kx * 1.0, sy);
-        ctx.lineTo(pk - (pk - cx + hw) * 0.1, sy + 5); ctx.lineTo(pk - 5, sy - 3); ctx.lineTo(pk + 1, sy + 7); ctx.lineTo(pk + 6, sy - 2); ctx.lineTo(pk + (cx + hw - pk) * 0.28, sy + 2);
-        ctx.lineTo(pk, baseY - ph); ctx.closePath(); ctx.fill();
-      }
-      ctx.fillStyle = rgbA(mezclaA(ce, [10, 20, 20], 0.55)); ctx.fillRect(0, baseY - 2, W, 400);
-      for (i = 0; i < 16; i++) {
-        var tx = hz(i, 7) * (W + 20) - 10 + sh, th = 18 + hz(i, 8) * 16;
-        ctx.beginPath(); ctx.moveTo(tx - 7, baseY + 2); ctx.lineTo(tx, baseY - th); ctx.lineTo(tx + 7, baseY + 2); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(tx - 6, baseY - th * 0.45); ctx.lineTo(tx, baseY - th * 1.05); ctx.lineTo(tx + 6, baseY - th * 0.45); ctx.closePath(); ctx.fill();
-      }
-    } else if (tipo === "cont") {
-      sol(W * 0.2, fy - 56, 34, [255, 242, 214], dia * 0.8);
-      ctx.fillStyle = rgbA(lejos); ctx.fillRect(0, fy - 2, W, 420);
-      // grúas de puerto y barco al fondo
-      ctx.fillStyle = rgbA(mezclaA(ce, sb, 0.45)); ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 2.5;
-      for (i = 0; i < 2; i++) {
-        var gx = 60 + i * 190 + sh;
-        ctx.beginPath(); ctx.moveTo(gx - 16, fy); ctx.lineTo(gx - 10, fy - 72); ctx.moveTo(gx + 16, fy); ctx.lineTo(gx + 10, fy - 72); ctx.stroke();
-        ctx.fillRect(gx - 40, fy - 78, 96, 6); ctx.fillRect(gx - 14, fy - 40, 28, 4);
-        ctx.beginPath(); ctx.moveTo(gx + 4, fy - 78); ctx.lineTo(gx - 34, fy - 98); ctx.lineTo(gx - 34, fy - 78); ctx.fill();
-        ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx - 34, fy - 98); ctx.lineTo(gx + 56, fy - 78); ctx.stroke(); ctx.lineWidth = 2.5;
-      }
-      ctx.beginPath(); ctx.moveTo(W - 130 + sh, fy - 8); ctx.lineTo(W - 10 + sh, fy - 8); ctx.lineTo(W - 24 + sh, fy + 6); ctx.lineTo(W - 118 + sh, fy + 6); ctx.closePath(); ctx.fill();
-      for (i = 0; i < 4; i++) ctx.fillRect(W - 120 + i * 22 + sh, fy - 20, 18, 12);
-      ctx.fillRect(W - 40 + sh, fy - 28, 20, 20);
-      neblina(fy + 10, 46, [225, 238, 240], 0.5 * (1 - t * 0.7));
-      var pal = [[196, 84, 61], [63, 111, 168], [217, 164, 58], [79, 143, 106], [150, 70, 70]];
-      for (i = 0; i < edificios.length; i++) {
-        e = edificios[i];
-        var n = Math.max(2, Math.round(e.h / 22)), k0 = Math.floor(e.v * pal.length);
-        for (var r = 0; r < n; r++) {
-          var by = baseY - (r + 1) * 20, cc = mezclaA(pal[(k0 + r) % pal.length], [14, 18, 28], t * 0.85);
-          ctx.fillStyle = rgbA(cc); ctx.fillRect(e.x + sh, by, e.w, 19);
-          ctx.fillStyle = "rgba(0,0,0,0.16)";
-          for (var rx = e.x + 5; rx < e.x + e.w - 2; rx += 6) ctx.fillRect(rx + sh, by + 2, 1.5, 15);
-          ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.fillRect(e.x + sh, by, e.w, 2);
-        }
-      }
-      ctx.fillStyle = mezcla([40, 52, 64], [8, 12, 20], t); ctx.fillRect(0, baseY, W, 400);
-      for (i = 0; i < 4; i++) {
-        var lx = 40 + i * 105 + sh;
-        ctx.fillStyle = mezcla([60, 70, 82], [20, 26, 36], t); ctx.fillRect(lx, baseY - 44, 3, 46);
-        sol(lx + 1.5, baseY - 46, 4, [255, 230, 160], clamp(t * 1.6 - 0.2, 0, 1));
-      }
-    } else if (tipo === "mesa") {
-      sol(W * 0.68, fy - 52, 52, [255, 232, 170], dia);
-      ctx.fillStyle = rgbA(lejos);
-      for (i = 0; i < 6; i++) {
-        var mx = i * 80 - 30 + hz(i, 2) * 30 + sh, mw = 56 + hz(i, 3) * 44, mh = 40 + hz(i, 4) * 46;
-        ctx.beginPath(); ctx.moveTo(mx - 6, fy + 400); ctx.lineTo(mx - 6, fy); ctx.lineTo(mx + 6, fy - mh); ctx.lineTo(mx + mw - 6, fy - mh); ctx.lineTo(mx + mw + 6, fy); ctx.lineTo(mx + mw + 6, fy + 400); ctx.closePath(); ctx.fill();
-      }
-      neblina(fy + 4, 50, mezclaA([255, 205, 150], sb, t), 0.5);
-      var top = mezclaA(tm.top[0], tm.top[1], t);
-      for (i = 0; i < edificios.length; i++) {
-        e = edificios[i];
-        var tp = baseY - e.h * 0.8;
-        ctx.fillStyle = rgbA(ce); ctx.beginPath(); ctx.moveTo(e.x + sh - 4, baseY + 400); ctx.lineTo(e.x + sh - 2, baseY); ctx.lineTo(e.x + sh + 3, tp + 6); ctx.lineTo(e.x + sh + 6, tp);
-        ctx.lineTo(e.x + sh + e.w - 6, tp); ctx.lineTo(e.x + sh + e.w - 3, tp + 6); ctx.lineTo(e.x + sh + e.w + 2, baseY); ctx.lineTo(e.x + sh + e.w + 4, baseY + 400); ctx.closePath(); ctx.fill();
-        ctx.fillStyle = "rgba(0,0,0,0.14)";
-        for (var st = tp + 18; st < baseY - 4; st += 14 + hz(i, st) * 8) ctx.fillRect(e.x + sh, st, e.w, 3);
-        ctx.fillStyle = rgbA(top); ctx.fillRect(e.x + sh + 5, tp, e.w - 10, 4);
-        ctx.fillStyle = "rgba(255,225,170,0.16)"; ctx.fillRect(e.x + sh, tp + 6, 4, baseY - tp);
-      }
-      ctx.fillStyle = rgbA(mezclaA(ce, [40, 18, 14], 0.4)); ctx.fillRect(0, baseY - 1, W, 400);
-      for (i = 0; i < 6; i++) {
-        var cx2 = hz(i, 9) * (W - 20) + 10 + sh, ch = 20 + hz(i, 10) * 14;
-        ctx.fillStyle = rgbA(mezclaA([52, 92, 60], [10, 20, 24], t));
-        rr(cx2 - 3, baseY - ch, 6, ch + 3, 3); ctx.fill();
-        rr(cx2 - 11, baseY - ch * 0.65, 5, ch * 0.4, 2.5); ctx.fill(); ctx.fillRect(cx2 - 11, baseY - ch * 0.35, 9, 4);
-        rr(cx2 + 6, baseY - ch * 0.8, 5, ch * 0.4, 2.5); ctx.fill(); ctx.fillRect(cx2 + 2, baseY - ch * 0.45, 9, 4);
-      }
-    } else {
+    {
       var neon = tipo === "edif" && tm.id === "f-neon", ve = mezcla(tm.vent[0], tm.vent[1], t);
       if (neon) {
         var sx = W * 0.5, sy2 = fy - 40, sr = 84, gs = ctx.createLinearGradient(0, sy2 - sr, 0, sy2 + sr);
@@ -1706,52 +2134,19 @@
     }
     ctx.globalAlpha = 1;
   }
-  function dibujarAmbiente(t, ca, sp) {
-    var i, y;
-    if (sp > 0) {
-      for (i = 0; i < estrellas2.length; i++) {
-        var e = estrellas2[i];
-        ctx.globalAlpha = sp * e.a * (0.6 + 0.4 * Math.sin(tiempo * 1.5 + i));
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(e.x, (e.y * H + ca * e.k * 6) % H, e.r, e.r);
-      }
-      var mx = W * 0.76, my = lerp(-60, H * 0.2, sp), mr = 22 + sp * 14;
-      var gl = ctx.createRadialGradient(mx, my, mr * 0.8, mx, my, mr * 2.6);
-      gl.addColorStop(0, "rgba(233,229,211,0.28)"); gl.addColorStop(1, "rgba(233,229,211,0)");
-      ctx.globalAlpha = sp;
-      ctx.fillStyle = gl; ctx.fillRect(mx - mr * 3, my - mr * 3, mr * 6, mr * 6);
-      ctx.fillStyle = "#e9e5d3"; ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(150,145,125,0.45)";
-      var cr = [[-0.35, -0.25, 0.26], [0.3, 0.1, 0.2], [-0.1, 0.4, 0.15]];
-      for (i = 0; i < cr.length; i++) { ctx.beginPath(); ctx.arc(mx + cr[i][0] * mr, my + cr[i][1] * mr, cr[i][2] * mr, 0, Math.PI * 2); ctx.fill(); }
-      ctx.globalAlpha = 1;
-    }
-    // nubes
-    var cr0 = Math.round(lerp(255, 125, t)), cg0 = Math.round(lerp(255, 135, t)), cb0 = Math.round(lerp(255, 175, t));
-    for (i = 0; i < nubes.length; i++) {
-      var c = nubes[i];
-      y = H * 0.62 - (c.alt - ca) * PX_POR_M * 0.5;
-      if (y < -60 || y > H + 60) continue;
-      var al = clamp((55 - c.alt) / 15, 0, 1) * (1 - sp) * (0.6 - 0.32 * t);
-      if (al <= 0.01) continue;
-      ctx.fillStyle = "rgba(" + cr0 + "," + cg0 + "," + cb0 + "," + al.toFixed(3) + ")";
-      ctx.beginPath();
-      ctx.ellipse(c.x, y, 34 * c.s, 12 * c.s, 0, 0, Math.PI * 2);
-      ctx.ellipse(c.x - 22 * c.s, y + 3 * c.s, 24 * c.s, 9 * c.s, 0, 0, Math.PI * 2);
-      ctx.ellipse(c.x + 24 * c.s, y + 4 * c.s, 26 * c.s, 9 * c.s, 0, 0, Math.PI * 2);
-      ctx.ellipse(c.x + 4 * c.s, y - 8 * c.s, 22 * c.s, 10 * c.s, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    // aviones
+  var GAL = [];
+  for (var gi = 0; gi < 340; gi++) { var gu = Math.pow(Math.random(), 0.65), gr = 6 + gu * 100; GAL.push({ r: gr, a: (gi % 2) * Math.PI + 3.4 * Math.log(1 + gr / 14) + (Math.random() - 0.5) * 0.5 * (0.4 + gu), s: 0.8 + Math.random() * 1.6, c: gu }); }
+  function dibujarAviones(al) {
+    var ca = camAlt(), i, y;
     for (i = 0; i < aviones.length; i++) {
       var a = aviones[i];
       y = H * 0.62 - (a.alt - ca) * PX_POR_M * 0.5;
       if (y < -20 || y > H + 20) continue;
-      ctx.save(); ctx.translate(a.x, y); ctx.scale(a.d, 1);
+      ctx.save(); ctx.globalAlpha = al; ctx.translate(a.x, y); ctx.scale(a.d, 1);
       var rg = ctx.createLinearGradient(-70, 0, 0, 0);
-      rg.addColorStop(0, "rgba(255,255,255,0)"); rg.addColorStop(1, "rgba(255,255,255," + (0.1 + 0.25 * (1 - t)).toFixed(2) + ")");
+      rg.addColorStop(0, "rgba(255,255,255,0)"); rg.addColorStop(1, "rgba(255,255,255,0.3)");
       ctx.fillStyle = rg; ctx.fillRect(-70, -1, 70, 2);
-      ctx.fillStyle = mezcla([40, 52, 76], [10, 14, 30], t);
+      ctx.fillStyle = "rgb(40,52,76)";
       rr(-10, -2.5, 22, 5, 2.5); ctx.fill();
       ctx.beginPath(); ctx.moveTo(0, -1); ctx.lineTo(-6, -9); ctx.lineTo(-2, -9); ctx.lineTo(4, -1); ctx.fill();
       ctx.beginPath(); ctx.moveTo(0, 1); ctx.lineTo(-5, 6); ctx.lineTo(-2, 6); ctx.lineTo(3, 1); ctx.fill();
@@ -1759,11 +2154,149 @@
       if (Math.floor(tiempo * 2) % 2 === 0) { ctx.fillStyle = "#ff4a3a"; ctx.beginPath(); ctx.arc(-4, -9, 1.6, 0, Math.PI * 2); ctx.fill(); }
       ctx.restore();
     }
+  }
+  function dibujarEstrellas(al, ca, tinte) {
+    if (al <= 0.01) return;
+    for (var i = 0; i < estrellas2.length; i++) {
+      var e = estrellas2[i];
+      ctx.globalAlpha = Math.min(1, al) * e.a * (0.6 + 0.4 * Math.sin(tiempo * 1.5 + i));
+      ctx.fillStyle = tinte && i % 4 === 0 ? tinte[i % tinte.length] : "#fff";
+      ctx.fillRect(e.x, (e.y * H + ca * e.k * 6) % H, e.r, e.r);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function anillosAgujero(desde, hasta) {
+    var cols = ["rgba(255,244,210,0.9)", "rgba(255,214,140,0.8)", "rgba(255,168,70,0.65)", "rgba(240,120,50,0.5)", "rgba(220,80,40,0.38)", "rgba(180,50,30,0.26)"];
+    for (var k = 0; k < 6; k++) {
+      var rx = 58 + k * 11;
+      ctx.strokeStyle = cols[k]; ctx.lineWidth = 5 - k * 0.45;
+      ctx.beginPath(); ctx.ellipse(0, 0, rx, rx * 0.26, 0, desde, hasta); ctx.stroke();
+    }
+  }
+  function dibujarMundos(w, ca) {
+    var i, y, al;
+    dibujarEstrellas(w[2] * 0.35 + w[3] + w[4] + w[5], ca, (w[4] + w[5]) > 0.3 ? ["#ffd9a0", "#bcd4ff", "#ffb8e6", "#b8fff0"] : null);
+
+    // nebulosas (galaxia)
+    al = w[4] + w[5] * 0.4;
+    if (al > 0.01) {
+      var nb = [[0.22, 0.22, 170, "255,60,170"], [0.85, 0.52, 200, "90,120,255"], [0.38, 0.82, 180, "170,70,255"], [0.92, 0.1, 130, "60,230,220"]];
+      for (i = 0; i < nb.length; i++) {
+        var ny = H * nb[i][1] + (ca - 27) * 3, ng = ctx.createRadialGradient(W * nb[i][0], ny, 0, W * nb[i][0], ny, nb[i][2]);
+        ng.addColorStop(0, "rgba(" + nb[i][3] + "," + (0.3 * al).toFixed(3) + ")"); ng.addColorStop(1, "rgba(" + nb[i][3] + ",0)");
+        ctx.fillStyle = ng; ctx.fillRect(W * nb[i][0] - nb[i][2], ny - nb[i][2], nb[i][2] * 2, nb[i][2] * 2);
+      }
+    }
+    // galaxia espiral
+    if (w[4] > 0.01) {
+      ctx.save(); ctx.globalAlpha = w[4]; ctx.translate(W * 0.7, H * 0.27 + (ca - 27) * 4); ctx.rotate(-0.4); ctx.scale(1, 0.55);
+      var gg = ctx.createRadialGradient(0, 0, 0, 0, 0, 120);
+      gg.addColorStop(0, "rgba(255,235,190,0.75)"); gg.addColorStop(0.3, "rgba(255,180,220,0.28)"); gg.addColorStop(1, "rgba(120,140,255,0)");
+      ctx.fillStyle = gg; ctx.fillRect(-130, -130, 260, 260);
+      ctx.rotate(tiempo * 0.04);
+      for (i = 0; i < GAL.length; i++) {
+        var p = GAL[i];
+        ctx.fillStyle = p.c < 0.25 ? "rgba(255,236,190,0.95)" : p.c < 0.6 ? "rgba(255,190,235,0.85)" : "rgba(165,195,255,0.8)";
+        ctx.fillRect(Math.cos(p.a) * p.r, Math.sin(p.a) * p.r, p.s, p.s);
+      }
+      ctx.restore();
+    }
+    // agujero negro
+    if (w[5] > 0.01) {
+      var bx = W * 0.5, by = H * 0.3 + (ca - 38) * 4;
+      ctx.save(); ctx.globalAlpha = w[5];
+      var bgl = ctx.createRadialGradient(bx, by, 20, bx, by, 180);
+      bgl.addColorStop(0, "rgba(255,150,60,0.42)"); bgl.addColorStop(1, "rgba(255,120,40,0)");
+      ctx.fillStyle = bgl; ctx.fillRect(bx - 190, by - 190, 380, 380);
+      ctx.translate(bx, by); ctx.rotate(-0.28);
+      anillosAgujero(0, Math.PI * 2);
+      for (i = 0; i < 46; i++) {
+        var orr = 60 + (i * 37 % 70), an = i * 2.4 + tiempo * (1.7 / (orr / 60));
+        ctx.fillStyle = "rgba(255," + (205 - Math.round((orr - 60) * 1.5)) + ",120,0.9)";
+        ctx.fillRect(Math.cos(an) * orr, Math.sin(an) * orr * 0.26, 2, 2);
+      }
+      ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(0, 0, 34, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(255,218,160,0.95)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 34.5, 0, Math.PI * 2); ctx.stroke();
+      anillosAgujero(0, Math.PI);
+      ctx.restore();
+    }
+    // aurora (estratosfera)
+    al = w[2];
+    if (al > 0.01) {
+      var au2 = [["90,255,170", 0.26], ["80,220,255", 0.4], ["180,120,255", 0.54]];
+      for (i = 0; i < au2.length; i++) {
+        var y0 = H * au2[i][1] + (ca - 11) * 5, ag = ctx.createLinearGradient(0, y0 - 40, 0, y0 + 90);
+        ag.addColorStop(0, "rgba(" + au2[i][0] + ",0)"); ag.addColorStop(0.45, "rgba(" + au2[i][0] + "," + (0.34 * al).toFixed(3) + ")"); ag.addColorStop(1, "rgba(" + au2[i][0] + ",0)");
+        ctx.fillStyle = ag; ctx.beginPath(); ctx.moveTo(0, y0 + 90);
+        for (var ax = 0; ax <= W; ax += 10) ctx.lineTo(ax, y0 + Math.sin(ax * 0.022 + tiempo * 0.55 + i * 2) * 22 + Math.sin(ax * 0.05 + tiempo * 0.9 + i) * 7);
+        ctx.lineTo(W, y0 + 90); ctx.closePath(); ctx.fill();
+      }
+    }
+    // la Tierra, curva abajo
+    al = w[2] + w[3] * 0.8;
+    if (al > 0.01) {
+      var ty = H * 0.84 + (ca - 11) * 6, R = 640;
+      if (ty < H + 10) {
+        ctx.save(); ctx.globalAlpha = Math.min(1, al);
+        var tg = ctx.createLinearGradient(0, ty, 0, ty + 170);
+        tg.addColorStop(0, "rgb(120,196,255)"); tg.addColorStop(0.12, "rgb(36,86,176)"); tg.addColorStop(1, "rgb(8,18,56)");
+        ctx.fillStyle = tg; ctx.beginPath(); ctx.arc(W / 2, ty + R, R, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "rgba(150,210,255,0.28)"; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(W / 2, ty + R, R + 5, Math.PI * 1.2, Math.PI * 1.8); ctx.stroke();
+        ctx.strokeStyle = "rgba(190,230,255,0.85)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(W / 2, ty + R, R, Math.PI * 1.2, Math.PI * 1.8); ctx.stroke();
+        ctx.restore();
+      }
+    }
+    // planeta con anillo y luna (espacio)
+    if (w[3] > 0.01) {
+      var sx = W * 0.2, sy = H * 0.3 + (ca - 18) * 3, mx = W * 0.76, my = H * 0.17 + (ca - 18) * 3, mr = 28;
+      ctx.save(); ctx.globalAlpha = w[3];
+      ctx.strokeStyle = "rgba(235,215,170,0.7)"; ctx.lineWidth = 5; ctx.beginPath(); ctx.ellipse(sx, sy, 52, 13, -0.35, Math.PI, Math.PI * 2); ctx.stroke();
+      var pg = ctx.createRadialGradient(sx - 8, sy - 8, 3, sx, sy, 28);
+      pg.addColorStop(0, "rgb(250,222,170)"); pg.addColorStop(1, "rgb(168,112,70)");
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(sx, sy, 26, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(235,215,170,0.85)"; ctx.beginPath(); ctx.ellipse(sx, sy, 52, 13, -0.35, 0, Math.PI); ctx.stroke();
+      var gl = ctx.createRadialGradient(mx, my, mr * 0.8, mx, my, mr * 2.6);
+      gl.addColorStop(0, "rgba(233,229,211,0.28)"); gl.addColorStop(1, "rgba(233,229,211,0)");
+      ctx.fillStyle = gl; ctx.fillRect(mx - mr * 3, my - mr * 3, mr * 6, mr * 6);
+      ctx.fillStyle = "#e9e5d3"; ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(150,145,125,0.45)";
+      var cr = [[-0.35, -0.25, 0.26], [0.3, 0.1, 0.2], [-0.1, 0.4, 0.15]];
+      for (i = 0; i < cr.length; i++) { ctx.beginPath(); ctx.arc(mx + cr[i][0] * mr, my + cr[i][1] * mr, cr[i][2] * mr, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    }
+    // nubes (cielo y estratosfera baja)
+    al = w[1] * 0.9 + w[2] * 0.12;
+    if (al > 0.01) {
+      for (i = 0; i < nubes.length; i++) {
+        var c = nubes[i];
+        y = H * 0.62 - (c.alt - ca) * PX_POR_M * 0.5;
+        if (y < -60 || y > H + 60) continue;
+        ctx.fillStyle = "rgba(255,255,255," + (al * 0.8).toFixed(3) + ")";
+        ctx.beginPath();
+        ctx.ellipse(c.x, y, 34 * c.s, 12 * c.s, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x - 22 * c.s, y + 3 * c.s, 24 * c.s, 9 * c.s, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x + 24 * c.s, y + 4 * c.s, 26 * c.s, 9 * c.s, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x + 4 * c.s, y - 8 * c.s, 22 * c.s, 10 * c.s, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // pájaros y aviones (cielo)
+    if (w[1] > 0.01) {
+      ctx.strokeStyle = "rgba(40,54,80," + (0.8 * w[1]).toFixed(3) + ")"; ctx.lineWidth = 1.7; ctx.lineCap = "round";
+      for (i = 0; i < pajaros.length; i++) {
+        var pb = pajaros[i], by2 = H * 0.62 - (pb.alt - ca) * PX_POR_M * 0.5, fl = Math.sin(tiempo * 8 + pb.ph) * 4;
+        if (by2 < -10 || by2 > H + 10) continue;
+        ctx.beginPath(); ctx.moveTo(pb.x - 7, by2 - fl); ctx.quadraticCurveTo(pb.x - 3, by2 - 3, pb.x, by2); ctx.quadraticCurveTo(pb.x + 3, by2 - 3, pb.x + 7, by2 - fl); ctx.stroke();
+      }
+      ctx.lineCap = "butt";
+      dibujarAviones(w[1]);
+    }
     // estrellas fugaces
+    al = w[3] + w[4] + w[5];
     ctx.lineWidth = 1.6; ctx.lineCap = "round";
     for (i = 0; i < fugaces.length; i++) {
       var f = fugaces[i];
-      ctx.strokeStyle = "rgba(255,255,255," + (clamp(t * 1.5, 0, 1) * f.life / f.max).toFixed(2) + ")";
+      ctx.strokeStyle = "rgba(255,255,255," + (Math.min(1, al) * f.life / f.max).toFixed(2) + ")";
       ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x - f.vx * 0.07, f.y - f.vy * 0.07); ctx.stroke();
     }
     ctx.lineCap = "butt";
@@ -1792,8 +2325,42 @@
 
   function emojiDe(def) { return def.emoji || ""; }
 
+  function trazarPartes(def) {
+    for (var k = 0; k < def.partes.length; k++) {
+      var pr = def.partes[k];
+      if (pr.c) { ctx.moveTo(pr.c[0] + pr.c[2], pr.c[1]); ctx.arc(pr.c[0], pr.c[1], pr.c[2], 0, Math.PI * 2); }
+      else { ctx.moveTo(pr[0][0], pr[0][1]); for (var j = 1; j < pr.length; j++) ctx.lineTo(pr[j][0], pr[j][1]); ctx.closePath(); }
+    }
+  }
+  // Dibuja la silueta completa (una sola forma): el contorno se traza grueso y se tapa por dentro, así sólo queda el borde exterior.
+  function dibujarSilueta(def, px, py, ang, off, seed) {
+    var sk = skin(def);
+    ctx.save(); ctx.translate(px, py); if (ang) ctx.rotate(ang); if (off) ctx.translate(off.x, off.y);
+    ctx.beginPath(); trazarPartes(def);
+    ctx.lineJoin = "round"; ctx.lineWidth = 4; ctx.strokeStyle = sk.s;
+    if (sk.g) { ctx.shadowColor = sk.s; ctx.shadowBlur = 10; }
+    ctx.stroke(); ctx.shadowBlur = 0;
+    if (sk.metal) oroPintar(0, 0, def.w, def.h, seed, sk.metal); else { ctx.fillStyle = sk.f; ctx.fill(); }
+    ctx.restore();
+    return sk;
+  }
   function dibujarCuerpo(b) {
     var def = b.plugin.def, v = b.vertices;
+    if (def.partes) {
+      var sk2 = dibujarSilueta(def, b.position.x, b.position.y, b.angle, b.plugin.off, b.id);
+      var of = b.plugin.off, cs0 = Math.cos(b.angle), sn0 = Math.sin(b.angle);
+      var gx = b.position.x + of.x * cs0 - of.y * sn0, gy = b.position.y + of.x * sn0 + of.y * cs0;
+      decorar(def, b.position.x, b.position.y, b.angle, true, of);
+      if (sk2.metal) {
+        brilloOro(gx, gy, def.w, def.h, b.angle, b.id, sk2.metal);
+        if (Math.random() < 0.06) lanzarBrillo(brillosM, b.bounds.min.x + Math.random() * (b.bounds.max.x - b.bounds.min.x), b.bounds.min.y + Math.random() * (b.bounds.max.y - b.bounds.min.y), sk2.metal);
+      }
+      if (b.plugin.puntos) {
+        var cs = Math.cos(b.angle), sn = Math.sin(b.angle), pp = b.plugin.puntos, q0 = pp[0], q1 = pp[1];
+        pegamentoUnion(b.position.x + q0.x * cs - q0.y * sn, b.position.y + q0.x * sn + q0.y * cs, b.position.x + q1.x * cs - q1.y * sn, b.position.y + q1.x * sn + q1.y * cs);
+      }
+      return;
+    }
     ctx.beginPath();
     if (def.circulo) ctx.arc(b.position.x, b.position.y, def.w / 2, 0, Math.PI * 2);
     else { ctx.moveTo(v[0].x, v[0].y); for (var i = 1; i < v.length; i++) ctx.lineTo(v[i].x, v[i].y); ctx.closePath(); }
@@ -1813,6 +2380,15 @@
     }
   }
   function dibujarColgada(def, x, y, ang) {
+    if (def.partes) {
+      var sk3 = dibujarSilueta(def, x, y, ang || 0, null, 7);
+      decorar(def, x, y, ang || 0);
+      if (sk3.metal) {
+        brilloOro(x, y, def.w, def.h, ang || 0, 7, sk3.metal);
+        if (Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk3.metal);
+      }
+      return;
+    }
     ctx.save(); ctx.translate(x, y); if (ang) ctx.rotate(ang);
     ctx.beginPath();
     if (def.circulo) ctx.arc(0, 0, def.w / 2, 0, Math.PI * 2);
@@ -1928,40 +2504,11 @@
     var hw = def.w / 2, hh = def.h / 2, i, x;
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     switch (def.id) {
-      case "caja": {
-        var m = 5;
-        ctx.strokeStyle = L("#7a5322"); ctx.globalAlpha = 0.55; ctx.lineWidth = 1.5;
-        for (i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(-hw + m, -hh + i * def.h / 4); ctx.lineTo(hw - m, -hh + i * def.h / 4); ctx.stroke(); }
-        ctx.globalAlpha = 1; ctx.lineWidth = 3.5;
-        ctx.strokeRect(-hw + m, -hh + m, def.w - 2 * m, def.h - 2 * m);
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(-hw + m, -hh + m); ctx.lineTo(hw - m, hh - m); ctx.moveTo(hw - m, -hh + m); ctx.lineTo(-hw + m, hh - m); ctx.stroke();
-        ctx.fillStyle = L("#3b2a14");
-        for (i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc((i & 1 ? 1 : -1) * (hw - m), (i & 2 ? 1 : -1) * (hh - m), 1.9, 0, Math.PI * 2); ctx.fill(); }
-        break;
-      }
-      case "tabla": {
-        ctx.strokeStyle = L(def.borde); ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
-        ctx.beginPath(); ctx.moveTo(-hw + 12, -2.5); ctx.lineTo(-14, -2.5); ctx.moveTo(-6, 0.5); ctx.lineTo(18, 0.5); ctx.moveTo(26, -2); ctx.lineTo(hw - 12, -2); ctx.stroke();
-        ctx.globalAlpha = 1; ctx.fillStyle = L("#4a3017");
-        ctx.beginPath(); ctx.arc(-hw + 7, 0, 1.7, 0, 7); ctx.arc(hw - 7, 0, 1.7, 0, 7); ctx.fill();
-        break;
-      }
-      case "ladrillo": {
-        ctx.fillStyle = K("#7a2a1b");
-        for (i = -1; i <= 1; i++) { rr(i * 22 - 7, -4.5, 14, 9, 3); ctx.fill(); }
-        ctx.strokeStyle = K("#e8967c"); ctx.lineWidth = 1.5; ctx.globalAlpha = 0.7;
-        ctx.beginPath(); ctx.moveTo(-hw + 5, -hh + 3.5); ctx.lineTo(hw - 5, -hh + 3.5); ctx.stroke(); ctx.globalAlpha = 1;
-        ctx.fillStyle = K("#8f3322");
-        var pts = [[-33, -8], [-12, 9], [12, -9], [35, 8], [-30, 8], [30, -7]];
-        for (i = 0; i < pts.length; i++) ctx.fillRect(pts[i][0], pts[i][1], 2, 1.5);
-        break;
-      }
       case "barril": {
         ctx.strokeStyle = L("#1f3d5e"); ctx.lineWidth = 3.2;
-        ctx.beginPath(); ctx.moveTo(-hw, -hh + 13); ctx.lineTo(hw, -hh + 13); ctx.moveTo(-hw, hh - 13); ctx.lineTo(hw, hh - 13); ctx.stroke();
-        ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(-hw, 0); ctx.lineTo(hw, 0); ctx.stroke();
-        ctx.fillStyle = K("#a9cdee"); ctx.globalAlpha = 0.4; rr(-hw + 7, -hh + 5, 5, def.h - 10, 2.5); ctx.fill(); ctx.globalAlpha = 1;
+        ctx.beginPath(); ctx.moveTo(-24, -18); ctx.lineTo(24, -18); ctx.moveTo(-24, 18); ctx.lineTo(24, 18); ctx.stroke();
+        ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(-24, 0); ctx.lineTo(24, 0); ctx.stroke();
+        ctx.fillStyle = K("#a9cdee"); ctx.globalAlpha = 0.4; rr(-15, -26, 5, 52, 2.5); ctx.fill(); ctx.globalAlpha = 1;
         ctx.fillStyle = K("#ffc22e");
         ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(9, 0); ctx.lineTo(0, 9); ctx.lineTo(-9, 0); ctx.closePath(); ctx.fill();
         ctx.fillStyle = L("#1b1403"); ctx.fillRect(-1, -5, 2, 6); ctx.fillRect(-1, 2.5, 2, 2);
@@ -2005,15 +2552,147 @@
         break;
       }
       case "pinguino": {
-        ctx.fillStyle = L("#16202f");
-        elipse(-hw + 2.5, 3, 3.2, 12, 0.18); ctx.fill(); elipse(hw - 2.5, 3, 3.2, 12, -0.18); ctx.fill();
-        ctx.fillStyle = K("#f2eee4"); elipse(0, 7, 11.5, 20); ctx.fill();
+        ctx.fillStyle = K("#ff8a3d");
+        ctx.beginPath(); ctx.moveTo(-15, 29); ctx.lineTo(-2, 29); ctx.lineTo(-1, 34); ctx.lineTo(-17, 34); ctx.closePath();
+        ctx.moveTo(2, 29); ctx.lineTo(15, 29); ctx.lineTo(17, 34); ctx.lineTo(1, 34); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = K("#f2eee4"); elipse(0, 8, 11.5, 20); ctx.fill();
         ctx.fillStyle = K("#ffffff");
-        ctx.beginPath(); ctx.arc(-5, -14, 3.6, 0, Math.PI * 2); ctx.arc(5, -14, 3.6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-5, -12, 3.6, 0, Math.PI * 2); ctx.arc(5, -12, 3.6, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = L("#0b0f16");
-        ctx.beginPath(); ctx.arc(-4.5, -14, 1.7, 0, Math.PI * 2); ctx.arc(4.5, -14, 1.7, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = K("#ffa726"); ctx.beginPath(); ctx.moveTo(-3.8, -9.5); ctx.lineTo(3.8, -9.5); ctx.lineTo(0, -3.8); ctx.closePath(); ctx.fill();
-        ctx.fillStyle = K("#ff8a3d"); elipse(-6.5, hh - 2.5, 6, 2.6); ctx.fill(); elipse(6.5, hh - 2.5, 6, 2.6); ctx.fill();
+        ctx.beginPath(); ctx.arc(-4.5, -12, 1.7, 0, Math.PI * 2); ctx.arc(4.5, -12, 1.7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = K("#ffa726"); ctx.beginPath(); ctx.moveTo(-3.8, -7.5); ctx.lineTo(3.8, -7.5); ctx.lineTo(0, -1.8); ctx.closePath(); ctx.fill();
+        break;
+      }
+      case "nube": {
+        ctx.strokeStyle = L("#b8c7dc"); ctx.lineWidth = 2; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); ctx.arc(-17, -3, 9.5, Math.PI * 1.05, Math.PI * 1.85); ctx.stroke();
+        ctx.beginPath(); ctx.arc(3, -8, 14.5, Math.PI * 1.05, Math.PI * 1.9); ctx.stroke();
+        ctx.beginPath(); ctx.arc(22, -1, 8.5, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke();
+        ctx.globalAlpha = 1; ctx.fillStyle = L("#3b4a63");
+        ctx.beginPath(); ctx.arc(-8, 4, 2.1, 0, 7); ctx.arc(8, 4, 2.1, 0, 7); ctx.fill();
+        ctx.strokeStyle = L("#3b4a63"); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(0, 6, 5, 0.25, Math.PI - 0.25); ctx.stroke();
+        ctx.fillStyle = K("#ffb3c1"); ctx.globalAlpha = 0.7; elipse(-16, 9, 4, 2.4); ctx.fill(); elipse(16, 9, 4, 2.4); ctx.fill(); ctx.globalAlpha = 1;
+        break;
+      }
+      case "globo": {
+        ctx.strokeStyle = L("#8f1f19"); ctx.lineWidth = 1.3; ctx.globalAlpha = 0.4;
+        elipse(0, -4, 9, 22); ctx.stroke(); elipse(0, -4, 17, 22); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgba(255,255,255,0.55)"; elipse(-9, -14, 5, 8, -0.5); ctx.fill();
+        ctx.fillStyle = K("#b8332c"); ctx.beginPath(); ctx.moveTo(-4, 17); ctx.lineTo(4, 17); ctx.lineTo(0, 25); ctx.closePath(); ctx.fill();
+        break;
+      }
+      case "cohete": {
+        ctx.fillStyle = K("#e24b3b");
+        ctx.beginPath(); ctx.moveTo(0, -40); ctx.lineTo(4.5, -33); ctx.lineTo(7.5, -24); ctx.lineTo(9, -18); ctx.lineTo(-9, -18); ctx.lineTo(-7.5, -24); ctx.lineTo(-4.5, -33); ctx.closePath(); ctx.fill();
+        ctx.fillRect(-9, 14, 18, 4.5);
+        ctx.beginPath(); ctx.moveTo(9, 6); ctx.lineTo(15, 24); ctx.lineTo(15, 35); ctx.lineTo(9, 31); ctx.closePath();
+        ctx.moveTo(-9, 6); ctx.lineTo(-15, 24); ctx.lineTo(-15, 35); ctx.lineTo(-9, 31); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = K("#4a5568"); ctx.beginPath(); ctx.moveTo(-5, 28); ctx.lineTo(5, 28); ctx.lineTo(6.5, 35); ctx.lineTo(-6.5, 35); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.45)"; ctx.fillRect(-6.5, -13, 2.4, 26);
+        ctx.fillStyle = K("#3a8fd6"); ctx.beginPath(); ctx.arc(0, -6, 5.5, 0, 7); ctx.fill();
+        ctx.strokeStyle = L("#7a8499"); ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.beginPath(); ctx.arc(-1.8, -7.8, 1.6, 0, 7); ctx.fill();
+        break;
+      }
+      case "hielo": {
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.beginPath(); ctx.moveTo(-22, -10); ctx.lineTo(-4, -19); ctx.lineTo(-14, 2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.28)";
+        ctx.beginPath(); ctx.moveTo(8, 21); ctx.lineTo(26, 14); ctx.lineTo(28, -2); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = L("#5aa0c8"); ctx.lineWidth = 1.2; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.moveTo(-4, -22); ctx.lineTo(3, -7); ctx.lineTo(-4, 6); ctx.lineTo(4, 22); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.strokeStyle = "rgba(255,255,255,0.9)"; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(15, -10); ctx.lineTo(15, -3); ctx.moveTo(11.5, -6.5); ctx.lineTo(18.5, -6.5); ctx.stroke();
+        break;
+      }
+      case "meteorito": {
+        ctx.fillStyle = K("#4a443e");
+        var cr2 = [[-10, -8, 8], [11, 6, 6], [-5, 13, 5], [13, -13, 4]];
+        for (i = 0; i < cr2.length; i++) { ctx.beginPath(); ctx.arc(cr2[i][0], cr2[i][1], cr2[i][2], 0, 7); ctx.fill(); }
+        ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 1.3;
+        for (i = 0; i < cr2.length; i++) { ctx.beginPath(); ctx.arc(cr2[i][0], cr2[i][1], cr2[i][2], Math.PI * 0.9, Math.PI * 1.7); ctx.stroke(); }
+        ctx.strokeStyle = K("#ff8a3d"); ctx.lineWidth = 1.6; ctx.globalAlpha = 0.85;
+        ctx.beginPath(); ctx.moveTo(-22, 4); ctx.lineTo(-14, 0); ctx.lineTo(-18, -9); ctx.moveTo(22, -4); ctx.lineTo(18, 2); ctx.stroke(); ctx.globalAlpha = 1;
+        break;
+      }
+      case "satelite": {
+        ctx.fillStyle = K("#2c4f9a"); ctx.fillRect(-42, -12, 21, 24); ctx.fillRect(21, -12, 21, 24);
+        ctx.strokeStyle = L("#8fb4f0"); ctx.lineWidth = 1; ctx.globalAlpha = 0.7;
+        for (i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(-42 + i * 5.25, -12); ctx.lineTo(-42 + i * 5.25, 12); ctx.moveTo(21 + i * 5.25, -12); ctx.lineTo(21 + i * 5.25, 12); ctx.stroke(); }
+        ctx.beginPath(); ctx.moveTo(-42, 0); ctx.lineTo(-21, 0); ctx.moveTo(21, 0); ctx.lineTo(42, 0); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = K("#e7b94a"); rr(-15, -15, 30, 30, 3); ctx.fill();
+        ctx.strokeStyle = L("#7a5a10"); ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = K("#c9d2de"); ctx.beginPath(); ctx.moveTo(-8, -15); ctx.lineTo(8, -15); ctx.lineTo(5, -21); ctx.lineTo(-5, -21); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = L("#3a3a3a"); ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, 7); ctx.fill();
+        ctx.fillStyle = "#7fe3ff"; ctx.beginPath(); ctx.arc(0, 0, 1.8, 0, 7); ctx.fill();
+        break;
+      }
+      case "ovni": {
+        ctx.fillStyle = K("#7fe3c0"); ctx.globalAlpha = 0.85;
+        ctx.beginPath(); for (i = 0; i <= 10; i++) { var da = Math.PI + Math.PI * i / 10; ctx.lineTo(Math.cos(da) * 17, 2 + Math.sin(da) * 16); } ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+        ctx.strokeStyle = L("#2a6f58"); ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,0.55)"; elipse(-6, -8, 4.5, 2.6, -0.5); ctx.fill();
+        ctx.fillStyle = "rgba(0,0,0,0.18)"; elipse(0, 12, 32, 3.5); ctx.fill();
+        var lc = ["#ffd24f", "#ff7ab8", "#7fe3ff", "#ffd24f", "#ff7ab8"];
+        for (i = 0; i < 5; i++) { ctx.fillStyle = K(lc[i]); ctx.beginPath(); ctx.arc(-30 + i * 15, 7, 3, 0, 7); ctx.fill(); }
+        break;
+      }
+      case "estrella": {
+        ctx.beginPath();
+        for (i = 0; i < 10; i++) { var ra = (i % 2 ? 13.5 : 32) * 0.64, an3 = -Math.PI / 2 + i * Math.PI / 5; ctx.lineTo(Math.cos(an3) * ra, Math.sin(an3) * ra); }
+        ctx.closePath(); ctx.fillStyle = K("#fff3a0"); ctx.fill();
+        ctx.fillStyle = L("#3a2a05"); ctx.beginPath(); ctx.arc(-4.5, -1.5, 1.8, 0, 7); ctx.arc(4.5, -1.5, 1.8, 0, 7); ctx.fill();
+        ctx.strokeStyle = L("#3a2a05"); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(0, 1.5, 4, 0.3, Math.PI - 0.3); ctx.stroke();
+        ctx.fillStyle = K("#ff9aa8"); ctx.globalAlpha = 0.6; elipse(-8.5, 3.5, 2.6, 1.6); ctx.fill(); elipse(8.5, 3.5, 2.6, 1.6); ctx.fill(); ctx.globalAlpha = 1;
+        break;
+      }
+      case "materia": {
+        ctx.strokeStyle = L("#a77bff"); ctx.lineWidth = 1.6; ctx.globalAlpha = 0.9;
+        ctx.beginPath();
+        for (i = 0; i < 60; i++) { var sa = i * 0.28, sr = 1.5 + i * 0.36; ctx.lineTo(Math.cos(sa) * sr, Math.sin(sa) * sr); }
+        ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = "#ffffff";
+        var sp2 = [[-16, -12], [14, -15], [17, 9], [-12, 15], [3, -19]];
+        for (i = 0; i < sp2.length; i++) ctx.fillRect(sp2[i][0], sp2[i][1], 1.6, 1.6);
+        ctx.strokeStyle = L("#7b4bd6"); ctx.lineWidth = 2; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(0, 0, def.w / 2 - 4, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+        break;
+      }
+      case "cristal": {
+        ctx.fillStyle = "rgba(255,255,255,0.42)"; ctx.beginPath(); ctx.moveTo(-6, -28); ctx.lineTo(-2, -36); ctx.lineTo(-1, 28); ctx.lineTo(-6, 28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.beginPath(); ctx.moveTo(11, -2); ctx.lineTo(17, -8); ctx.lineTo(18, 30); ctx.lineTo(12, 30); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(-21, 10); ctx.lineTo(-16, 3); ctx.lineTo(-15, 30); ctx.lineTo(-20, 30); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = L("#127a72"); ctx.lineWidth = 1.3; ctx.globalAlpha = 0.8;
+        ctx.beginPath(); ctx.moveTo(9, 34); ctx.lineTo(9, -2); ctx.moveTo(-9, 34); ctx.lineTo(-9, 8); ctx.moveTo(-9, -30); ctx.lineTo(0, -40); ctx.lineTo(9, -30); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(-3, -16, 1.8, 0, 7); ctx.arc(17, 12, 1.4, 0, 7); ctx.fill();
+        break;
+      }
+      case "caja": {
+        var m = 5;
+        ctx.strokeStyle = L("#7a5322"); ctx.globalAlpha = 0.55; ctx.lineWidth = 1.5;
+        for (i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(-hw + m, -hh + i * def.h / 4); ctx.lineTo(hw - m, -hh + i * def.h / 4); ctx.stroke(); }
+        ctx.globalAlpha = 1; ctx.lineWidth = 3.5;
+        ctx.strokeRect(-hw + m, -hh + m, def.w - 2 * m, def.h - 2 * m);
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(-hw + m, -hh + m); ctx.lineTo(hw - m, hh - m); ctx.moveTo(hw - m, -hh + m); ctx.lineTo(-hw + m, hh - m); ctx.stroke();
+        ctx.fillStyle = L("#3b2a14");
+        for (i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc((i & 1 ? 1 : -1) * (hw - m), (i & 2 ? 1 : -1) * (hh - m), 1.9, 0, Math.PI * 2); ctx.fill(); }
+        break;
+      }
+      case "tabla": {
+        ctx.strokeStyle = L(def.borde); ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+        ctx.beginPath(); ctx.moveTo(-hw + 12, -2.5); ctx.lineTo(-14, -2.5); ctx.moveTo(-6, 0.5); ctx.lineTo(18, 0.5); ctx.moveTo(26, -2); ctx.lineTo(hw - 12, -2); ctx.stroke();
+        ctx.globalAlpha = 1; ctx.fillStyle = L("#4a3017");
+        ctx.beginPath(); ctx.arc(-hw + 7, 0, 1.7, 0, 7); ctx.arc(hw - 7, 0, 1.7, 0, 7); ctx.fill();
+        break;
+      }
+      case "ladrillo": {
+        ctx.fillStyle = K("#7a2a1b");
+        for (i = -1; i <= 1; i++) { rr(i * 22 - 7, -4.5, 14, 9, 3); ctx.fill(); }
+        ctx.strokeStyle = K("#e8967c"); ctx.lineWidth = 1.5; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.moveTo(-hw + 5, -hh + 3.5); ctx.lineTo(hw - 5, -hh + 3.5); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.fillStyle = K("#8f3322");
+        var pts = [[-33, -8], [-12, 9], [12, -9], [35, 8], [-30, 8], [30, -7]];
+        for (i = 0; i < pts.length; i++) ctx.fillRect(pts[i][0], pts[i][1], 2, 1.5);
         break;
       }
       case "cuna": {
@@ -2045,9 +2724,15 @@
     }
   }
 
-  function decorar(def, x, y, ang, esCuerpo) {
+  function decorar(def, x, y, ang, esCuerpo, off) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
     if (esCuerpo && def.tri) ctx.translate(def.w / 6, -def.h / 6);
+    if (def.partes) {
+      if (off) ctx.translate(off.x, off.y);
+      ctx.beginPath(); trazarPartes(def); ctx.clip();
+      if (def.k) ctx.scale(def.k, def.k);
+      ctx.translate(-def.ox, -def.oy);      // el arte se dibuja en las coordenadas originales de la silueta
+    }
     arte(def);
     ctx.restore();
   }
@@ -2095,7 +2780,7 @@
     elPista.hidden = tutoActivo; btnPausa.hidden = false;
     ajusteMusica();
   }
-  var vistas = { menu: elMenu, ayuda: elAyuda, ajustes: elAjustes, tienda: elTienda, pausa: elPausa, fin: elFin };
+  var vistas = { menu: elMenu, ayuda: elAyuda, ajustes: elAjustes, tienda: elTienda, misiones: elMis, indice: elIndice, pausa: elPausa, fin: elFin };
   var volverT = "menu";
   var volverA = "menu";
   function mostrar(n) {
@@ -2108,7 +2793,7 @@
   function pausar() {
     if (estado !== "juego") return;
     estado = "pausa";
-    elPausaAlt.textContent = fmt(puntaje) + " m";
+    elPausaAlt.textContent = fmt(altAct) + " m";
     mostrar("pausa");
     elPista.hidden = true; btnPausa.hidden = true;
     ajusteMusica();
@@ -2122,7 +2807,7 @@
     ajusteMusica();
   }
   function alMenu() {
-    if (estado === "pausa") cobrar();
+    if (estado === "pausa") registrarPartida(cobrar());
     if (tutoActivo) { if (tutoPaso === 3) terminarTuto(); else { tutoActivo = false; tutoPaso = 0; elTuto.hidden = true; clearTimeout(tutoTimer); } }
     estado = "menu";
     reiniciar();
@@ -2154,6 +2839,9 @@
   clic(HB.rotar[0], function () { rotarPieza(); HB.rotar[0].blur(); });
   clic(HB.cambiar[0], function () { cambiarPieza(); HB.cambiar[0].blur(); });
   clic(HB.pegar[0], function () { pegarPieza(); HB.pegar[0].blur(); });
+  clic(HB.freno[0], function () { frenarTorre(); HB.freno[0].blur(); });
+  clic(HB.tam[0], function () { tamPieza(); HB.tam[0].blur(); });
+  clic(HB.nivel[0], function () { nivelarTorre(); HB.nivel[0].blur(); });
   var swVib = document.getElementById("swVib");
   if (!("vibrate" in navigator)) document.getElementById("rowVib").hidden = true;
   swVib.setAttribute("aria-checked", vibOn ? "true" : "false");
@@ -2162,6 +2850,19 @@
     try { localStorage.setItem("equilibrio-vib", vibOn ? "1" : "0"); } catch (e) {}
     swVib.setAttribute("aria-checked", vibOn ? "true" : "false");
     if (vibOn) vibrar(40);
+  });
+  clic(document.getElementById("btnIndice"), function () { renderIndice(); mostrar("indice"); });
+  clic(document.getElementById("btnVolverI"), function () { mostrar("menu"); });
+  function abrirMis(de) { volverM = de; renderMis(); mostrar("misiones"); }
+  clic(document.getElementById("btnMis"), function () { abrirMis("menu"); });
+  clic(document.getElementById("btnMisFin"), function () { abrirMis("fin"); });
+  clic(document.getElementById("btnVolverM"), function () { mostrar(volverM); actualizarMenuTxt(); });
+  clic(document.getElementById("tabMis"), function () { setTabMis("mis"); });
+  clic(document.getElementById("tabLog"), function () { setTabMis("logros"); });
+  elListaMis.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-mis], button[data-log]") : null;
+    if (!b) return;
+    if (b.hasAttribute("data-mis")) cobrarMis(+b.getAttribute("data-mis")); else cobrarLogro(b.getAttribute("data-log"));
   });
   function abrirTienda(de) { volverT = de; renderTienda(); mostrar("tienda"); }
   clic(document.getElementById("btnTienda"), function () { abrirTienda("menu"); });
@@ -2189,10 +2890,15 @@
     } else if (estado === "juego" && e.code === "KeyR") { rotarPieza();
     } else if (estado === "juego" && e.code === "KeyC") { cambiarPieza();
     } else if (estado === "juego" && e.code === "KeyG") { pegarPieza();
+    } else if (estado === "juego" && e.code === "KeyF") { frenarTorre();
+    } else if (estado === "juego" && e.code === "KeyT") { tamPieza();
+    } else if (estado === "juego" && e.code === "KeyN") { nivelarTorre();
     } else if (e.code === "Escape" || e.code === "KeyP") {
       if (estado === "juego") pausar();
       else if (!elAjustes.hidden) mostrar(volverA);
       else if (!elTienda.hidden) mostrar(volverT);
+      else if (!elMis.hidden) mostrar(volverM);
+      else if (!elIndice.hidden) mostrar("menu");
       else if (!elAyuda.hidden) mostrar("menu");
       else if (estado === "pausa") reanudar();
     }
@@ -2207,8 +2913,9 @@
     return { estado: estado, puntaje: puntaje, drops: drops, cuerpos: cuerpos ? cuerpos.length : 0, topEstable: topEstable, viento: vientoVal, temblor: temblorT, mejor: mejor, hookX: hookX(), topX: (function(){var t=null;for(var i=0;i<(cuerpos||[]).length;i++){var c=cuerpos[i];if(c.plugin.calm>10&&(t===null||c.position.y<t.position.y))t=c;}return t?t.position.x:200;})() };
   };
 
-  window.__eqAlt = function (m) { topEstable = -m * PX_POR_M; camTop = -TORRE_PANTALLA - m * PX_POR_M; puntaje = m; };
+  window.__eqAlt = function (m) { topEstable = -m * PX_POR_M; camTop = -TORRE_PANTALLA - m * PX_POR_M; puntaje = m; altAct = m; revisarMundo(m); };
   window.__eqSoltarEn = function (x) { fase = Math.asin(clamp((x - BASE_X) / amplitudGrua(), -1, 1)); hookVx = 0; soltar(); };
+  misDia(); insignias();
   reiniciar();
   requestAnimationFrame(frame);
 })();
