@@ -768,7 +768,7 @@
   var volM = leerVol("equilibrio-vm", 0.7), volE = leerVol("equilibrio-ve", 0.8);
   var au = { master: null, comp: null, an: null, sfx: null, musG: null, filt: null, ruido: null };
   var mus = { want: "menu", cur: null, step: 0, next: 0, timer: 0, bus: null, tempo: 1, tension: false, capa: 0 };
-  var NOMBRES = { menu: "Turno de noche", juego: "Grúa en marcha" };
+  var NOMBRES = {};
   var elSonando = document.getElementById("sonandoTxt"), swMute = document.getElementById("swMute");
   function leerVol(k, d) { try { var v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? d : clamp(v, 0, 1); } catch (e) { return d; } }
   function guardarVol(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
@@ -797,7 +797,7 @@
     actualizarSonando();
   }
   function actualizarSonando() {
-    elSonando.textContent = !ac ? "Tocá para activar la música" : mute ? "Sonido silenciado" : "Sonando: " + NOMBRES.menu;
+    elSonando.textContent = !ac ? "Tocá para activar la música" : mute ? "Sonido silenciado" : "Sonando: " + (NOMBRES[mus.cur || "menu"] || NOMBRES.menu);
   }
 
   function tono(f, dur, tipo, vol, f2) {
@@ -893,39 +893,109 @@
     var e = ac.createGain(); e.gain.setValueAtTime(vol, t); e.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     s.connect(f); f.connect(e); e.connect(mus.bus.inp); s.start(t); s.stop(t + dur + 0.02);
   }
-  function paso16(step, t, sd) {
-    var s = step % 64, bar = s >> 4, k = s & 15, ch = ACORDES[bar], m;
-    if (mus.cur === "menu") {
-      if (k === 0) {
-        var dur = sd * 16;
-        for (var i = 0; i < 4; i++) {
-          nota(ch[i], t, dur * 1.1, "triangle", 0.014, 0.5).detune.value = -6;
-          nota(ch[i], t, dur * 1.1, "triangle", 0.014, 0.5).detune.value = 6;
+  // ---- Pistas: cada mundo tiene su propia canción (tempo fijo) ----
+  function acorde(r, iv) { return [r].concat(iv.map(function (i) { return r + i; })); }
+  var C_M = [4, 7, 12], C_m = [3, 7, 12], C_M7 = [4, 7, 11], C_m7 = [3, 7, 10], C_s2 = [2, 7, 12], C_s4 = [5, 7, 12], C_dim = [3, 6, 9], C_5 = [7, 12, 16];
+  function progr(lista) { return lista.map(function (x) { return acorde(x[0], x[1]); }); }
+  function genMel(W) {
+    var seed = W.seed, out = [];
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var deg = 3, nSc = W.sc.length;
+    function nt(d) { var o = Math.floor(d / nSc), i = ((d % nSc) + nSc) % nSc; return W.base + o * 12 + W.sc[i]; }
+    for (var bar = 0; bar < 4; bar++) {
+      var row = [];
+      for (var k = 0; k < 16; k++) {
+        var on = W.rhy[k] && (bar !== 3 || rnd() < 0.8) && !(bar === 1 && k === W.rhyDrop);
+        if (!on) { row.push(0); continue; }
+        deg += Math.floor(rnd() * 5) - 2;
+        if (deg < 0) deg = 1; if (deg > nSc + 3) deg = nSc;
+        if ((k & 3) === 0 && rnd() < 0.7) {
+          var best = deg, bd = 99, ch = W.ch[bar];
+          for (var d = deg - 2; d <= deg + 2; d++) {
+            var n = nt(d);
+            for (var c = 0; c < 4; c++) { var dd = Math.abs(((n - ch[c]) % 12 + 12) % 12); if (dd === 0 && Math.abs(d - deg) < bd) { bd = Math.abs(d - deg); best = d; } }
+          }
+          deg = best;
         }
-        nota(RAICES[bar], t, dur * 0.95, "sine", 0.12, 0.03);
+        row.push(nt(deg));
       }
-      if ((k & 1) === 0) nota(ch[ARP[(k >> 1) & 7]], t, sd * 3.5, "triangle", 0.035, 0.005, true);
-      if ((k & 3) === 2) ruidoGolpe(t, 0.04, 0.012, 8000);
-      m = MEL_MENU[bar][k];
-      if (m) { nota(m, t, sd * 6, "sine", 0.07, 0.01, true); nota(m + 12, t, sd * 3, "sine", 0.015, 0.01, true); }
-    } else {
-      if ((k & 3) === 0) bombo(t);
-      if (k === 4 || k === 12) ruidoGolpe(t, 0.1, 0.05, 1800);
-      if ((k & 1) === 0) ruidoGolpe(t, 0.035, (k & 3) === 2 ? 0.035 : 0.015, 8000);
-      if (BAJO.indexOf(k) >= 0) nota(RAICES[bar] + ((k === 6 || k === 14) ? 12 : 0), t, sd * 2.2, "triangle", 0.14, 0.008);
-      if ((k & 1) === 0) nota(ch[ARP[(k >> 1) & 7]] + 12, t, sd * 2, "triangle", 0.022, 0.004, true);
-      m = MEL_JUEGO[bar][k];
-      if (m) nota(m, t, sd * 2.5, "square", 0.022, 0.006, true);
-      if (mus.capa >= 1 && k === 0) {
-        for (var q = 0; q < 4; q++) nota(ch[q], t, sd * 17, "triangle", 0.012, 0.4);
+      out.push(row);
+    }
+    return out;
+  }
+  var PISTAS = {
+    menu: { nombre: "Ventana abierta", bpm: 92, seed: 11, base: 67, sc: [0, 2, 4, 5, 7, 9, 11],
+      ch: progr([[55, C_M], [52, C_m], [48, C_M7], [50, C_s4]]), ro: [43, 40, 36, 38],
+      rhy: [1,0,0,1, 0,0,1,0, 1,0,0,0, 1,0,1,0], rhyDrop: 6,
+      pad: ["triangle", 0.016], arp: ["triangle", 0.03, 0, 4], bajo: ["sine", 0.12, [0, 7, 10]], hat: 0.008, leadW: "sine", leadV: 0.065, leadLen: 5, leadOct: 0.012 },
+    m0: { nombre: "Grúa en marcha", bpm: 104, ch: progr([[57, C_m], [53, C_M], [55, C_M], [55, C_M7]]), ro: [45, 41, 48, 43], mel: "orig",
+      kick: [0, 4, 8, 12], snare: [4, 12], hat: 0.015, arp: ["triangle", 0.022, 12, 2], bajo: ["triangle", 0.14, [0, 3, 6, 8, 11, 14]], leadW: "square", leadV: 0.022, leadLen: 2.5 },
+    m1: { nombre: "Sobre las nubes", bpm: 88, seed: 23, base: 72, sc: [0, 2, 4, 6, 7, 9, 11],
+      ch: progr([[60, C_M7], [67, C_M], [57, C_m7], [65, C_M7]]), ro: [48, 43, 45, 41],
+      rhy: [1,0,1,0, 0,1,0,0, 1,0,0,1, 0,0,1,0], rhyDrop: 5,
+      kick: [0, 10], snare: [12], hat: 0.012, pad: ["triangle", 0.015], arp: ["sine", 0.04, 12, 2], bajo: ["sine", 0.13, [0, 6, 10]], leadW: "sine", leadV: 0.06, leadLen: 4, leadOct: 0.02 },
+    m2: { nombre: "Aire fino", bpm: 76, seed: 37, base: 74, sc: [0, 2, 3, 5, 7, 9, 10],
+      ch: progr([[62, C_m7], [60, C_M7], [65, C_M7], [57, C_m7]]), ro: [50, 48, 53, 45],
+      rhy: [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,0,0,0], rhyDrop: 6,
+      kick: [0], snare: [], hat: 0.006, pad: ["sine", 0.024], arp: ["triangle", 0.03, 12, 4], bajo: ["sine", 0.12, [0]], leadW: "triangle", leadV: 0.05, leadLen: 8, leadOct: 0.015, shaker: 1 },
+    m3: { nombre: "Órbita", bpm: 96, seed: 51, base: 64, sc: [0, 2, 3, 5, 7, 8, 10],
+      ch: progr([[52, C_m], [48, C_M], [50, C_M], [47, C_s4]]), ro: [40, 36, 38, 35],
+      rhy: [1,0,0,1, 0,0,1,0, 0,1,0,0, 1,0,0,0], rhyDrop: 9,
+      kick: [0, 6, 8, 14], snare: [4, 12], hat: 0.018, arp: ["sawtooth", 0.012, 12, 2], bajo: ["sawtooth", 0.07, [0, 2, 4, 6, 8, 10, 12, 14]], leadW: "sawtooth", leadV: 0.018, leadLen: 3, pad: ["sawtooth", 0.006] },
+    m4: { nombre: "Polvo de estrellas", bpm: 112, seed: 67, base: 69, sc: [0, 2, 4, 7, 9],
+      ch: progr([[54, C_m], [50, C_M], [57, C_M], [52, C_M]]), ro: [42, 38, 45, 40],
+      rhy: [1,0,1,1, 0,1,0,1, 1,0,1,0, 1,1,0,1], rhyDrop: 4,
+      kick: [0, 4, 8, 12], snare: [4, 12], hat: 0.02, pad: ["triangle", 0.012], arp: ["square", 0.012, 12, 1], bajo: ["triangle", 0.15, [0, 3, 6, 8, 10, 14]], leadW: "square", leadV: 0.02, leadLen: 2, leadOct: 0.014 },
+    m5: { nombre: "Horizonte de sucesos", bpm: 68, seed: 83, base: 62, sc: [0, 1, 3, 5, 6, 8, 10],
+      ch: progr([[50, C_m], [49, C_dim], [46, C_M], [49, C_5]]), ro: [38, 37, 34, 37],
+      rhy: [1,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,0,0], rhyDrop: 7,
+      kick: [0, 3], snare: [], hat: 0, pad: ["sawtooth", 0.011], arp: ["sine", 0.025, 0, 4], bajo: ["sine", 0.2, [0]], leadW: "sine", leadV: 0.05, leadLen: 10, leadOct: 0.02, grave: 1 }
+  };
+  Object.keys(PISTAS).forEach(function (k) {
+    var W = PISTAS[k];
+    W.melodia = W.mel === "orig" ? MEL_JUEGO : genMel(W);
+    NOMBRES[k] = W.nombre;
+  });
+  function pistaMundo() { return "m" + clamp(mundoRun | 0, 0, 5); }
+  function paso16(step, t, sd) {
+    var W = PISTAS[mus.cur]; if (!W) return;
+    var s = step % 64, bar = s >> 4, k = s & 15, ch = W.ch[bar], m, menu = mus.cur === "menu";
+    if (W.pad && k === 0) {
+      var dp = sd * 16 * 1.1;
+      for (var i = 0; i < 4; i++) {
+        nota(ch[i], t, dp, W.pad[0], W.pad[1], 0.5).detune.value = -6;
+        nota(ch[i], t, dp, W.pad[0], W.pad[1], 0.5).detune.value = 6;
       }
+    }
+    if (W.kick && W.kick.indexOf(k) >= 0) bombo(t);
+    if (W.snare && W.snare.indexOf(k) >= 0) ruidoGolpe(t, 0.1, 0.05, 1800);
+    if (W.hat && (k & 1) === 0) ruidoGolpe(t, 0.035, (k & 3) === 2 ? W.hat * 2 : W.hat, 8000);
+    if (W.shaker && (k & 3) === 2) ruidoGolpe(t, 0.08, 0.012, 5000);
+    if (W.bajo) {
+      var bp = W.bajo[2];
+      if (bp.indexOf(k) >= 0) {
+        var bn = W.ro[bar] + (W.grave ? 0 : ((k === 6 || k === 14) ? 12 : 0));
+        nota(bn, t, menu || W.grave ? sd * 14 : sd * 2.2, W.bajo[0], W.bajo[1], menu || W.grave ? 0.05 : 0.008);
+      }
+    }
+    if (W.arp && (k % W.arp[3]) === 0 && (W.arp[3] > 1 || (k & 1) === 0 || true)) {
+      var ai = ARP[(k >> 1) & 7];
+      nota(ch[ai] + W.arp[2], t, sd * (W.arp[3] >= 4 ? 3.5 : 2), W.arp[0], W.arp[1], 0.004, true);
+    }
+    m = W.melodia[bar][k];
+    if (m) {
+      nota(m, t, sd * W.leadLen, W.leadW, W.leadV, 0.01, true);
+      if (W.leadOct) nota(m + 12, t, sd * W.leadLen * 0.6, "sine", W.leadOct, 0.01, true);
+    }
+    if (!menu) {
+      if (mus.capa >= 1 && k === 0) for (var q = 0; q < 4; q++) nota(ch[q], t, sd * 17, "triangle", 0.012, 0.4);
       if (mus.capa >= 2) {
         if (m) nota(m + 12, t, sd * 2.5, "triangle", 0.02, 0.006, true);
         if (k & 1) ruidoGolpe(t, 0.03, 0.012, 9000);
       }
       if (mus.tension) {
-        if (k === 0) nota(RAICES[bar] + 6, t, sd * 8, "sine", 0.035, 0.05);
-        if ((k & 3) === 0) nota(RAICES[bar] - 12, t, sd * 4, "sawtooth", 0.06, 0.02);
+        if (k === 0) nota(W.ro[bar] + 6, t, sd * 8, "sine", 0.035, 0.05);
+        if ((k & 3) === 0) nota(W.ro[bar] - 12, t, sd * 4, "sawtooth", 0.06, 0.02);
         if (k & 1) ruidoGolpe(t, 0.03, 0.02, 6000);
       }
     }
@@ -935,7 +1005,7 @@
     var ahead = ac.currentTime + 0.18;
     if (mus.next < ac.currentTime - 0.5) mus.next = ac.currentTime + 0.05;
     while (mus.next < ahead) {
-      var bpm = mus.cur === "menu" ? 76 : 104 * mus.tempo * (mus.tension ? 1.08 : 1);
+      var bpm = PISTAS[mus.cur] ? PISTAS[mus.cur].bpm : 100;
       var sd = 60 / bpm / 4;
       paso16(mus.step, mus.next, sd);
       mus.next += sd; mus.step++;
@@ -2798,7 +2868,7 @@
     while (!parado && acum >= DT && pasos < 4) { paso(); acum -= DT; pasos++; }
     if (acum > DT * 4) acum = 0;
     actualizarViento();
-    mus.tempo = 1 + Math.min(puntaje / 90, 0.3);
+    if (mus.want && mus.want !== "menu" && estado !== "menu") { var pw = pistaMundo(); if (pw !== mus.want) setTrack(pw); }
     mus.tension = temblorAviso > 0 || temblorT > 0;
     mus.capa = puntaje >= 30 ? 2 : puntaje >= 15 ? 1 : 0;
     animarEq();
@@ -2819,7 +2889,7 @@
   }
   function arrancar() {
     PUB.juegoOn();
-    setTrack("juego");
+    setTrack("m0");
     audio();
     reiniciar();
     estado = "juego";
@@ -3058,7 +3128,7 @@
       }
       restaurarSnap(ofertaSnap);
       estado = "juego"; mostrar(null); btnPausa.hidden = false; elPista.hidden = true;
-      ultimo = 0; acum = 0; setTrack("juego"); ajusteMusica(); PUB.juegoOn();
+      ultimo = 0; acum = 0; setTrack(pistaMundo()); ajusteMusica(); PUB.juegoOn();
       aviso("¡Tiempo rebobinado!"); tono(900, 0.4, "sawtooth", 0.04, 120); vibrar(60);
     });
   }
@@ -3072,6 +3142,7 @@
   }
 
   // gancho de pruebas (solo lectura)
+  window.__eqMus = function () { return [mus.cur, mus.step, ac && ac.state]; };
   window.__eq = function () {
     return { dbg: (cuerpos||[]).map(function (c) { return [+c.speed.toFixed(3), +c.angularVelocity.toFixed(4), c.plugin.calm, +c.angle.toFixed(3)]; }), estado: estado, puntaje: puntaje, drops: drops, cuerpos: cuerpos ? cuerpos.length : 0, topEstable: topEstable, viento: vientoVal, temblor: temblorT, mejor: mejor, hookX: hookX(), topX: (function(){var t=null;for(var i=0;i<(cuerpos||[]).length;i++){var c=cuerpos[i];if(c.plugin.calm>10&&(t===null||c.position.y<t.position.y))t=c;}return t?t.position.x:200;})() };
   };
