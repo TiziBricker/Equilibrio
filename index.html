@@ -430,6 +430,8 @@
   .rasgo.mal { background: rgba(255,107,107,0.12); color: #ff9a9a; border-color: rgba(255,107,107,0.3); }
   .rasgo.neu { background: rgba(143,155,176,0.14); color: var(--ink); border-color: rgba(143,155,176,0.3); }
   .pista-i { font-size: 13px; color: var(--muted); font-style: italic; }
+  .sec-mundo { border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .sec-mundo small { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); text-transform: none; }
   .veces { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
 </style>
 
@@ -1686,10 +1688,14 @@
     return d.desde > 0 ? "Aparece desde la pieza " + d.desde : "Desde el inicio";
   }
   function renderIndice() {
-    var h = "", i, d, mu = -1;
-    for (i = 0; i < PIEZAS.length; i++) {
+    var h = "", i, d, mu = -1, W;
+    for (W = 0; W < MUNDOS.length; W++) {
+      var mw2 = MUNDOS[W], c0 = "rgb(" + mw2.top.join(",") + ")", c1 = "rgb(" + mw2.bot.join(",") + ")", hay = false;
+      for (i = 0; i < PIEZAS.length; i++) if ((PIEZAS[i].mundo || 0) === W) hay = true;
+      h += '<div class="sec-tienda sec-mundo" style="background:linear-gradient(rgba(11,15,24,.5),rgba(11,15,24,.5)),linear-gradient(90deg,' + c0 + ',' + c1 + ')">Mundo ' + (W + 1) + ' · ' + mw2.n + '<small>desde ' + mw2.h + ' m' + (hay ? "" : " · sin objetos nuevos") + '</small></div>';
+      for (i = 0; i < PIEZAS.length; i++) {
       d = PIEZAS[i];
-      if ((d.mundo || 0) !== mu) { mu = d.mundo || 0; h += '<div class="sec-tienda">Mundo ' + (mu + 1) + ' · ' + MUNDOS[mu].n + '</div>'; }
+      if ((d.mundo || 0) !== W) continue;
       var vista = !!indice[d.id];
       h += '<div class="ficha' + (vista ? "" : " oculta") + '"><div class="ficha-ico"><canvas width="120" height="120" data-i="' + i + '"></canvas></div><div class="ficha-txt">';
       if (vista) {
@@ -1699,6 +1705,7 @@
         h += '<b>???</b><p>Todavía no te salió. Seguí jugando para descubrirlo.</p><span class="pista-i">Pista: ' + cuando(d).toLowerCase() + '</span>';
       }
       h += '</div></div>';
+      }
     }
     elListaIndice.innerHTML = h;
     document.getElementById("indiceN").textContent = contarIndice() + " / " + PIEZAS.length;
