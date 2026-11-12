@@ -242,6 +242,8 @@
   #sigueTxt canvas { position: static; width: 26px; height: 26px; }
   .vineta { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s;
     background: radial-gradient(ellipse at center, transparent 48%, rgba(0, 0, 0, 0.62)); }
+  .congelado canvas { filter: saturate(0.7) hue-rotate(-12deg) brightness(1.05); }
+  .congelado .vineta { opacity: 1; box-shadow: inset 0 0 70px 10px rgba(120,200,255,0.5); }
   .lento .vineta { opacity: 1; }
   .lento canvas { filter: saturate(0.55) contrast(1.05); }
   #tienda, #ajustes, #ayuda, #pausa { background: rgba(12, 17, 27, 0.95); }
@@ -472,7 +474,7 @@
     <button class="hab" id="habRotar" aria-label="Rotar pieza (R)" title="Rotar pieza (R)" hidden><kbd>R</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9a5.5 5.5 0 1 0 1.8-4.1"/><path d="M3.5 3v3.8h3.8"/></svg><span class="hab-n">Rotar</span><b id="usosRotar">0</b></button>
     <button class="hab" id="habCambiar" aria-label="Cambiar pieza (C)" title="Descartar y pasar a la siguiente (C)" hidden><kbd>C</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 6h12.5l-3-3"/><path d="M15.5 12H3l3 3"/></svg><span class="hab-n">Cambiar</span><b id="usosCambiar">0</b></button>
     <button class="hab" id="habPegar" aria-label="Pegamento (G)" aria-pressed="false" title="Pegamento en la base (G)" hidden><kbd>G</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.2c3 3.8 5 6.3 5 8.6a5 5 0 0 1-10 0c0-2.3 2-4.8 5-8.6z"/></svg><span class="hab-n">Pegar</span><b id="usosPegar">0</b></button>
-    <button class="hab" id="habFreno" aria-label="Freno (F)" title="Frena toda la torre al instante (F)" hidden><kbd>F</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M5.5 9h7"/></svg><span class="hab-n">Freno</span><b id="usosFreno">0</b></button>
+    <button class="hab" id="habFreno" aria-label="Congelar (F)" title="Congela la torre hasta que la próxima pieza la toque (F)" hidden><kbd>F</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M5.5 9h7"/></svg><span class="hab-n">Freno</span><b id="usosFreno">0</b></button>
     <button class="hab" id="habTam" aria-label="Tamaño de la pieza (T)" aria-pressed="false" title="Agranda o achica la pieza (T)" hidden><kbd>T</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="8.5" width="6.5" height="6.5" rx="1"/><rect x="8.5" y="2.5" width="7" height="7" rx="1"/></svg><span class="hab-n">Tamaño</span><b id="usosTam">0</b></button>
     <button class="hab" id="habNivel" aria-label="Nivelar (N)" title="Endereza las piezas torcidas (N)" hidden><kbd>N</kbd><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="6.5" width="14" height="5" rx="2"/><circle cx="9" cy="9" r="1.2"/></svg><span class="hab-n">Nivelar</span><b id="usosNivel">0</b></button>
   </div>
@@ -741,8 +743,8 @@
   // y se achica entero, así el juego siempre se ve completo y centrado, con el fondo rellenando los costados.
   var DISENO_H = 640, DISENO_W = 400;
   function ajustarPantalla() {
-    var vh = window.innerHeight - 24, vw = window.innerWidth - 32, z = Math.min(1, vh / DISENO_H, vw / DISENO_W);
-    if (vh < DISENO_H) {
+    var vh = window.innerHeight - 16, vw = window.innerWidth - 24, z = Math.min(2.4, vh / DISENO_H, vw / DISENO_W);
+    if (vh < DISENO_H || (window.innerWidth >= 600 && z > 1.02)) {
       elStage.style.width = DISENO_W + "px"; elStage.style.maxWidth = "none"; elStage.style.height = DISENO_H + "px";
       elStage.style.flex = "none"; elStage.style.alignSelf = "center"; elStage.style.transform = "scale(" + z + ")";
     } else {
@@ -1078,7 +1080,7 @@
     { id: "rotar",   sec: "Habilidades", n: "Rotar pieza",   d: "Gira la pieza antes de soltarla. Usos por partida: 3, 6 o 10.", p: [120, 300, 600] },
     { id: "cambiar", n: "Cambiar pieza", d: "Descarta la pieza actual y pasás a la siguiente. Usos por partida: 1, 2 o 4.", p: [150, 350, 700] },
     { id: "pegar",   n: "Pegamento",     d: "La pieza queda pegada a lo primero que toque. Usos por partida: 1, 2 o 3.", p: [200, 450, 900] },
-    { id: "freno",   n: "Freno",         d: "Frena toda la torre al instante y la deja quieta. Usos por partida: 1, 2 o 3.", p: [250, 550, 1000] },
+    { id: "freno",   n: "Congelar",         d: "Congela el tiempo: la torre queda quieta hasta que la pieza que soltás toque algo. Usos por partida: 1, 2 o 3.", p: [250, 550, 1000] },
     { id: "tam",     n: "Tamaño",        d: "Agranda o achica la pieza actual. Usos por partida: 1, 2 o 3.", p: [300, 650, 1200] },
     { id: "nivel",   n: "Nivelar",       d: "Endereza suavemente las piezas torcidas. Usos por partida: 1, 2 o 3.", p: [350, 750, 1400] }
   ];
@@ -1260,7 +1262,7 @@
 
   // ---------- Habilidades ----------
   var HAB_USOS = { rotar: [0, 3, 6, 10], cambiar: [0, 1, 2, 4], pegar: [0, 1, 2, 3], freno: [0, 1, 2, 3], tam: [0, 1, 2, 3], nivel: [0, 1, 2, 3] };
-  var HAB_IDS = ["rotar", "cambiar", "pegar", "freno", "tam", "nivel"], HAB_NOM = { rotar: "Rotar", cambiar: "Cambiar pieza", pegar: "Pegamento", freno: "Freno", tam: "Tamaño", nivel: "Nivelar" };
+  var HAB_IDS = ["rotar", "cambiar", "pegar", "freno", "tam", "nivel"], HAB_NOM = { rotar: "Rotar", cambiar: "Cambiar pieza", pegar: "Pegamento", freno: "Congelar", tam: "Tamaño", nivel: "Nivelar" };
   function algunaHab() { for (var i = 0; i < HAB_IDS.length; i++) if (nivel(HAB_IDS[i]) > 0) return true; return false; }
   var usos = { rotar: 0, cambiar: 0, pegar: 0, freno: 0, tam: 0, nivel: 0 }, pegarCola = [], nivelarN = 0;
   var habsEl = document.getElementById("habs"), habKey = "";
@@ -1315,15 +1317,29 @@
     else { usos.tam++; cur.def = base; }
     tono(k === 1 ? 480 : 360, 0.08, "triangle", 0.05, k === 1 ? 700 : 260);
   }
+  var congelado = false, descongelarYa = false;
   function frenarTorre() {
-    if (estado !== "juego" || usos.freno <= 0 || !cuerpos.length) return;
+    if (estado !== "juego" || usos.freno <= 0 || !cuerpos.length || congelado) return;
     usos.freno--; misEv("hab", 1);
     for (var i = 0; i < cuerpos.length; i++) {
       var b = cuerpos[i];
-      if (b.plugin.sigue || b.speed >= 2.5) continue;
+      if (b.plugin.sigue || b.plugin.vuelo) continue;
       Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0); b.plugin.calm = 40;
+      Body.setStatic(b, true); b.plugin.fz = true;
     }
-    aviso("Torre frenada"); tono(140, 0.18, "sine", 0.08, 90);
+    congelado = true; descongelarYa = false;
+    elStage.classList.add("congelado");
+    aviso("Tiempo congelado"); tono(140, 0.18, "sine", 0.08, 90);
+  }
+  function descongelar(silencio) {
+    if (!congelado) return;
+    congelado = false; descongelarYa = false;
+    for (var i = 0; i < cuerpos.length; i++) {
+      var b = cuerpos[i];
+      if (b.plugin.fz) { b.plugin.fz = false; Body.setStatic(b, false); Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0); }
+    }
+    elStage.classList.remove("congelado");
+    if (!silencio) tono(220, 0.12, "sine", 0.05, 330);
   }
   function nivelarTorre() {
     if (estado !== "juego" || usos.nivel <= 0 || !cuerpos.length) return;
@@ -1804,13 +1820,19 @@
         var a = ev.pairs[n].bodyA.parent || ev.pairs[n].bodyA, b = ev.pairs[n].bodyB.parent || ev.pairs[n].bodyB;
         if (a.plugin && a.plugin.pega && !a.plugin.pegada && b.position.y > a.position.y) { a.plugin.pegada = true; pegarCola.push([a, b]); }
         else if (b.plugin && b.plugin.pega && !b.plugin.pegada && a.position.y > b.position.y) { b.plugin.pegada = true; pegarCola.push([b, a]); }
+        if (congelado) {
+          var pa = a.plugin, pb = b.plugin;
+          if ((pa && pa.def && !pa.fz) || (pb && pb.def && !pb.fz)) descongelarYa = true;
+        }
+        if (a.plugin) a.plugin.vuelo = false;
+        if (b.plugin) b.plugin.vuelo = false;
         var v = Math.max(a.speed || 0, b.speed || 0);
         if (v > 2.5) { sfx.golpe(v * 6); vibrar(v > 5 ? 25 : 10); break; }
       }
     });
     cuerpos = []; snaps = []; drops = 0; puntaje = 0; topEstable = 0;
     vidas = nivel("segunda"); errores = 0; errDrops = 0; errCool = 0; reseteoTope = false; dropsMundo = 0; ultDif = false; sig2 = null; actualizarVidas();
-    escala = 1; objetivo = 1; elStage.classList.remove("lento");
+    escala = 1; objetivo = 1; elStage.classList.remove("lento"); congelado = false; descongelarYa = false; elStage.classList.remove("congelado");
     usos = {}; HAB_IDS.forEach(function (q) { usos[q] = HAB_USOS[q][nivel(q)]; });
     pegarCola = [];
     camTop = -TORRE_PANTALLA; camObj = camTop;
@@ -1880,7 +1902,7 @@
     var top = camTop + COLGAR_TOP;
     guardarSnap();
     var b = crearCuerpo(def, x, top + def.h / 2);
-    b.plugin.n = drops;
+    b.plugin.n = drops; b.plugin.vuelo = true;
     if (ang) {
       Body.rotate(b, ang);
       var mn = Infinity;
@@ -1948,12 +1970,13 @@
     }
     procesarPegas();
     Engine.update(engine, DT * escala);
+    if (descongelarYa) descongelar();
     seguirPegas();
     // asentado: amortigua el balanceo de las piezas que ya casi están quietas
     if (nivelarN > 0) nivelarN--;
     for (var sq = 0; sq < cuerpos.length; sq++) {
       var bq = cuerpos[sq];
-      if (bq.plugin.sigue) continue;
+      if (bq.plugin.sigue || bq.plugin.fz) continue;
       if (nivelarN > 0) {                 // Nivelar: cada pieza gira suavemente hacia el ángulo recto más cercano
         if (!bq.plugin.def.circulo) {
           var tgt = Math.round(bq.angle / (Math.PI / 2)) * (Math.PI / 2), df = tgt - bq.angle;
@@ -3105,6 +3128,7 @@
       Composite.add(engine.world, b); nuevos.push(b);
     });
     sn.cuerpos.forEach(function (q, k) { if (q.sig && nuevos[q.sig.i]) nuevos[k].plugin.sigue = { o: nuevos[q.sig.i], x: q.sig.x, y: q.sig.y, a: q.sig.a }; });
+    congelado = false; descongelarYa = false; elStage.classList.remove("congelado");
     cuerpos = nuevos; pegarCola = [];
     cur = { def: sn.cur.def, ang: sn.cur.ang, pega: sn.cur.pega };
     usos = JSON.parse(JSON.stringify(sn.usos)); sig = sn.sig; sig2 = sn.sig2; drops = sn.drops;
@@ -3150,6 +3174,8 @@
 
   // gancho de pruebas (solo lectura)
   window.__eqMus = function () { return [mus.cur, mus.step, ac && ac.state]; };
+  window.__eqFreno = function () { usos.freno = 2; frenarTorre(); return congelado; };
+  window.__eqCong = function () { return { c: congelado, est: cuerpos.filter(function (b) { return b.isStatic; }).length, n: cuerpos.length, y: cuerpos.map(function (b) { return Math.round(b.position.y); }) }; };
   window.__eq = function () {
     return { dbg: (cuerpos||[]).map(function (c) { return [+c.speed.toFixed(3), +c.angularVelocity.toFixed(4), c.plugin.calm, +c.angle.toFixed(3)]; }), estado: estado, puntaje: puntaje, drops: drops, cuerpos: cuerpos ? cuerpos.length : 0, topEstable: topEstable, viento: vientoVal, temblor: temblorT, mejor: mejor, hookX: hookX(), topX: (function(){var t=null;for(var i=0;i<(cuerpos||[]).length;i++){var c=cuerpos[i];if(c.plugin.calm>10&&(t===null||c.position.y<t.position.y))t=c;}return t?t.position.x:200;})() };
   };
