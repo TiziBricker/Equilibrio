@@ -194,8 +194,14 @@
   .rk-nombre input { flex: 1; min-width: 0; border-radius: 12px; border: 1px solid var(--card-line); background: var(--card); color: var(--ink); font: inherit; font-size: 16px; padding: 10px 12px; }
   .rk-nombre input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .rk-nombre .btn-sec { padding: 10px 14px; }
+  .rk-tabs { display: flex; gap: 6px; width: min(340px, 100%); padding: 4px; border-radius: 14px; background: var(--card); border: 1px solid var(--card-line); }
+  .rk-tabs button { flex: 1; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font: inherit; font-weight: 700; font-size: 14px; padding: 8px 0; cursor: pointer; }
+  .rk-tabs button[aria-selected="true"] { background: var(--accent); color: #231a00; }
+  .rk-tabs button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .rk-yo { width: min(340px, 100%); box-sizing: border-box; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--accent); background: rgba(255,194,46,0.12); font-size: 15px; display: flex; justify-content: space-between; gap: 8px; }
+  .rk-yo b { color: var(--accent); }
   .rk-estado { min-height: 18px; font-size: 13px; color: var(--muted); text-align: center; }
-  .rk-lista { list-style: none; margin: 0; padding: 0; width: min(340px, 100%); max-height: 46vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .rk-lista { list-style: none; margin: 0; padding: 0; width: min(340px, 100%); max-height: 38vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
   .rk-lista li { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--card-line); font-size: 15px; }
   .rk-lista li b { color: var(--accent); }
   .rk-lista li.yo { border-color: var(--accent); background: rgba(255,194,46,0.12); }
@@ -590,8 +596,14 @@
       <input id="rkNombre" type="text" maxlength="14" placeholder="Tu nombre" aria-label="Tu nombre" />
       <button class="btn-sec" type="submit">Guardar</button>
     </form>
+    <div class="rk-tabs" id="rkTabs" role="tablist" hidden>
+      <button type="button" role="tab" data-p="day" aria-selected="false">Hoy</button>
+      <button type="button" role="tab" data-p="week" aria-selected="false">Semana</button>
+      <button type="button" role="tab" data-p="all" aria-selected="true">Siempre</button>
+    </div>
     <div class="rk-estado" id="rkEstado" aria-live="polite"></div>
     <ol class="rk-lista" id="rkLista"></ol>
+    <div class="rk-yo" id="rkYo" hidden></div>
     <button class="btn" id="btnVolverRk" data-foco>Volver</button>
   </div>
 
@@ -1741,7 +1753,7 @@
     if (drops > 0) misEv("partidas", 1);
     if (gan > 0) misEv("monedas", gan);
     misEv("alt", puntaje);
-    if (window.RANKAPI) RANKAPI.registrar(puntaje);
+    if (window.RANKAPI) RANKAPI.registrar(puntaje, drops, Math.round((Date.now() - runT0) / 1000));
   }
 
 
@@ -1874,7 +1886,7 @@
   }
 
   // ---------- Estado ----------
-  var engine, base, cuerpos, cur, sig, fase, drops, mejor = leerMejor(), puntaje, camTop, camObj, topEstable;
+  var runT0 = 0, engine, base, cuerpos, cur, sig, fase, drops, mejor = leerMejor(), puntaje, camTop, camObj, topEstable;
   var estado = "menu";            // menu | juego | cayendo | fin
   var VIENTO = false;   // el viento se reactivará en otros modos de juego
   var tSpawn, tCaida, tiempo, vientoFase, vientoVal, temblorAviso, temblorT, temblorProx, sacudida, hookVx;
@@ -1922,7 +1934,7 @@
         if (v > 2.5) { sfx.golpe(v * 6); vibrar(v > 5 ? 25 : 10); break; }
       }
     });
-    cuerpos = []; snaps = []; drops = 0; puntaje = 0; topEstable = 0;
+    cuerpos = []; snaps = []; drops = 0; puntaje = 0; topEstable = 0; runT0 = Date.now();
     vidas = nivel("segunda"); errores = 0; errDrops = 0; errCool = 0; reseteoTope = false; dropsMundo = 0; ultDif = false; sig2 = null; actualizarVidas();
     escala = 1; objetivo = 1; elStage.classList.remove("lento"); congelado = false; descongelarYa = false; elStage.classList.remove("congelado");
     usos = {}; HAB_IDS.forEach(function (q) { usos[q] = HAB_USOS[q][nivel(q)]; });
@@ -3201,56 +3213,96 @@
     function nombre() { return (ls("equilibrio-nombre") || "").slice(0, 14); }
     function limpio(t) { return String(t || "").replace(/[<>\n\r]/g, "").trim().slice(0, 14); }
     function mejorLocal() { return parseFloat(ls("equilibrio-rk-mejor")) || 0; }
-    function enviado() { return parseFloat(ls("equilibrio-rk-enviado")) || 0; }
-    function enviar() {
-      var h = Math.round(mejorLocal() * 10) / 10, n = nombre();
-      if (!base || !n || h <= 0 || h <= enviado()) return Promise.resolve(false);
-      var pedido = sb
-        ? fetch(sb + "/rest/v1/rpc/submit_score", { method: "POST", headers: sbH, body: JSON.stringify({ p_uid: uid(), p_n: n, p_h: h }) })
-        : fetch(fb + "/scores/" + uid() + ".json", { method: "PUT", body: JSON.stringify({ n: n, h: h }) });
-      return pedido
-        .then(function (r) { if (r.ok) { ls("equilibrio-rk-enviado", String(h)); return true; } return false; })
-        .catch(function () { return false; });
+    function dia() { return new Date().toISOString().slice(0, 10); }
+    function leerJ(k) { try { return JSON.parse(ls(k) || "null"); } catch (e) { return null; } }
+    var periodo = "all", enCurso = false;
+    function rpc(f, args) {
+      return fetch(sb + "/rest/v1/rpc/" + f, { method: "POST", headers: sbH, body: JSON.stringify(args) });
     }
-    function registrar(alt) {
-      if (!base) return;
-      if (alt > mejorLocal()) ls("equilibrio-rk-mejor", String(alt));
+    // Se manda cada partida que supera tu mejor del día, con piezas y segundos jugados: el servidor descarta lo imposible.
+    function enviar() {
+      var pend = leerJ("equilibrio-rk-pend"), n = nombre();
+      if (!base || !n || !pend || enCurso) return Promise.resolve(false);
+      enCurso = true;
+      var pedido = sb
+        ? rpc("submit_score", { p_uid: uid(), p_n: n, p_h: pend.h, p_d: pend.d, p_s: pend.s })
+        : fetch(fb + "/scores/" + uid() + ".json", { method: "PUT", body: JSON.stringify({ n: n, h: Math.max(pend.h, mejorLocal()) }) });
+      return pedido
+        .then(function (r) {
+          enCurso = false;
+          if (r.ok || (r.status >= 400 && r.status < 500 && r.status !== 429)) { ls("equilibrio-rk-pend", ""); }   // 4xx = rechazada: no reintentar
+          return r.ok;
+        })
+        .catch(function () { enCurso = false; return false; });
+    }
+    function registrar(alt, piezas, segs) {
+      if (!base || !(alt > 0)) return;
+      var h = Math.round(alt * 10) / 10;
+      if (h > mejorLocal()) ls("equilibrio-rk-mejor", String(h));
+      var hoy = leerJ("equilibrio-rk-hoy");
+      if (!hoy || hoy.d !== dia()) hoy = { d: dia(), h: 0 };
+      if (h <= hoy.h) return;
+      hoy.h = h; ls("equilibrio-rk-hoy", JSON.stringify(hoy));
+      var pend = leerJ("equilibrio-rk-pend");
+      if (!pend || h > pend.h) ls("equilibrio-rk-pend", JSON.stringify({ h: h, d: piezas | 0, s: segs | 0 }));
       enviar();
     }
+    function fila(e, i, yo) {
+      var li = document.createElement("li"), p = document.createElement("b"), nm = document.createElement("span"), al = document.createElement("em");
+      p.textContent = i; nm.textContent = e.n; al.textContent = fmt(e.h) + " m"; al.style.fontStyle = "normal";
+      if (e.id === yo) li.className = "yo";
+      li.appendChild(p); li.appendChild(nm); li.appendChild(al); return li;
+    }
+    var TIT = { day: "de hoy", week: "de la semana", all: "del mundo" };
     function cargar() {
-      estado.textContent = "Cargando…"; lista.innerHTML = "";
+      var per = periodo, yo = uid(), elYo = document.getElementById("rkYo");
+      estado.textContent = "Cargando…"; lista.innerHTML = ""; elYo.hidden = true;
       var pide = sb
-        ? fetch(sb + "/rest/v1/scores?select=uid,n,h&order=h.desc&limit=20", { headers: sbH })
-        : fetch(fb + "/scores.json?orderBy=" + encodeURIComponent('"h"') + "&limitToLast=20");
+        ? rpc("top_scores", { p_period: per, p_limit: 50 })
+        : fetch(fb + "/scores.json?orderBy=" + encodeURIComponent('"h"') + "&limitToLast=50");
       return pide.then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (d) {
-        var arr = [], k, yo = uid();
+        if (per !== periodo) return;
+        var arr = [], k;
         if (sb) { (d || []).forEach(function (e) { if (e && e.h !== null && !isNaN(+e.h)) arr.push({ id: e.uid, n: String(e.n || "?").slice(0, 14), h: +e.h }); }); }
         else for (k in (d || {})) if (d[k] && typeof d[k].h === "number") arr.push({ id: k, n: String(d[k].n || "?").slice(0, 14), h: d[k].h });
         arr.sort(function (a, b) { return b.h - a.h; });
-        lista.innerHTML = "";
-        arr.forEach(function (e, i) {
-          var li = document.createElement("li"), p = document.createElement("b"), nm = document.createElement("span"), al = document.createElement("em");
-          p.textContent = i + 1; nm.textContent = e.n; al.textContent = fmt(e.h) + " m"; al.style.fontStyle = "normal";
-          if (e.id === yo) li.className = "yo";
-          li.appendChild(p); li.appendChild(nm); li.appendChild(al); lista.appendChild(li);
-        });
-        estado.textContent = arr.length ? "Top " + arr.length + " del mundo" + (mejorLocal() ? " · tu mejor: " + fmt(mejorLocal()) + " m" : "") : "Todavía no hay puntajes. ¡Sé el primero!";
-      }).catch(function (e) { estado.textContent = "No se pudo cargar el ranking" + (typeof e === "number" ? " (error " + e + ")" : " (sin conexión o bloqueado)") + "."; });
+        var estoy = false;
+        arr.forEach(function (e, i) { if (e.id === yo) estoy = true; lista.appendChild(fila(e, i + 1, yo)); });
+        estado.textContent = arr.length ? "Top " + arr.length + " " + TIT[per] + (mejorLocal() ? " · tu mejor: " + fmt(mejorLocal()) + " m" : "") : "Todavía no hay puntajes " + TIT[per] + ". ¡Sé el primero!";
+        if (sb && !estoy) {
+          rpc("my_rank", { p_uid: yo, p_period: per }).then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
+            m = m && m[0]; if (!m || per !== periodo || m.rank === null) return;
+            elYo.innerHTML = ""; var a = document.createElement("span"), b = document.createElement("b");
+            a.textContent = "Estás #" + m.rank; b.textContent = fmt(+m.h) + " m"; elYo.appendChild(a); elYo.appendChild(b); elYo.hidden = false;
+          }).catch(function () {});
+        }
+      }).catch(function (e) { if (per === periodo) estado.textContent = "No se pudo cargar el ranking" + (typeof e === "number" ? " (error " + e + ")" : " (sin conexión o bloqueado)") + "."; });
     }
-    function abrir() { inp.value = nombre(); mostrar("ranking"); cargar(); }
+    function marcarTab() {
+      var bs = document.querySelectorAll("#rkTabs button");
+      for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-selected", bs[i].getAttribute("data-p") === periodo ? "true" : "false");
+    }
+    function abrir() { inp.value = nombre(); marcarTab(); mostrar("ranking"); cargar(); enviar(); }
     function init() {
       if (!base) return;
       btn.hidden = false;
-      if (mejor > mejorLocal()) ls("equilibrio-rk-mejor", String(mejor));
+      if (sb) {
+        var tabs = document.getElementById("rkTabs"); tabs.hidden = false;
+        tabs.addEventListener("click", function (e) {
+          var b = e.target.closest ? e.target.closest("button[data-p]") : null;
+          if (!b) return; periodo = b.getAttribute("data-p"); marcarTab(); cargar();
+        });
+      }
       clic(btn, abrir);
       clic(document.getElementById("btnVolverRk"), function () { mostrar("menu"); });
       document.getElementById("rkForm").addEventListener("submit", function (e) {
         e.preventDefault();
         var n = limpio(inp.value);
         if (!n) { estado.textContent = "Escribí un nombre."; return; }
-        ls("equilibrio-nombre", n); inp.value = n; ls("equilibrio-rk-enviado", "0");
+        ls("equilibrio-nombre", n); inp.value = n;
         estado.textContent = "Guardando…";
-        enviar().then(function () { cargar(); });
+        var antes = sb ? rpc("set_name", { p_uid: uid(), p_n: n }).catch(function () {}) : Promise.resolve();
+        antes.then(function () { return enviar(); }).then(function () { cargar(); });
       });
     }
     return { registrar: registrar, init: init };
