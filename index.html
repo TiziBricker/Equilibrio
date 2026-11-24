@@ -634,7 +634,6 @@
       <input id="rkNombre" type="text" maxlength="14" placeholder="Tu nombre" aria-label="Tu nombre" />
       <button class="btn-sec" type="submit">Guardar</button>
     </form>
-    <div class="rk-cuenta" id="rkCuenta" hidden></div>
     <div class="rk-tabs" id="rkTabs" role="tablist" hidden>
       <button type="button" role="tab" data-p="day" aria-selected="false">Hoy</button>
       <button type="button" role="tab" data-p="week" aria-selected="false">Semana</button>
@@ -3294,27 +3293,11 @@
       location.href = sb + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(location.origin + location.pathname);
     }
     function salir() { ses = null; listo = false; ls("equilibrio-sesion", ""); pintarCuenta(); }
-    function pintarCuenta() {
-      var el = document.getElementById("rkCuenta"); if (!goog) return;
-      pintarPerfil(); pintarPanel();
-      el.hidden = false; el.innerHTML = "";
-      var tx = document.createElement("small"), b = document.createElement("button"); b.type = "button";
-      if (ses) {
-        tx.textContent = "✓ Sesión de Google" + (ses.n ? ": " + ses.n : "") + ". Tu récord queda en tu cuenta."; b.className = "btn-sec"; b.textContent = "Salir";
-        b.onclick = function () { salir(); cargar(); };
-        el.appendChild(tx); el.appendChild(b);
-      } else {
-        tx.textContent = "Opcional: entrá para guardar tu récord en tu cuenta.";
-        b.className = "btn-google"; b.id = "btnGoogle";
-        b.innerHTML = GLOGO + 'Entrar con Google';
-        b.onclick = function () { entrar("rk"); };
-        el.appendChild(tx); el.appendChild(b);
-      }
-    }
+    function pintarCuenta() { if (!goog) return; pintarPerfil(); pintarPanel(); }
     // ----- Guardado en la nube: monedas, compras, misiones, logros, índice, récord y ajustes siguen a tu cuenta -----
     function estadoJuego() { return window.__estadoJuego ? window.__estadoJuego() : "menu"; }
     var CLAVES = ["mejor", "tienda", "misiones", "indice", "tuto", "mute", "vib", "vm", "ve"];
-    var syncT = parseInt(ls("equilibrio-sync-t"), 10) || 0, listo = false, sucio = false, ocupado = false, ultimo = "", msgSync = "";
+    var syncT = parseInt(ls("equilibrio-sync-t"), 10) || 0, listo = false, sucio = false, ocupado = false, ultimo = "", msgSync = "", ultPull = 0;
     function pj(t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } }
     function copia(o) { return JSON.parse(JSON.stringify(o)); }
     function instantanea() { var o = {}; CLAVES.forEach(function (k) { var v = ls("equilibrio-" + k); if (v !== null && v !== "") o[k] = v; }); return o; }
@@ -3357,7 +3340,7 @@
     }
     function sincronizar() {
       if (!ses || ocupado || (estadoJuego() !== "menu" && estadoJuego() !== "fin")) return Promise.resolve();
-      ocupado = true; msgSync = "Sincronizando…"; pintarPanel();
+      ocupado = true; ultPull = Date.now(); msgSync = "Sincronizando…"; pintarPanel();
       return rpc("get_save", {}).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (rows) {
         var c = rows && rows[0], L = instantanea(), marca = ls("equilibrio-sync-id"), out, t;
         if (!c) { out = L; t = syncT || Date.now(); }                                   // la nube está vacía: sube lo de esta compu
@@ -3380,7 +3363,7 @@
       setInterval(function () {
         if (!ses) return;
         if (listo) { var cur = JSON.stringify(instantanea()); if (cur !== ultimo) { ultimo = cur; syncT = Date.now(); ls("equilibrio-sync-t", String(syncT)); sucio = true; } }
-        if (!listo || sucio) sincronizar();
+        if (!listo || sucio || Date.now() - ultPull > (cfg.pullMs || 30000)) sincronizar();   // y cada ~30 s mira si otro dispositivo cambió algo
       }, ms);
       document.addEventListener("visibilitychange", function () {
         if (!ses || !listo) return;
