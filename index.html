@@ -2345,10 +2345,14 @@
   }
 
   // Mini-torre: muestra la torre del mundo actual, desde su plataforma hasta la altura del mundo siguiente
+  var miniDib = false;
   function dibujarMini() {
     var bw = 56, s = 0.3, i, b;
     var mi = Math.min(mundoMax, MUNDOS.length - 1), spanM = MUNDOS[mi + 1] ? MUNDOS[mi + 1].h - MUNDOS[mi].h : 14;
-    var availH = spanM * PX_POR_M * s + 16, x0 = W - bw - 8, y0 = Math.round(H / 2 - availH / 2), bot = y0 + availH - 8;
+    // la ventana llega hasta la meta del mundo o hasta la grúa (lo que esté más arriba); si no entra, se achica la escala
+    var spanPx = spanM * PX_POR_M, topPx = Math.max(spanPx, -(camTop + RIEL_Y) + 16);
+    s = Math.min(0.3, (H * 0.6 - 16) / topPx);
+    var availH = topPx * s + 16, x0 = W - bw - 8, y0 = Math.round(H / 2 - availH / 2), bot = y0 + availH - 8;
     function my(wy) { return bot + wy * s; }
     ctx.save();
     ctx.fillStyle = "rgba(8, 12, 22, 0.38)"; rr(x0 - 3, y0, bw + 6, availH, 8); ctx.fill();
@@ -2368,21 +2372,38 @@
     }
     ctx.restore();
     ctx.fillStyle = plM.to; ctx.fillRect(BASE_X - BASE_W / 2, 0, BASE_W, 5);
-    var topB = null;
     for (i = 0; i < cuerpos.length; i++) {
       b = cuerpos[i]; if (b.bounds.max.y > 80) continue;
-      if (!topB || b.bounds.min.y < topB.bounds.min.y) topB = b;
       dibujarCuerpo(b);
     }
-    ctx.restore();
-    if (topB) {
-      var tx = x0 + bw / 2 + (topB.bounds.min.x - BASE_X) * s, twid = Math.max(2, (topB.bounds.max.x - topB.bounds.min.x) * s);
-      ctx.fillStyle = "#ffc22e"; ctx.fillRect(tx, my(topB.bounds.min.y) - 2, twid, 2);
+    // la grúa con su pieza colgada, en la misma posición (respecto de la torre) que en el juego
+    miniDib = true;
+    var rY = camTop + RIEL_Y, hx = hookX(), gcM = gruaCol(), cx0 = BASE_X - bw / s / 2 - 10, cw = bw / s + 20;
+    ctx.fillStyle = "#1d2538"; ctx.fillRect(cx0, rY, cw, 9);
+    ctx.fillStyle = gcM.metal ? METALES[gcM.metal].cd : gcM.c1;
+    for (var rx2 = cx0; rx2 < cx0 + cw; rx2 += 22) {
+      ctx.beginPath(); ctx.moveTo(rx2, rY); ctx.lineTo(rx2 + 8, rY); ctx.lineTo(rx2 + 2, rY + 9); ctx.lineTo(rx2 - 6, rY + 9); ctx.closePath(); ctx.fill();
     }
+    ctx.fillStyle = gcM.metal ? METALES[gcM.metal].cl : gcM.c2; ctx.fillRect(hx - 14, rY - 4, 28, 16);
+    ctx.fillStyle = "#1b1403"; ctx.fillRect(hx - 9, rY, 18, 4);
+    ctx.strokeStyle = "#cfd6e4"; ctx.lineWidth = 4;
+    var pT = camTop + COLGAR_TOP;
+    if (cur) {
+      var dmM = dimCur();
+      ctx.beginPath(); ctx.moveTo(hx, rY + 12); ctx.lineTo(hx, pT); ctx.stroke();
+      ctx.fillStyle = "#cfd6e4"; ctx.fillRect(hx - 5, pT - 5, 10, 6);
+      dibujarColgada(cur.def, hx, pT + dmM.h / 2, cur.ang || 0);
+    } else if (estado === "juego") {
+      ctx.beginPath(); ctx.moveTo(hx, rY + 12); ctx.lineTo(hx, rY + 34); ctx.stroke();
+      ctx.fillStyle = "#cfd6e4"; ctx.fillRect(hx - 5, rY + 32, 10, 6);
+    }
+    miniDib = false;
+    ctx.restore();
     ctx.restore();
     // meta: la altura donde empieza el mundo siguiente
     ctx.setLineDash([3, 3]); ctx.strokeStyle = "rgba(255,194,46,0.85)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(x0 - 3, y0 + 1); ctx.lineTo(x0 + bw + 3, y0 + 1); ctx.stroke(); ctx.setLineDash([]);
+    var metaY = bot - spanPx * s - 7;
+    ctx.beginPath(); ctx.moveTo(x0 - 3, metaY); ctx.lineTo(x0 + bw + 3, metaY); ctx.stroke(); ctx.setLineDash([]);
     ctx.restore();
   }
 
@@ -2755,7 +2776,7 @@
       decorar(def, x, y, ang || 0);
       if (sk3.metal) {
         brilloOro(x, y, def.w, def.h, ang || 0, 7, sk3.metal);
-        if (Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk3.metal);
+        if (!miniDib && Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk3.metal);
       }
       return;
     }
@@ -2773,7 +2794,7 @@
     decorar(def, x, y, ang || 0);
     if (sk.metal) {
       brilloOro(x, y, def.w, def.h, ang || 0, 7, sk.metal);
-      if (Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk.metal);
+      if (!miniDib && Math.random() < 0.08) lanzarBrillo(brillosP, x + (Math.random() - 0.5) * def.w, y + (Math.random() - 0.5) * def.h, sk.metal);
     }
   }
 
