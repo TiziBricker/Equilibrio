@@ -14,5 +14,5 @@ window.EQ_RANK = {
   supabaseUrl: "https://uvkkwlbhvqelmcvrksrq.supabase.co",
   supabaseKey: "sb_publishable_7uuCbwjiMLjm3J2iO07THw_fR5cgjbP",
   url: "",
-  google: false
+  google: true
 };
