@@ -207,6 +207,25 @@
   .btn-google:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .rk-cuenta .btn-sec { padding: 7px 12px; font-size: 13px; }
   .rk-lista li span i { color: var(--accent); font-style: normal; margin-left: 4px; }
+  .btn-perfil { position: absolute; top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 2px solid var(--card-line); background: var(--card); color: var(--accent); display: grid; place-items: center; cursor: pointer; overflow: hidden; z-index: 2; font: inherit; }
+  #menu .titulo { margin-top: 18px; }
+  .btn-perfil svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .btn-perfil b { font-family: var(--font-display); font-size: 20px; color: #231a00; }
+  .btn-perfil img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .btn-perfil.con { border-color: var(--accent); background: var(--accent); }
+  .btn-perfil:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .btn-perfil[hidden], .btn-perfil [hidden] { display: none; }
+  .cu-avatar { width: 84px; height: 84px; border-radius: 50%; background: var(--card); border: 3px solid var(--card-line); display: grid; place-items: center; overflow: hidden; position: relative; color: var(--accent); }
+  .cu-avatar svg { width: 46px; height: 46px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .cu-avatar [hidden] { display: none; }
+  .cu-avatar.con { background: var(--accent); border-color: var(--accent); }
+  .cu-avatar b { font-family: var(--font-display); font-size: 40px; color: #231a00; }
+  .cu-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cu-nombre { font-size: 20px; font-weight: 700; }
+  .cu-mail { font-size: 13px; color: var(--muted); margin-top: -10px; overflow-wrap: anywhere; }
+  .cu-txt { margin: 0; width: min(300px, 100%); font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .cu-estado { min-height: 18px; font-size: 13px; color: var(--accent); }
+  #cuenta .menu-col { align-items: center; }
   .rk-estado { min-height: 18px; font-size: 13px; color: var(--muted); text-align: center; }
   .rk-lista { list-style: none; margin: 0; padding: 0; width: min(340px, 100%); max-height: 38vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
   .rk-lista li { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--card-line); font-size: 15px; }
@@ -533,6 +552,7 @@
     <h1 class="titulo">Equi<em>librio</em></h1>
     <div class="franja" aria-hidden="true"></div>
     <p class="sub">La grúa te trae cosas. Vos las apilás. Si algo se cae, se acabó.</p>
+    <button class="btn-perfil" id="btnPerfil" aria-label="Cuenta" title="Cuenta" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c.8-4 3.8-6 7.5-6s6.7 2 7.5 6"/></svg><b id="perfilIni" hidden></b><img id="perfilImg" alt="" referrerpolicy="no-referrer" hidden></button>
     <div class="mejor-menu" id="mejorMenu"></div>
     <div class="menu-col">
       <button class="btn" id="btnJugar" data-foco><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Jugar</button>
@@ -595,6 +615,17 @@
     <div class="conteo"><span id="indiceN">0 / 0</span><small>descubiertos</small></div>
     <div class="lista-tienda" id="listaIndice"></div>
     <button class="btn" id="btnVolverI" data-foco>Volver</button>
+  </div>
+
+  <div class="overlay" id="cuenta" hidden>
+    <h2 class="titulo" style="font-size:clamp(34px,10vw,44px)">Cuen<em>ta</em></h2>
+    <div class="cu-avatar" id="cuAvatar"></div>
+    <div class="cu-nombre" id="cuNombre"></div>
+    <div class="cu-mail" id="cuMail"></div>
+    <p class="cu-txt" id="cuTxt"></p>
+    <div class="cu-estado" id="cuEstado" aria-live="polite"></div>
+    <div class="menu-col" id="cuAcc"></div>
+    <button class="btn" id="btnVolverCu" data-foco>Volver</button>
   </div>
 
   <div class="overlay" id="ranking" hidden>
@@ -1896,6 +1927,7 @@
   // ---------- Estado ----------
   var runT0 = 0, engine, base, cuerpos, cur, sig, fase, drops, mejor = leerMejor(), puntaje, camTop, camObj, topEstable;
   var estado = "menu";            // menu | juego | cayendo | fin
+  window.__estadoJuego = function () { return estado; };
   var VIENTO = false;   // el viento se reactivará en otros modos de juego
   var tSpawn, tCaida, tiempo, vientoFase, vientoVal, temblorAviso, temblorT, temblorProx, sacudida, hookVx;
   var rayas = [], estrellas = [], edificios = [];
@@ -3131,7 +3163,7 @@
     if (tutoActivo) fase = -1.5;   // la grúa arranca desde un costado y pasa por el medio
     ajusteMusica();
   }
-  var vistas = { oferta: document.getElementById("oferta"), menu: elMenu, ayuda: elAyuda, ajustes: elAjustes, tienda: elTienda, misiones: elMis, indice: elIndice, ranking: document.getElementById("ranking"), pausa: elPausa, fin: elFin };
+  var vistas = { oferta: document.getElementById("oferta"), menu: elMenu, ayuda: elAyuda, ajustes: elAjustes, tienda: elTienda, misiones: elMis, indice: elIndice, ranking: document.getElementById("ranking"), cuenta: document.getElementById("cuenta"), pausa: elPausa, fin: elFin };
   var volverT = "menu";
   var volverA = "menu";
   function mostrar(n) {
@@ -3211,7 +3243,7 @@
     var cfg = window.EQ_RANK || {}, fb = cfg.url ? String(cfg.url).replace(/\/+$/, "") : "", sb = cfg.supabaseUrl && cfg.supabaseKey ? String(cfg.supabaseUrl).replace(/\/+$/, "") : "", base = fb || sb;
     var sbH = { apikey: cfg.supabaseKey, "Content-Type": "application/json" };
     if (cfg.supabaseKey && String(cfg.supabaseKey).indexOf("sb_") !== 0) sbH.Authorization = "Bearer " + cfg.supabaseKey;   // las claves nuevas (sb_publishable_...) van solo en apikey
-    var btn = document.getElementById("btnRank"), lista = document.getElementById("rkLista"), estado = document.getElementById("rkEstado"), inp = document.getElementById("rkNombre");
+    var btn = document.getElementById("btnRank"), lista = document.getElementById("rkLista"), rkEst = document.getElementById("rkEstado"), inp = document.getElementById("rkNombre");
     function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
     function uid() {
       var u = ls("equilibrio-uid");
@@ -3224,12 +3256,13 @@
     function dia() { return new Date().toISOString().slice(0, 10); }
     function leerJ(k) { try { return JSON.parse(ls(k) || "null"); } catch (e) { return null; } }
     var periodo = "all", enCurso = false;
+    var GLOGO = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';
     // ----- Sesión de Google (opcional, solo versión de GitHub): Supabase Auth por REST, sin librerías -----
     var goog = !!(sb && cfg.google && !window.__PORTAL), ses = goog ? leerJ("equilibrio-sesion") : null;
     function jwt(t) { try { return JSON.parse(decodeURIComponent(escape(atob(String(t).split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))))); } catch (e) { return null; } }
     function guardarSes(a, r) {
       var c = jwt(a); if (!c || !c.sub) return false; var m = c.user_metadata || {};
-      ses = { a: a, r: r, e: c.exp || 0, id: c.sub, n: limpio(String(m.given_name || m.name || m.full_name || "").split(" ")[0]) };
+      ses = { a: a, r: r, e: c.exp || 0, id: c.sub, n: limpio(String(m.given_name || m.name || m.full_name || "").split(" ")[0]), nf: String(m.full_name || m.name || "").slice(0, 40), em: String(c.email || m.email || "").slice(0, 80), f: /^https:\/\//.test(m.avatar_url || m.picture || "") ? String(m.avatar_url || m.picture) : "" };
       ls("equilibrio-sesion", JSON.stringify(ses)); return true;
     }
     function tomarHash() {
@@ -3256,13 +3289,14 @@
         return fetch(sb + "/rest/v1/rpc/" + f, { method: "POST", headers: h, body: JSON.stringify(args) });
       });
     }
-    function entrar() {
-      try { sessionStorage.setItem("equilibrio-abrir-rk", "1"); } catch (e) {}
+    function entrar(donde) {
+      try { sessionStorage.setItem("equilibrio-abrir", donde || "rk"); } catch (e) {}
       location.href = sb + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(location.origin + location.pathname);
     }
-    function salir() { ses = null; ls("equilibrio-sesion", ""); pintarCuenta(); }
+    function salir() { ses = null; listo = false; ls("equilibrio-sesion", ""); pintarCuenta(); }
     function pintarCuenta() {
       var el = document.getElementById("rkCuenta"); if (!goog) return;
+      pintarPerfil(); pintarPanel();
       el.hidden = false; el.innerHTML = "";
       var tx = document.createElement("small"), b = document.createElement("button"); b.type = "button";
       if (ses) {
@@ -3272,11 +3306,119 @@
       } else {
         tx.textContent = "Opcional: entrá para guardar tu récord en tu cuenta.";
         b.className = "btn-google"; b.id = "btnGoogle";
-        b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Entrar con Google';
-        b.onclick = entrar;
+        b.innerHTML = GLOGO + 'Entrar con Google';
+        b.onclick = function () { entrar("rk"); };
         el.appendChild(tx); el.appendChild(b);
       }
     }
+    // ----- Guardado en la nube: monedas, compras, misiones, logros, índice, récord y ajustes siguen a tu cuenta -----
+    function estadoJuego() { return window.__estadoJuego ? window.__estadoJuego() : "menu"; }
+    var CLAVES = ["mejor", "tienda", "misiones", "indice", "tuto", "mute", "vib", "vm", "ve"];
+    var syncT = parseInt(ls("equilibrio-sync-t"), 10) || 0, listo = false, sucio = false, ocupado = false, ultimo = "", msgSync = "";
+    function pj(t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } }
+    function copia(o) { return JSON.parse(JSON.stringify(o)); }
+    function instantanea() { var o = {}; CLAVES.forEach(function (k) { var v = ls("equilibrio-" + k); if (v !== null && v !== "") o[k] = v; }); return o; }
+    function aplicar(o) { CLAVES.forEach(function (k) { try { if (o[k] !== undefined) localStorage.setItem("equilibrio-" + k, o[k]); else localStorage.removeItem("equilibrio-" + k); } catch (e) {} }); }
+    function difieren(a, b) { return CLAVES.some(function (k) { return (a[k] === undefined ? null : a[k]) !== (b[k] === undefined ? null : b[k]); }); }
+    // Une dos guardados sin perder progreso: lo más nuevo manda, y lo acumulativo (récord, logros, índice, niveles, compras) nunca baja.
+    // modo "primera": primera vez que esta compu entra a la cuenta → las monedas ganadas como invitado se suman.
+    function mezclar(L, tL, C, tC, modo) {
+      var nuevaC = tC >= tL, A = nuevaC ? C : L, B = nuevaC ? L : C, out = {}, k;
+      for (k in B) out[k] = B[k]; for (k in A) out[k] = A[k];
+      var mj = Math.max(parseFloat(L.mejor) || 0, parseFloat(C.mejor) || 0); if (mj > 0) out.mejor = String(mj);
+      var il = pj(L.indice) || {}, ic = pj(C.indice) || {}, ix = {}, hay = false;
+      for (k in il) if (il[k]) { ix[k] = il[k]; hay = true; } for (k in ic) if (ic[k]) { ix[k] = ic[k]; hay = true; }
+      if (hay) out.indice = JSON.stringify(ix);
+      if (L.tuto === "1" || C.tuto === "1") out.tuto = "1";
+      var tl = pj(L.tienda), tc = pj(C.tienda);
+      if (tl && tc) {
+        var ta = nuevaC ? tc : tl, tb = nuevaC ? tl : tc, r = copia(ta);
+        r.m = (ta.m | 0) + (modo === "primera" ? (tb.m | 0) : 0);
+        r.mm = Math.max(ta.mm | 0, tb.mm | 0);
+        r.n = r.n || {}; for (k in (tb.n || {})) r.n[k] = Math.max(r.n[k] | 0, tb.n[k] | 0);
+        r.c = r.c || { own: {}, eq: {} }; r.c.own = r.c.own || {}; for (k in ((tb.c || {}).own || {})) if (tb.c.own[k]) r.c.own[k] = tb.c.own[k];
+        out.tienda = JSON.stringify(r);
+      }
+      var ml = pj(L.misiones), mc = pj(C.misiones);
+      if (ml && mc) {
+        var ma = nuevaC ? mc : ml, mb = nuevaC ? ml : mc, rm = copia(ma);
+        rm.st = rm.st || {}; rm.lg = rm.lg || {};
+        for (k in (mb.st || {})) rm.st[k] = Math.max(rm.st[k] | 0, mb.st[k] | 0);
+        for (k in (mb.lg || {})) if (mb.lg[k]) rm.lg[k] = mb.lg[k];
+        out.misiones = JSON.stringify(rm);
+      }
+      return out;
+    }
+    function subir(datos) {
+      return rpc("put_save", { p_data: datos, p_t: syncT }).then(function (r) {
+        if (r.ok) { sucio = false; msgSync = "✓ Progreso guardado en tu cuenta"; } else msgSync = "No se pudo guardar (error " + r.status + "). Se reintenta solo.";
+        pintarPanel();
+      });
+    }
+    function sincronizar() {
+      if (!ses || ocupado || (estadoJuego() !== "menu" && estadoJuego() !== "fin")) return Promise.resolve();
+      ocupado = true; msgSync = "Sincronizando…"; pintarPanel();
+      return rpc("get_save", {}).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (rows) {
+        var c = rows && rows[0], L = instantanea(), marca = ls("equilibrio-sync-id"), out, t;
+        if (!c) { out = L; t = syncT || Date.now(); }                                   // la nube está vacía: sube lo de esta compu
+        else if (marca && marca !== ses.id) { out = c.data || {}; t = +c.t || 0; }     // otra cuenta usó esta compu: manda la nube
+        else { out = mezclar(L, syncT, c.data || {}, +c.t || 0, marca ? "normal" : "primera"); t = Math.max(syncT, +c.t || 0); }
+        var cambioLocal = difieren(out, L), cambioNube = !c || difieren(out, c.data || {});
+        if (cambioLocal) aplicar(out);
+        ls("equilibrio-sync-id", ses.id); syncT = t; ls("equilibrio-sync-t", String(t));
+        ultimo = JSON.stringify(instantanea()); sucio = false; listo = true;
+        if (cambioLocal) {
+          var n = parseInt(sessionStorage.getItem("equilibrio-recargas") || "0", 10) || 0;
+          if (n < 2) { try { sessionStorage.setItem("equilibrio-recargas", String(n + 1)); } catch (e) {} location.reload(); return; }   // recarga para que el juego lea lo nuevo
+        } else { try { sessionStorage.removeItem("equilibrio-recargas"); } catch (e) {} }
+        if (cambioNube) return subir(out);
+        msgSync = "✓ Progreso guardado en tu cuenta"; pintarPanel();
+      }).catch(function () { msgSync = "Sin conexión con la nube. Se reintenta solo."; pintarPanel(); }).then(function () { ocupado = false; });
+    }
+    function vigilar() {
+      var ms = cfg.syncMs || 6000;
+      setInterval(function () {
+        if (!ses) return;
+        if (listo) { var cur = JSON.stringify(instantanea()); if (cur !== ultimo) { ultimo = cur; syncT = Date.now(); ls("equilibrio-sync-t", String(syncT)); sucio = true; } }
+        if (!listo || sucio) sincronizar();
+      }, ms);
+      document.addEventListener("visibilitychange", function () {
+        if (!ses || !listo) return;
+        if (document.visibilityState === "visible") { sincronizar(); return; }
+        if (sucio && ses.e - 10 > Date.now() / 1000) {   // al cerrar o cambiar de pestaña: último envío de lo pendiente
+          try { fetch(sb + "/rest/v1/rpc/put_save", { method: "POST", keepalive: true, headers: { apikey: cfg.supabaseKey, "Content-Type": "application/json", Authorization: "Bearer " + ses.a }, body: JSON.stringify({ p_data: instantanea(), p_t: syncT }) }); } catch (e) {}
+        }
+      });
+    }
+    // ----- Círculo de perfil del menú y panel de cuenta -----
+    function inicial() { return ((ses && (ses.n || ses.nf || ses.em)) || "").trim().charAt(0).toUpperCase(); }
+    function avatar(cont, grande) {   // pone foto (o inicial) dentro de cont; si no hay sesión deja el ícono
+      var ini = cont.querySelector("b"), img = cont.querySelector("img"), svg = cont.querySelector("svg");
+      if (!ini) { ini = document.createElement("b"); cont.appendChild(ini); }
+      if (!img) { img = document.createElement("img"); img.alt = ""; img.referrerPolicy = "no-referrer"; cont.appendChild(img); }
+      cont.classList.toggle("con", !!ses);
+      ini.textContent = inicial(); ini.hidden = !ses; img.hidden = true; if (svg) { if (ses) svg.setAttribute("hidden", ""); else svg.removeAttribute("hidden"); }
+      if (ses && ses.f) { img.onload = function () { img.hidden = false; }; img.onerror = function () { img.hidden = true; }; if (img.getAttribute("src") !== ses.f) img.src = ses.f; else img.hidden = false; }
+    }
+    function pintarPerfil() { var b = document.getElementById("btnPerfil"); if (!goog) return; b.hidden = false; avatar(b); b.setAttribute("aria-label", ses ? "Cuenta de " + (ses.nf || ses.n || "Google") : "Iniciar sesión"); }
+    function pintarPanel() {
+      if (!goog) return;
+      var av = document.getElementById("cuAvatar"), acc = document.getElementById("cuAcc");
+      if (!av.querySelector("svg")) av.insertAdjacentHTML("afterbegin", '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c.8-4 3.8-6 7.5-6s6.7 2 7.5 6"/></svg>');
+      avatar(av);
+      document.getElementById("cuNombre").textContent = ses ? (ses.nf || ses.n || "Jugador") : "Jugás como invitado";
+      document.getElementById("cuMail").textContent = ses ? ses.em : "";
+      document.getElementById("cuTxt").textContent = ses
+        ? "Tus monedas, compras, misiones, logros, índice y récord se guardan en tu cuenta y te siguen en cualquier dispositivo donde entres."
+        : "Entrá con Google para guardar tu progreso en la nube: si jugás desde otra compu o celular, lo encontrás todo igual.";
+      document.getElementById("cuEstado").textContent = ses ? msgSync : "";
+      acc.innerHTML = "";
+      var b = document.createElement("button"); b.type = "button";
+      if (ses) { b.className = "btn-sec"; b.textContent = "Cerrar sesión"; b.onclick = function () { salir(); }; }
+      else { b.className = "btn-google"; b.id = "btnGoogleCu"; b.innerHTML = GLOGO + "Entrar con Google"; b.onclick = function () { entrar("cu"); }; }
+      acc.appendChild(b);
+    }
+    function abrirCuenta() { pintarPanel(); mostrar("cuenta"); if (ses) sincronizar(); }
     // al volver del login: pasa el récord de invitado a la cuenta y pone el nombre de Google si no tenías uno
     function despuesDeLogin() {
       if (!ses) return Promise.resolve();
@@ -3324,7 +3466,7 @@
     var TIT = { day: "de hoy", week: "de la semana", all: "del mundo" };
     function cargar() {
       var per = periodo, yo = uid(), elYo = document.getElementById("rkYo");
-      estado.textContent = "Cargando…"; lista.innerHTML = ""; elYo.hidden = true;
+      rkEst.textContent = "Cargando…"; lista.innerHTML = ""; elYo.hidden = true;
       var pide = sb
         ? rpc("top_scores", { p_period: per, p_limit: 50, p_uid: uid() })
         : fetch(fb + "/scores.json?orderBy=" + encodeURIComponent('"h"') + "&limitToLast=50");
@@ -3336,7 +3478,7 @@
         arr.sort(function (a, b) { return b.h - a.h; });
         var estoy = false;
         arr.forEach(function (e, i) { if (e.mine) estoy = true; lista.appendChild(fila(e, i + 1, yo)); });
-        estado.textContent = arr.length ? "Top " + arr.length + " " + TIT[per] + (mejorLocal() ? " · tu mejor: " + fmt(mejorLocal()) + " m" : "") : "Todavía no hay puntajes " + TIT[per] + ". ¡Sé el primero!";
+        rkEst.textContent = arr.length ? "Top " + arr.length + " " + TIT[per] + (mejorLocal() ? " · tu mejor: " + fmt(mejorLocal()) + " m" : "") : "Todavía no hay puntajes " + TIT[per] + ". ¡Sé el primero!";
         if (sb && !estoy) {
           rpc("my_rank", { p_uid: yo, p_period: per }).then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
             m = m && m[0]; if (!m || per !== periodo || m.rank === null) return;
@@ -3344,7 +3486,7 @@
             a.textContent = "Estás #" + m.rank; b.textContent = fmt(+m.h) + " m"; elYo.appendChild(a); elYo.appendChild(b); elYo.hidden = false;
           }).catch(function () {});
         }
-      }).catch(function (e) { if (per === periodo) estado.textContent = "No se pudo cargar el ranking" + (typeof e === "number" ? " (error " + e + ")" : " (sin conexión o bloqueado)") + "."; });
+      }).catch(function (e) { if (per === periodo) rkEst.textContent = "No se pudo cargar el ranking" + (typeof e === "number" ? " (error " + e + ")" : " (sin conexión o bloqueado)") + "."; });
     }
     function marcarTab() {
       var bs = document.querySelectorAll("#rkTabs button");
@@ -3356,9 +3498,14 @@
       btn.hidden = false;
       if (goog) {
         tomarHash();
-        if (ses) despuesDeLogin().then(function () { enviar(); });
-        var reabrir = false; try { reabrir = sessionStorage.getItem("equilibrio-abrir-rk") === "1"; sessionStorage.removeItem("equilibrio-abrir-rk"); } catch (e) {}
-        if (reabrir) setTimeout(function () { abrir(); }, 50);
+        pintarPerfil();
+        clic(document.getElementById("btnPerfil"), abrirCuenta);
+        clic(document.getElementById("btnVolverCu"), function () { mostrar("menu"); });
+        if (ses) despuesDeLogin().then(function () { enviar(); return sincronizar(); });
+        vigilar();
+        var donde = ""; try { donde = sessionStorage.getItem("equilibrio-abrir") || ""; sessionStorage.removeItem("equilibrio-abrir"); } catch (e) {}
+        if (donde === "rk") setTimeout(function () { abrir(); }, 50);
+        if (donde === "cu") setTimeout(function () { abrirCuenta(); }, 50);
       }
       if (sb) {
         var tabs = document.getElementById("rkTabs"); tabs.hidden = false;
@@ -3372,9 +3519,9 @@
       document.getElementById("rkForm").addEventListener("submit", function (e) {
         e.preventDefault();
         var n = limpio(inp.value);
-        if (!n) { estado.textContent = "Escribí un nombre."; return; }
+        if (!n) { rkEst.textContent = "Escribí un nombre."; return; }
         ls("equilibrio-nombre", n); inp.value = n;
-        estado.textContent = "Guardando…";
+        rkEst.textContent = "Guardando…";
         var antes = sb ? rpc("set_name", { p_uid: uid(), p_n: n }).catch(function () {}) : Promise.resolve();
         antes.then(function () { return enviar(); }).then(function () { cargar(); });
       });
