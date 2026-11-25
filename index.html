@@ -597,6 +597,7 @@
       <input type="range" id="volEfectos" min="0" max="100" step="1" value="80">
     </div>
     <div class="interruptor"><span id="lblMute">Silenciar todo</span><button class="sw" id="swMute" role="switch" aria-checked="false" aria-labelledby="lblMute"></button></div>
+    <div class="interruptor" id="rowMini"><span id="lblMini">Minimapa</span><button class="sw" id="swMini" role="switch" aria-checked="true" aria-labelledby="lblMini"></button></div>
     <div class="interruptor" id="rowVib"><span id="lblVib">Vibración</span><button class="sw" id="swVib" role="switch" aria-checked="true" aria-labelledby="lblVib"></button></div>
     </div>
     <button class="btn" id="btnVolverAj" data-foco>Volver</button>
@@ -1372,6 +1373,7 @@
     }
   }
 
+  var miniOn = (function () { try { return localStorage.getItem("equilibrio-mini") !== "0"; } catch (e) { return true; } })();   // por defecto, activado
   var vibOn = leerVib(), vibT = 0, TEMBLOR_VIB = [];
   for (var vi = 0; vi < 18; vi++) TEMBLOR_VIB.push(70, 50);
   function leerVib() { try { return localStorage.getItem("equilibrio-vib") !== "0"; } catch (e) { return true; } }
@@ -2330,8 +2332,7 @@
       var dm = dimCur();
       dibujarColgada(cur.def, hx2, piezaTop + dm.h / 2, cur.ang || 0);
       if (cur.pega) {
-        var gy = piezaTop + dm.h;
-        pegamentoBanda(hx2 - dm.w / 2, gy, dm.w);
+        pegamentoForma(cur.def, cur.ang || 0, hx2, piezaTop + dm.h / 2);
       }
       // guía de caída
       ctx.setLineDash([3, 7]); ctx.strokeStyle = "rgba(255,255,255,0.22)"; ctx.lineWidth = 1.5;
@@ -2341,7 +2342,7 @@
       ctx.fillStyle = "#cfd6e4"; ctx.fillRect(hx2 - 5, RIEL_Y + 32, 10, 6);
     }
     dibujarBrillos(brillosP);
-    if (estado !== "menu" && !tutoActivo) dibujarMini();
+    if (estado !== "menu" && !tutoActivo && miniOn) dibujarMini();
   }
 
   // Mini-torre: muestra la torre del mundo actual, desde su plataforma hasta la altura del mundo siguiente
@@ -2864,6 +2865,57 @@
     ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(x0 + 5, y - 1); ctx.lineTo(x0 + w - 5, y - 1); ctx.stroke(); ctx.lineCap = "butt";
   }
+  // Pegamento que sigue la forma real de la pieza: solo cuelga de la parte más baja (no de la caja que la rodea)
+  function pegamentoForma(def, ang, cx, cy) {
+    var f = fantasmaDe(def, ang), g = f.body, parts = g.parts.length > 1 ? g.parts.slice(1) : [g];
+    var bx = (g.bounds.min.x + g.bounds.max.x) / 2, by = (g.bounds.min.y + g.bounds.max.y) / 2;
+    var x0 = g.bounds.min.x - bx, x1 = g.bounds.max.x - bx, i, j, k, a, b, V, y, xa, best, pts = [], maxY = -Infinity;
+    for (var xr = x0; xr <= x1 + 0.01; xr += 2) {
+      xa = Math.min(xr, x1) + bx; best = -Infinity;
+      for (i = 0; i < parts.length; i++) {
+        V = parts[i].vertices;
+        for (j = 0; j < V.length; j++) {
+          a = V[j]; b = V[(j + 1) % V.length];
+          if ((a.x <= xa && b.x >= xa) || (b.x <= xa && a.x >= xa)) {
+            y = a.x === b.x ? Math.max(a.y, b.y) : a.y + (b.y - a.y) * (xa - a.x) / (b.x - a.x);
+            if (y > best) best = y;
+          }
+        }
+      }
+      if (best > -Infinity) { pts.push({ x: Math.min(xr, x1), y: best - by }); if (best - by > maxY) maxY = best - by; }
+    }
+    // tramos continuos de la silueta que están a menos de 6 px del punto más bajo (base plana = todo el ancho; punta = solo la punta)
+    var runs = [], run = null;
+    for (k = 0; k < pts.length; k++) {
+      if (pts[k].y >= maxY - 6) { if (!run) { run = []; runs.push(run); } run.push(pts[k]); } else run = null;
+    }
+    for (k = 0; k < runs.length; k++) {
+      run = runs[k];
+      if (run[run.length - 1].x - run[0].x < 10) { var mx = (run[0].x + run[run.length - 1].x) / 2, my2 = Math.max(run[0].y, run[run.length - 1].y); run = [{ x: mx - 5, y: my2 }, { x: mx + 5, y: my2 }]; }
+      pegamentoTramo(run, cx, cy);
+    }
+  }
+  function pegamentoTramo(run, cx, cy) {
+    var xs = run[0].x, xe = run[run.length - 1].x, w = xe - xs, n = Math.max(1, Math.round(w / 20)), i, q, d = [], yMin = Infinity, yMax = -Infinity;
+    function yEn(x) { for (var u = 1; u < run.length; u++) if (run[u].x >= x) { var p0 = run[u - 1], p1 = run[u], t = p1.x === p0.x ? 0 : (x - p0.x) / (p1.x - p0.x); return p0.y + (p1.y - p0.y) * t; } return run[run.length - 1].y; }
+    for (i = 0; i < run.length; i++) { yMin = Math.min(yMin, run[i].y); yMax = Math.max(yMax, run[i].y); }
+    ctx.beginPath(); ctx.moveTo(cx + xs, cy + run[0].y - 3);
+    for (i = 1; i < run.length; i++) ctx.lineTo(cx + run[i].x, cy + run[i].y - 3);
+    ctx.lineTo(cx + xe, cy + run[run.length - 1].y + 2);
+    for (i = n - 1; i >= 0; i--) {
+      var dx = xs + w * (i + 0.5) / n, dy = yEn(dx), len = 4 + hz(i, 11) * 5 + 4 * (0.5 + 0.5 * Math.sin(tiempo * 2.2 + i * 1.7));
+      ctx.lineTo(cx + dx + 4.5, cy + dy + 3); ctx.quadraticCurveTo(cx + dx + 3.5, cy + dy + len, cx + dx, cy + dy + len + 2.5); ctx.quadraticCurveTo(cx + dx - 3.5, cy + dy + len, cx + dx - 4.5, cy + dy + 3);
+      yMax = Math.max(yMax, dy + len + 3);
+    }
+    ctx.lineTo(cx + xs, cy + run[0].y + 2); ctx.closePath();
+    var g = ctx.createLinearGradient(0, cy + yMin - 3, 0, cy + yMax);
+    g.addColorStop(0, "#f2ff8e"); g.addColorStop(1, "#9ccc1c");
+    ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 1.3; ctx.strokeStyle = "#5f7f10"; ctx.lineJoin = "round"; ctx.stroke();
+    if (w > 14) {
+      ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(cx + xs + 5, cy + yEn(xs + 5) - 1); ctx.lineTo(cx + xe - 5, cy + yEn(xe - 5) - 1); ctx.stroke(); ctx.lineCap = "butt";
+    }
+  }
   function pegamentoUnion(ax, ay, bx, by) {
     ctx.lineCap = "round";
     ctx.strokeStyle = "#5f7f10"; ctx.lineWidth = 6.5; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
@@ -3247,6 +3299,13 @@
   clic(HB.freno[0], function () { frenarTorre(); HB.freno[0].blur(); });
   clic(HB.tam[0], function () { tamPieza(); HB.tam[0].blur(); });
   clic(HB.nivel[0], function () { nivelarTorre(); HB.nivel[0].blur(); });
+  var swMini = document.getElementById("swMini");
+  swMini.setAttribute("aria-checked", miniOn ? "true" : "false");
+  clic(swMini, function () {
+    miniOn = !miniOn;
+    try { localStorage.setItem("equilibrio-mini", miniOn ? "1" : "0"); } catch (e) {}
+    swMini.setAttribute("aria-checked", miniOn ? "true" : "false");
+  });
   var swVib = document.getElementById("swVib");
   if (!("vibrate" in navigator)) document.getElementById("rowVib").hidden = true;
   swVib.setAttribute("aria-checked", vibOn ? "true" : "false");
@@ -3317,13 +3376,15 @@
     function pintarCuenta() { if (!goog) return; pintarPerfil(); pintarPanel(); }
     // ----- Guardado en la nube: monedas, compras, misiones, logros, índice, récord y ajustes siguen a tu cuenta -----
     function estadoJuego() { return window.__estadoJuego ? window.__estadoJuego() : "menu"; }
-    var CLAVES = ["mejor", "tienda", "misiones", "indice", "tuto", "mute", "vib", "vm", "ve"];
+    var CLAVES = ["mejor", "tienda", "misiones", "indice", "tuto", "mute", "vib", "mini", "vm", "ve"];
     var syncT = parseInt(ls("equilibrio-sync-t"), 10) || 0, listo = false, sucio = false, ocupado = false, ultimo = "", msgSync = "", ultPull = 0;
     function pj(t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } }
     function copia(o) { return JSON.parse(JSON.stringify(o)); }
     function instantanea() { var o = {}; CLAVES.forEach(function (k) { var v = ls("equilibrio-" + k); if (v !== null && v !== "") o[k] = v; }); return o; }
     function aplicar(o) { CLAVES.forEach(function (k) { try { if (o[k] !== undefined) localStorage.setItem("equilibrio-" + k, o[k]); else localStorage.removeItem("equilibrio-" + k); } catch (e) {} }); }
-    function difieren(a, b) { return CLAVES.some(function (k) { return (a[k] === undefined ? null : a[k]) !== (b[k] === undefined ? null : b[k]); }); }
+    function orden(o) { if (!o || typeof o !== "object") return o; if (Array.isArray(o)) return o.map(orden); var r = {}; Object.keys(o).sort().forEach(function (k) { r[k] = orden(o[k]); }); return r; }
+    function canon(t) { if (t === undefined || t === null) return null; try { return JSON.stringify(orden(JSON.parse(t))); } catch (e) { return String(t); } }
+    function difieren(a, b) { return CLAVES.some(function (k) { return canon(a[k]) !== canon(b[k]); }); }   // compara el contenido, no el orden de las claves
     // Une dos guardados sin perder progreso: lo más nuevo manda, y lo acumulativo (récord, logros, índice, niveles, compras) nunca baja.
     // modo "primera": primera vez que esta compu entra a la cuenta → las monedas ganadas como invitado se suman.
     function mezclar(L, tL, C, tC, modo) {
@@ -3373,7 +3434,7 @@
         ultimo = JSON.stringify(instantanea()); sucio = false; listo = true;
         if (cambioLocal) {
           var n = parseInt(sessionStorage.getItem("equilibrio-recargas") || "0", 10) || 0;
-          if (n < 2) { try { sessionStorage.setItem("equilibrio-recargas", String(n + 1)); } catch (e) {} location.reload(); return; }   // recarga para que el juego lea lo nuevo
+          if (n < 2) { try { sessionStorage.setItem("equilibrio-recargas", String(n + 1)); } catch (e) {} ocupado = true; setTimeout(function () { location.reload(); }, 250); return; }   // recarga para que el juego lea lo nuevo
         } else { try { sessionStorage.removeItem("equilibrio-recargas"); } catch (e) {} }
         if (cambioNube) return subir(out);
         msgSync = "✓ Progreso guardado en tu cuenta"; pintarPanel();
@@ -3741,6 +3802,9 @@
   };
 
   window.__eqAlt = function (m) { topEstable = -m * PX_POR_M; camTop = -TORRE_PANTALLA - m * PX_POR_M; puntaje = m; altAct = m; revisarMundo(m); };
+  window.__eqTam = function (k) { if (cur) cur.def = escalarDef(cur.def.orig || cur.def, k); };
+  window.__eqAng = function (g) { if (cur) cur.ang = g * Math.PI / 180; };
+  window.__eqPega = function (v) { if (cur) cur.pega = v !== false; };
   window.__eqPieza = function (id) { for (var i = 0; i < PIEZAS.length; i++) if (PIEZAS[i].id === id && cur) { cur.def = PIEZAS[i]; cur.ang = 0; } };
   window.__eqFase = function (f) { fase = f; };
   window.__eqSoltarEn = function (x) { fase = Math.asin(clamp((x - BASE_X) / amplitudGrua(), -1, 1)); hookVx = 0; soltar(); };
